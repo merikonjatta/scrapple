@@ -1,8 +1,8 @@
-class RawHandler < Compound::Handler
+class MarkdownHandler < Compound::Handler
+	require 'maruku'
 
 	action :view do |path, app|
-		app.headers "Content-Type" => "text/plain"
-		File.open(path){ |f| f.read }
+		app.markdown(File.open(path){ |f| f.read })
 	end
 
 	action :edit do |path, app|

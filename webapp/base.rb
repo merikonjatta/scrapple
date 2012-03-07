@@ -15,7 +15,6 @@ module Compound
 			require 'pry'
 		end
 
-
 		configure do
 			YAML.load_file(File.join(settings.root, 'config.yml')).each do |k,v|
 				set k, v
@@ -24,23 +23,24 @@ module Compound
 		end
 
 
-		def get_handler(name)
-			name = name + '_handler'
-			require File.join(settings.root, 'plugins', name, name)
-			name.camelize.constantize.new
-		end
-
-
 		get '/system' do
 			'System'
 		end
+
 
 		get '/*/*/as/*' do |path, action, handler_name|
 			fullpath = File.join(settings.content_dir, path)
 			raise Sinatra::NotFound unless File.exists?(fullpath)
 
-			get_handler(handler_name).invoke(action, fullpath, self)
-			response
+			result = get_handler(handler_name).invoke(action, fullpath, self)
+			result
+		end
+
+		private
+		def get_handler(name)
+			name = name + '_handler'
+			require File.join(settings.root, 'plugins', name, name)
+			name.camelize.constantize.new
 		end
 
 	end
