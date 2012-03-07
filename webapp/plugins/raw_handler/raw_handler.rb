@@ -10,4 +10,8 @@ class RawHandler < Compound::Handler
 		app.headers({"Content-Type" => "text/plain"})
 	end
 
+	action :write do |path, app|
+		app.body("Wrote #{path} with:\n\n#{app.params[:content]}")
+	end
+
 end
