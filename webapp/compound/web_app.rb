@@ -1,28 +1,32 @@
 require 'sinatra/base'
+require 'pathname'
 require 'yaml'
 require 'active_support/core_ext'
 
-require './handler'
+require File.join(File.dirname(__FILE__), 'handlers/base')
 
 
 module Compound
 	class HandlerNotFound < Exception; end
 	class ActionNotFound < Exception; end
 
-	class Base < Sinatra::Base
+	class WebApp < Sinatra::Base
 
 		require 'pry' if development?
 
 		configure do
+			set :root, File.expand_path(File.dirname(File.dirname(__FILE__)))
 			YAML.load_file(File.join(settings.root, 'config.yml')).each { |k,v| set k, v }
-			set :content_dir, File.expand_path(File.join(settings.root, settings.content_dir))
+			unless Pathname.new(settings.content_dir).absolute?
+				set :content_dir, File.expand_path(settings.content_dir, settings.root) 
+			end
 		end
 
 
 		def self.load_handler(name)
 			name = name + '_handler'
 			require File.join(settings.root, 'plugins', name, name)
-			name.camelize.constantize
+			("Compound::Handlers::"+name.camelize).constantize
 		end
 
 
@@ -36,7 +40,7 @@ module Compound
 		end
 
 
-		get '/*/*/as/*' do |path, action, handler_name|
+		get '/*/*/*' do |path, handler_name, action|
 			fullpath = File.join(settings.content_dir, path)
 			raise Sinatra::NotFound unless File.exists?(fullpath)
 
