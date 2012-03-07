@@ -11,6 +11,7 @@ class RawHandler < Compound::Handler
 	end
 
 	action :write do |path, app|
+		app.headers "Content-Type" => "text/plain"
 		"Wrote #{path} with:\n\n#{app.params[:content]}"
 	end
 

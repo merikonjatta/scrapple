@@ -1,8 +1,7 @@
-class MarkdownHandler < Compound::Handler
-	require 'maruku'
+class DefaultHandler < Compound::Handler
 
 	action :view do |path, app|
-		app.markdown(File.open(path){ |f| f.read })
+		app.erb :view, :locals => {:text => (File.open(path){ |f| f.read })}
 	end
 
 	action :edit do |path, app|
