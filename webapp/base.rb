@@ -11,9 +11,7 @@ module Compound
 
 	class Base < Sinatra::Base
 
-		if development?
-			require 'pry'
-		end
+		require 'pry' if development?
 
 		configure do
 			YAML.load_file(File.join(settings.root, 'config.yml')).each { |k,v| set k, v }
@@ -42,7 +40,7 @@ module Compound
 			fullpath = File.join(settings.content_dir, path)
 			raise Sinatra::NotFound unless File.exists?(fullpath)
 
-			result = load_handler(handler_name).new.invoke(action, fullpath, self)
+			result = load_handler(handler_name).new(self).invoke(action, fullpath)
 			result
 		end
 
