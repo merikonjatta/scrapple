@@ -1,17 +1,13 @@
 class RawHandler < Compound::Handler
 
-	view do |path, request|
-		result = {}
-		result[:body] = File.open(path) { |f| f.read }
-		result[:headers] = {"Content-Type" => "text/plain"}
-		result
+	action :view do |path, app|
+		app.body(File.open(path){ |f| f.read })
+		app.headers({"Content-Type" => "text/plain"})
 	end
 
-	edit do |path, request|
-		result = {}
-		result[:body] = "Editing:\n" + File.open(path) { |f| f.read }
-		result[:headers] = {"Content-Type" => "text/plain"}
-		result
+	action :edit do |path, app|
+		app.body("Editing:\n" + File.open(path){ |f| f.read })
+		app.headers({"Content-Type" => "text/plain"})
 	end
 
 end

@@ -40,11 +40,8 @@ module Compound
 			raise Sinatra::NotFound unless File.exists?(fullpath)
 
 			handler = new_handler(handler_name)
-			result = handler.invoke(action, fullpath, request)
-
-			status result[:status]
-			headers result[:headers]
-			body result[:body]
+			handler.invoke(action, fullpath, self)
+			response
 		end
 
 	end

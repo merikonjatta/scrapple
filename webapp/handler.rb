@@ -2,22 +2,17 @@ module Compound
 	class Handler
 
 		def invoke(name, *params)
-			raise Compound::ActionNotFound if (proc = self.class.actions[name.intern]).nil?
-			proc.call(*params)
+			raise Compound::ActionNotFound if (action_proc = self.class.action(name)).nil?
+			action_proc.call(*params)
 		end
-
 
 		class << self
 			def action(name, &block)
-				(@actions ||= {})[name.intern] = block
-			end
-
-			def view(&block)
-				action(:view, &block)
-			end
-
-			def edit(&block)
-				action(:edit, &block)
+				if block_given?
+					(@actions ||= {})[name.intern] = block
+				else
+					@actions[name.intern]
+				end
 			end
 
 			def actions
