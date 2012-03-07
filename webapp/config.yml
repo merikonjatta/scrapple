@@ -1,16 +1,5 @@
-content_dir: "../content_dir"
-database:
-  production:
-    adapter: "sqlite3"
-    database: "db/production.sqlite3"
-  development:
-    adapter: "sqlite3"
-    database: "db/development.sqlite3"
-  test:
-    adapter: "sqlite3"
-    database: "db/test.sqlite3"
-
+content_dir: "../sample_content"
 handlers:
-	else:
-		view: plain
-		edit: plain
+  other:
+    view: raw
+    edit: raw
