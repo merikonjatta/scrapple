@@ -1,17 +1,10 @@
-class MarkdownHandler < Compound::Handler
-	require 'maruku'
+require 'maruku'
+Compound::Base.load_handler("default")
+
+class MarkdownHandler < DefaultHandler
 
 	def view(path, app)
-		app.markdown(File.open(path){ |f| f.read })
-	end
-
-	def edit(path, app)
-		app.body("Editing:\n" + File.open(path){ |f| f.read })
-		app.headers({"Content-Type" => "text/plain"})
-	end
-
-	def write(path, app)
-		app.body("Wrote #{path} with:\n\n#{app.params[:content]}")
+		render_default_view(app, app.markdown(File.open(path){ |f| f.read }))
 	end
 
 end

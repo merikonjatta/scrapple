@@ -16,10 +16,20 @@ module Compound
 		end
 
 		configure do
-			YAML.load_file(File.join(settings.root, 'config.yml')).each do |k,v|
-				set k, v
-			end
+			YAML.load_file(File.join(settings.root, 'config.yml')).each { |k,v| set k, v }
 			set :content_dir, File.expand_path(File.join(settings.root, settings.content_dir))
+		end
+
+
+		def self.load_handler(name)
+			name = name + '_handler'
+			require File.join(settings.root, 'plugins', name, name)
+			name.camelize.constantize
+		end
+
+
+		def load_handler(name)
+			self.class.load_handler(name)
 		end
 
 
@@ -32,15 +42,8 @@ module Compound
 			fullpath = File.join(settings.content_dir, path)
 			raise Sinatra::NotFound unless File.exists?(fullpath)
 
-			result = get_handler(handler_name).invoke(action, fullpath, self)
+			result = load_handler(handler_name).new.invoke(action, fullpath, self)
 			result
-		end
-
-		private
-		def get_handler(name)
-			name = name + '_handler'
-			require File.join(settings.root, 'plugins', name, name)
-			name.camelize.constantize.new
 		end
 
 	end

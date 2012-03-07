@@ -1,16 +1,27 @@
 class DefaultHandler < Compound::Handler
 
+	def initialize
+		@template_dir = File.join(File.dirname(__FILE__), "views")
+	end
+
 	def view(path, app)
-		app.erb :view, :locals => {:text => (File.open(path){ |f| f.read })}
+		render_default_view(app, File.open(path){ |f| f.read})
 	end
 
 	def edit(path, app)
-		app.body("Editing:\n" + File.open(path){ |f| f.read })
-		app.headers({"Content-Type" => "text/plain"})
+		"Editing:\n" + File.open(path){ |f| f.read }
 	end
 
 	def write(path, app)
-		app.body("Wrote #{path} with:\n\n#{app.params[:content]}")
+		"Wrote #{path} with:\n\n#{app.params[:content]}"
+	end
+
+
+	protected
+	def render_default_view(app, text)
+		app.erb(:view,
+						:locals => {:text => text},
+						:views => @template_dir)
 	end
 
 end
