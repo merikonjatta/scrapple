@@ -1,2 +1,2 @@
-require './compound_base'
-run CompoundBase
+require './base'
+run Compound::Base
