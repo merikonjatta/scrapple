@@ -24,7 +24,7 @@ module Compound
 		end
 
 
-		def new_handler(name)
+		def get_handler(name)
 			name = name + '_handler'
 			require File.join(settings.root, 'plugins', name, name)
 			name.camelize.constantize.new
@@ -39,8 +39,7 @@ module Compound
 			fullpath = File.join(settings.content_dir, path)
 			raise Sinatra::NotFound unless File.exists?(fullpath)
 
-			handler = new_handler(handler_name)
-			handler.invoke(action, fullpath, self)
+			get_handler(handler_name).invoke(action, fullpath, self)
 			response
 		end
 
