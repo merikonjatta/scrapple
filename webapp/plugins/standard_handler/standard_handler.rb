@@ -1,9 +1,8 @@
 class Compund::Handlers::StandardHandler < Compund::Handlers::Base
 
-  @@template_dir = File.join(File.dirname(__FILE__), "views")
-
   def view(path)
-    standard_view(path, File.open(path){ |f| f.read})
+    locals = {:title => path, :text => File.open(path){ |f| f.read }}
+    erb(local_view(__FILE__, "view"), :locals => locals)
   end
 
   def edit(path)
@@ -12,14 +11,6 @@ class Compund::Handlers::StandardHandler < Compund::Handlers::Base
 
   def write(path)
     "Wrote #{path} with:\n\n#{params[:content]}"
-  end
-
-
-  protected
-  def standard_view(title, text)
-    erb(:view,
-        :locals => {:title => title, :text => text},
-        :views => @@template_dir)
   end
 
 end

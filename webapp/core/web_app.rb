@@ -17,6 +17,7 @@ module Compund
 		configure do
 			set :root, File.expand_path("..", File.dirname(__FILE__))
       set :public_folder, File.join(settings.root, 'core', 'public')
+      set :views, File.join(settings.root, 'core', 'views')
 
       # Load and normalize config.yml directives
 			YAML.load_file(File.join(settings.root, 'config.yml')).each { |k,v| set k, v }
@@ -32,10 +33,15 @@ module Compund
 			("Compund::Handlers::"+name.camelize).constantize
 		end
 
-
 		def load_handler(name)
 			self.class.load_handler(name)
 		end
+
+    def local_view(base, name)
+      base_pathname = Pathname.new(File.dirname(base))
+      views_pathname = Pathname.new(settings.views)
+      base_pathname.relative_path_from(views_pathname).join("views", name).to_s.intern
+    end
 
 
 		get '/system' do
@@ -44,10 +50,13 @@ module Compund
 
 
 		get '/*/*/*' do |path, handler_name, action|
-			fullpath = File.join(settings.content_dir, path)
-			raise Sinatra::NotFound unless File.exists?(fullpath)
+      @path = path
+      @handler_name = handler_name
+      @action = action
+			@fullpath = File.join(settings.content_dir, @path)
+			raise Sinatra::NotFound unless File.exists?(@fullpath)
 
-			result = load_handler(handler_name).new(self).invoke(action, fullpath)
+			result = load_handler(@handler_name).new(self).invoke(@action, @fullpath)
 			result
 		end
 

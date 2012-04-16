@@ -6,7 +6,9 @@ module Compund
 		class MarkdownHandler < Compund::Handlers::StandardHandler
 
 			def view(path)
-				standard_view(path, markdown(File.open(path){ |f| f.read }))
+        @text = markdown(File.open(path){ |f| f.read })
+        @title = path
+        erb(local_view(__FILE__, "view"))
 			end
 
 		end
