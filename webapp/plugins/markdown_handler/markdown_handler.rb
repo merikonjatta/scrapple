@@ -1,9 +1,9 @@
 require 'maruku'
-Compound::WebApp.load_handler("standard")
+Compund::WebApp.load_handler("standard")
 
-module Compound
+module Compund
 	module Handlers
-		class MarkdownHandler < Compound::Handlers::StandardHandler
+		class MarkdownHandler < Compund::Handlers::StandardHandler
 
 			def view(path)
 				standard_view(path, markdown(File.open(path){ |f| f.read }))

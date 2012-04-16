@@ -6,7 +6,7 @@ require 'active_support/core_ext'
 require File.join(File.dirname(__FILE__), 'handlers/base')
 
 
-module Compound
+module Compund
 	class HandlerNotFound < Exception; end
 	class ActionNotFound < Exception; end
 
@@ -16,7 +16,7 @@ module Compound
 
 		configure do
 			set :root, File.expand_path("..", File.dirname(__FILE__))
-      set :public_folder, File.join(settings.root, 'compound', 'public')
+      set :public_folder, File.join(settings.root, 'core', 'public')
 
       # Load and normalize config.yml directives
 			YAML.load_file(File.join(settings.root, 'config.yml')).each { |k,v| set k, v }
@@ -29,7 +29,7 @@ module Compound
 		def self.load_handler(name)
 			name = name + '_handler'
 			require File.join(settings.root, 'plugins', name, name)
-			("Compound::Handlers::"+name.camelize).constantize
+			("Compund::Handlers::"+name.camelize).constantize
 		end
 
 

@@ -1,4 +1,4 @@
-class Compound::Handlers::StandardHandler < Compound::Handlers::Base
+class Compund::Handlers::StandardHandler < Compund::Handlers::Base
 
   @@template_dir = File.join(File.dirname(__FILE__), "views")
 

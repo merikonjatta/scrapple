@@ -1,6 +1,6 @@
-module Compound
+module Compund
 	module Handlers
-		class RawHandler < Compound::Handlers::Base
+		class RawHandler < Compund::Handlers::Base
 
 			def view(path)
 				headers "Content-Type" => "text/plain"

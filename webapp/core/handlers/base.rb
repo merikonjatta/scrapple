@@ -1,4 +1,4 @@
-module Compound
+module Compund
 	module Handlers
 		class Base
 
@@ -8,7 +8,7 @@ module Compound
 
 			# Invoke an action defined as a method
 			def invoke(action_name, *args)
-				raise Compound::ActionNotFound unless self.public_methods.include? action_name.intern
+				raise Compund::ActionNotFound unless self.public_methods.include? action_name.intern
 				self.send(action_name.intern, *args)
 			end
 

@@ -1,2 +1,2 @@
-require File.join(File.dirname(__FILE__), 'compound', 'web_app')
-run Compound::WebApp
+require File.join(File.dirname(__FILE__), 'core', 'web_app')
+run Compund::WebApp
