@@ -9,6 +9,11 @@ group :development, :test do
   gem 'shotgun'
   gem 'pry'
 end
+
 group :test do
   gem 'shoulda'
+end
+
+Dir[File.join(File.dirname(__FILE__), "plugins", "**", "Gemfile")].each do |plugin_gemfile|
+  eval(IO.read(plugin_gemfile), binding)
 end

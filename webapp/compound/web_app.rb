@@ -15,7 +15,10 @@ module Compound
 		require 'pry' if development?
 
 		configure do
-			set :root, File.expand_path(File.dirname(File.dirname(__FILE__)))
+			set :root, File.expand_path("..", File.dirname(__FILE__))
+      set :public_folder, File.join(settings.root, 'compound', 'public')
+
+      # Load and normalize config.yml directives
 			YAML.load_file(File.join(settings.root, 'config.yml')).each { |k,v| set k, v }
 			unless Pathname.new(settings.content_dir).absolute?
 				set :content_dir, File.expand_path(settings.content_dir, settings.root) 

@@ -14,7 +14,7 @@ module Compound
 
 			# Delegate all unknown methods to base app
 			def method_missing(method_name, *args)
-				raise NoMethodError unless @app.public_methods.include? method_name.intern
+				raise NoMethodError, "No such method #{method_name}" unless @app.public_methods.include? method_name.intern
 				@app.send(method_name, *args)
 			end
 
