@@ -1,4 +1,4 @@
-class Compund::Handlers::StandardHandler < Compund::Handlers::Base
+module Compund::Handlers::StandardHandler
 
   def view(path)
     locals = {:title => path, :text => File.open(path){ |f| f.read }}

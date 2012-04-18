@@ -3,12 +3,11 @@ require 'pathname'
 require 'yaml'
 require 'active_support/core_ext'
 
-require File.join(File.dirname(__FILE__), 'handlers/base')
-
-
 module Compund
 	class HandlerNotFound < Exception; end
 	class ActionNotFound < Exception; end
+
+  module Handlers; end
 
 	class WebApp < Sinatra::Base
 
@@ -30,12 +29,25 @@ module Compund
 		def self.load_handler(name)
 			name = name + '_handler'
 			require File.join(settings.root, 'plugins', name, name)
-			("Compund::Handlers::"+name.camelize).constantize
+			mod = ("Compund::Handlers::"+name.camelize).constantize
+      mod.module_eval do
+        self.instance_methods.each do |meth|
+          unless meth.to_s =~ /^#{name}__.+$/
+            alias_method(:"#{name}__#{meth}", meth) 
+            undef_method(meth)
+          end
+        end
+      end
+      include mod
 		end
 
 		def load_handler(name)
 			self.class.load_handler(name)
 		end
+
+    def call_handler_method(handler_name, method_name, *args)
+      self.send(:"#{handler_name}_handler__#{method_name}", *args)
+    end
 
     def local_view(base, name)
       base_pathname = Pathname.new(File.dirname(base))
@@ -56,7 +68,8 @@ module Compund
 			@fullpath = File.join(settings.content_dir, @path)
 			raise Sinatra::NotFound unless File.exists?(@fullpath)
 
-			result = load_handler(@handler_name).new(self).invoke(@action, @fullpath)
+      load_handler(@handler_name)
+      result = call_handler_method(@handler_name, @action, @fullpath)
 			result
 		end
 
