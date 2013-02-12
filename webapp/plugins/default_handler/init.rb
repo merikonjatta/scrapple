@@ -1,8 +1,9 @@
 module DefaultHandler
   class << self
 
-    def view(request)
-      Tilt.new(request[:path]).render
+    # The `view` action 
+    def view(file)
+      Tilt.new(file).render
     end
 
     def edit(request)
