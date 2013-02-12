@@ -60,8 +60,12 @@ module Compund
           directives[md[1].strip] = md[2].strip
           num_noncontent_lines += 1
         else
-          if line.strip.blank? && directives.count == 9
-            num_noncontent_lines += 1 and next
+          if line.strip.blank? 
+            if directives.count == 0
+              num_noncontent_lines += 1 and next
+            else
+              num_noncontent_lines += 1 and break
+            end
           else
             break
           end

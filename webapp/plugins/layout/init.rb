@@ -3,6 +3,7 @@ module Layout
 
     def within_layout(page)
       return if page.directives['layout'].nil?
+      return if page.handler_name != "default"
 
       layout_file = Compund::Webapp.find_file(page.directives['layout'])
 
