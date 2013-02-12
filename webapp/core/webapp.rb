@@ -6,7 +6,7 @@ require 'pry'
 
 require 'core/page'
 require 'core/file_finder'
-require 'core/file_parser'
+require 'core/settings_parser'
 
 module Scrapple
   class HandlerNotFound < Exception; end

@@ -48,15 +48,17 @@ module Scrapple
       @headers   ||= self["headers"] || {}
       @status    ||= self["status"]  || 200
 
+      sp = SettingsParser.new(@locals)
+
       unless @ignore_settings_files
         settings_files = FileFinder.find_in_ancestors("_settings", @file, Scrapple::Webapp.content_dir)
         settings_files.reverse_each do |settings_file|
-          @locals.merge! FileParser.parse_file(settings_file)[1]
+          sp.parse_and_merge_file(settings_file)
         end
       end
 
-      (@file_body, directives) = FileParser.parse(@file_body)
-      @locals.merge!(directives)
+      @file_body = sp.parse_and_merge(@file_body)
+      @locals = sp.result
     end
 
 
