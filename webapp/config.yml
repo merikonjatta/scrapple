@@ -1,6 +1,0 @@
-content_dir: "../sample_content"
-relative_url_base: ""
-handlers:
-  other:
-    view: raw
-    edit: raw

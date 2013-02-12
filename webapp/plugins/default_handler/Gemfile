@@ -1,0 +1,6 @@
+source :rubygems
+gem 'tilt'
+gem 'maruku'
+gem 'haml'
+gem 'rdoc'
+gem 'RedCloth'
