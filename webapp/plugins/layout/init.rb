@@ -3,7 +3,7 @@ module Layout
 
     def use_layout(app)
       layout_file = app.params[:directives]['layout'] || "layout"
-      app.body Tilt.new(app.find_file(layout_file)).render(app, :content => app.body.first)
+      app.body app.process(layout_file, app.params)
     end
 
   end

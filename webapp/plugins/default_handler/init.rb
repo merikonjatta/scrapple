@@ -3,7 +3,7 @@ module DefaultHandler
 
     # The `view` action 
     def view(app)
-      app.body Tilt.new(app.params[:file]).render
+      app.body Tilt.new(app.params[:file]).render(app, :content => app.body.first)
     end
 
     def edit(app)
