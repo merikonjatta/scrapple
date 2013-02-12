@@ -21,7 +21,7 @@ module Scrapple
         end
 
         # Still not a valid file, so give up
-        raise FileNotFound, "File not found: #{file} for #{path}" unless File.file?(file)
+        file = nil unless File.file?(file)
 
         return file
       end
@@ -34,11 +34,34 @@ module Scrapple
         leaf = File.dirname(leaf) if File.file?(leaf)
         root = File.expand_path(root)
         raise ArgumentError, "leaf must be a descendant of root" unless leaf[0, root.length] == root
+
         found = []
-        found << find(path, leaf)
+
+        if file = find(path, leaf)
+          found << file
+        end
+
         if leaf != root
           found = found + find_in_ancestors(path, File.dirname(leaf), root)
         end
+
+        found
+      end
+
+
+      # Find a file in the nearest parent directory.
+      def find_nearest_in_ancestors(path, leaf, root)
+        leaf = File.expand_path(leaf)
+        leaf = File.dirname(leaf) if File.file?(leaf)
+        root = File.expand_path(root)
+        raise ArgumentError, "leaf must be a descendant of root" unless leaf[0, root.length] == root
+
+        found = find(path, leaf)
+
+        if leaf != root
+          found ||= find_nearest_in_ancestors(path, File.dirname(leaf), root)
+        end
+
         found
       end
 

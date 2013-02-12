@@ -43,7 +43,7 @@ module Scrapple
     end
 
     get '/' do
-      process nil
+      process ""
     end
 
     get '/*/*' do |path, handler|

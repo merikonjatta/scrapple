@@ -1,11 +1,11 @@
 module Layout
   class << self
 
-    def within_layout(page)
+    def wrap_with_layout(page)
       return if page['handler'] != "default"
       return if page['layout'].nil?
 
-      layout_file = Scrapple::FileFinder.find(page['layout'], Scrapple::Webapp.content_dir)
+      layout_file = Scrapple::FileFinder.find_nearest_in_ancestors(page['layout'], page.file, Scrapple::Webapp.content_dir)
       return if page.file == layout_file
 
       wrapper_page = Scrapple::Page.new do |pg|
@@ -25,5 +25,5 @@ module Layout
 end
 
 Scrapple::Page.hook(:after_render) do |page|
-  Layout.within_layout(page)
+  Layout.wrap_with_layout(page)
 end
