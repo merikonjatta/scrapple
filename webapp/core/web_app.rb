@@ -4,74 +4,71 @@ require 'yaml'
 require 'active_support/core_ext'
 
 module Compund
-	class HandlerNotFound < Exception; end
-	class ActionNotFound < Exception; end
+  class HandlerNotFound < Exception; end
+  class ActionNotFound < Exception; end
 
   module Handlers; end
+  module Plugins; end
 
-	class WebApp < Sinatra::Base
+  class WebApp < Sinatra::Base
 
-		require 'pry' if development?
+    require 'pry' if development?
 
-		configure do
-			set :root, File.expand_path("..", File.dirname(__FILE__))
+    def self.register_handler(name, mod)
+      @@handlers ||= {}
+      @@handlers[name] = mod
+    end
+
+    def handlers
+      @@handlers ||= {}
+    end
+
+    def self.hook(point, options, &block)
+      @@hooks ||= {}
+      @@hooks[point] ||= []
+      @@hooks[point].push({:options => options, :block => block})
+    end
+
+    def self.hooks_at(point)
+      @@hooks ||= {}
+      return @@hooks[point] || []
+    end
+
+    configure do
+      set :root, File.expand_path("..", File.dirname(__FILE__))
       set :public_folder, File.join(settings.root, 'core', 'public')
-      set :views, File.join(settings.root, 'core', 'views')
+      set :views, File.join(settings.root)
 
       # Load and normalize config.yml directives
-			YAML.load_file(File.join(settings.root, 'config.yml')).each { |k,v| set k, v }
-			unless Pathname.new(settings.content_dir).absolute?
-				set :content_dir, File.expand_path(settings.content_dir, settings.root) 
-			end
-		end
-
-
-		def self.load_handler(name)
-			name = name + '_handler'
-			require File.join(settings.root, 'plugins', name, name)
-			mod = ("Compund::Handlers::"+name.camelize).constantize
-      mod.module_eval do
-        self.instance_methods.each do |meth|
-          unless meth.to_s =~ /^#{name}__.+$/
-            alias_method(:"#{name}__#{meth}", meth) 
-            undef_method(meth)
-          end
-        end
+      YAML.load_file(File.join(settings.root, 'config.yml')).each { |k,v| set k, v }
+      unless Pathname.new(settings.content_dir).absolute?
+        set :content_dir, File.expand_path(settings.content_dir, settings.root) 
       end
-      include mod
-		end
 
-		def load_handler(name)
-			self.class.load_handler(name)
-		end
-
-    def call_handler_method(handler_name, method_name, *args)
-      self.send(:"#{handler_name}_handler__#{method_name}", *args)
-    end
-
-    def local_view(base, name)
-      base_pathname = Pathname.new(File.dirname(base))
-      views_pathname = Pathname.new(settings.views)
-      base_pathname.relative_path_from(views_pathname).join("views", name).to_s.intern
+      # Require all init.rb scripts in plugins dir
+      Dir[settings.root + "/plugins/**/init.rb"].each do |script|
+        require script
+      end
     end
 
 
-		get '/system' do
-			'System'
-		end
+    get '/system' do
+      'System'
+    end
 
+    get '/*/*/*' do |path, handler_name, action|
+      request[:path] = path
+      request[:handler_name] = handler_name
+      request[:action] = action
+      request[:file_path] = File.join(settings.content_dir, path)
+      request[:content] = File.open(request[:file_path]) { |f| f.read }
+      raise Sinatra::NotFound unless File.exists?(request[:file_path])
 
-		get '/*/*/*' do |path, handler_name, action|
-      @path = path
-      @handler_name = handler_name
-      @action = action
-			@fullpath = File.join(settings.content_dir, @path)
-			raise Sinatra::NotFound unless File.exists?(@fullpath)
+      self.class.hooks_at(:before_render).each do |hook|
+        hook[:block].call(self)
+      end
+      body request[:content]
+    end
 
-      load_handler(@handler_name)
-      result = call_handler_method(@handler_name, @action, @fullpath)
-			result
-		end
-
-	end
+  end
 end
