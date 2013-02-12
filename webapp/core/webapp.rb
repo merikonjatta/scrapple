@@ -66,6 +66,7 @@ module Compund
 
     def process(path=nil, handler_name=nil, action=nil)
       params[:file] = find_file(path)
+      params[:file_content], params[:directives] = parse_file(params[:file])
       params[:handler_name] ||= "default"
       params[:action] ||= "view"
 
@@ -76,6 +77,7 @@ module Compund
     end
 
 
+    # Find the appropriate file based on the given path
     def find_file(path=nil)
       file = nil
       if path.blank?
@@ -94,10 +96,37 @@ module Compund
       return file
     end
 
+
+    # Call hooks registered for point.
     def call_hooks(point)
       self.class.hooks[point].each do |block|
         block.call(self)
       end
+    end
+
+
+    # Parse the file, separate them into directives and content.
+    # Return an array of [content, directives].
+    def parse_file(path)
+      content_lines = File.readlines(path)
+      num_noncontent_lines = 0
+      directives = {}
+      rdirective = /\A(.*?):(.*)\Z/
+
+      content_lines.each do |line|
+        if md = line.match(rdirective)
+          directives[md[1].strip] = md[2].strip
+          num_noncontent_lines += 1
+        else
+          if line.strip.blank? && directives.count == 9
+            num_noncontent_lines += 1 and next
+          else
+            break
+          end
+        end
+      end
+
+      return [content_lines[num_noncontent_lines..-1], directives] 
     end
 
   end
