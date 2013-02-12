@@ -14,12 +14,20 @@ module Compund
   class Webapp < Sinatra::Base
 
     @handlers = {}
+    @hooks = {
+      :before_render => [],
+      :after_render => [],
+    }
 
     class << self
-      attr_reader :handlers
+      attr_reader :handlers, :hooks
 
       def register_handler(mod, name)
         @handlers[name] = mod
+      end
+
+      def hook(point, &block)
+        @hooks[point] << block
       end
     end
 
@@ -60,7 +68,11 @@ module Compund
       params[:file] = find_file(path)
       params[:handler_name] ||= "default"
       params[:action] ||= "view"
+
+      call_hooks(:before_render)
       self.class.handlers[params[:handler_name]].send(params[:action], self)
+      call_hooks(:after_render)
+      self.body
     end
 
 
@@ -72,13 +84,20 @@ module Compund
         file = File.join(settings.content_dir, path)
       end
 
-      unless File.exist?(file)
+      if file.nil? || !File.exist?(file)
         file = Dir[File.join(settings.content_dir, "#{path}.*")].first
       end
 
-      raise Sinatra::NotFound unless File.exist?(file)
+      #raise Sinatra::NotFound if file.nil? || File.exist?(file)
+      raise "File not found: #{file} for #{path}" if file.nil? || !File.exist?(file)
 
       return file
+    end
+
+    def call_hooks(point)
+      self.class.hooks[point].each do |block|
+        block.call(self)
+      end
     end
 
   end
