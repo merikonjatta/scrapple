@@ -8,7 +8,6 @@ require 'core/page'
 
 module Compund
   class HandlerNotFound < Exception; end
-  class ActionNotFound < Exception; end
 
   module Handlers; end
   module Plugins; end
@@ -51,9 +50,10 @@ module Compund
       set :views, File.join(settings.root)
       set :content_dir, File.expand_path(ENV['CONTENT_DIR'])
 
-      # Require all init.rb scripts in plugins dir
-      Dir[settings.root + "/plugins/**/init.rb"].each do |script|
-        require script
+      # Require all <plugin>.rb scripts in plugins dir
+      Dir[settings.root + "/plugins/*"].each do |plugin_dir|
+        plugin_name = plugin_dir.match(/.*\/(.*)$/)[1]
+        require File.join(plugin_dir, plugin_name)
       end
     end
 
@@ -65,10 +65,6 @@ module Compund
       process nil
     end
 
-    get '/*/*/*' do |path, handler, action|
-      process path, handler, action
-    end
-
     get '/*/*' do |path, handler|
       process path, handler
     end
@@ -78,9 +74,8 @@ module Compund
     end
 
 
-    def process(_path=nil, _handler_name=nil, _action=nil)
+    def process(_path=nil, _handler_name=nil)
       params["handler"] ||= "default"
-      params["action"] ||= "view"
 
       page = Page.new do |pg|
         pg.file = self.class.find_file(_path)

@@ -13,7 +13,6 @@ module Layout
 
         pg.params = page.params
         pg.handler = page.handler
-        pg.action = page.action
         pg.headers = page.headers
         pg.status = page.status
       end

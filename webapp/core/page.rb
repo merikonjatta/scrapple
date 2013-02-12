@@ -13,7 +13,7 @@ module Compund
     end
 
     attr_accessor :params, :locals, :body, :headers, :status
-    attr_accessor :handler, :action
+    attr_accessor :handler
     attr_accessor :file, :content
 
     def initialize
@@ -24,7 +24,6 @@ module Compund
 
       @content ||= File.read(@file) unless @file.nil?
       @handler ||= self["handler"] || "default"
-      @action  ||= self["action"]  || "view"
       @headers ||= self["headers"] || {}
       @status  ||= self["status"]  || 200
       parse_content
@@ -45,7 +44,7 @@ module Compund
 
     def render
       call_hooks(:before_render)
-      Compund::Webapp.handlers[@handler].send(@action, self)
+      Compund::Webapp.handlers[@handler].handle(self)
       call_hooks(:after_render)
 
       [@status, @headers, @body]
