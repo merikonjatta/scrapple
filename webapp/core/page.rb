@@ -14,7 +14,8 @@ module Compund
 
 
     attr_accessor :file, :content, :directives, :params,
-                  :locals, :handler_name, :action, :body, :headers, :status
+                  :locals, :handler_name, :action,
+                  :body, :headers, :status
 
     def initialize
       yield(self) if block_given?
@@ -33,12 +34,13 @@ module Compund
       call_hooks(:before_render)
       @content = File.read(@file) if (!@file.nil? && @content.nil?)
       @directives   ||= {}
-      parse_content
       @handler_name ||= "default"
       @action       ||= "view"
       @status  ||= 200
       @headers ||= {}
       @locals  ||= {}
+      parse_content
+      apply_directives
 
       Compund::Webapp.handlers[@handler_name].send(@action, self)
 
@@ -68,6 +70,18 @@ module Compund
 
       @content = @content.lines.to_a[num_noncontent_lines..-1].join
       @directives.merge!(directives)
+    end
+
+
+    def apply_directives
+      @directives.each do |key, value|
+        case key
+        when "handler"
+          @handler_name = value
+        when "status"
+          @status = value
+        end
+      end
     end
   end
 end

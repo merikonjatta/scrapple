@@ -65,16 +65,16 @@ module Compund
       process nil
     end
 
-    get '/*' do |path|
-      process path
+    get '/*/*/*' do |path, handler_name, action|
+      process path, handler_name, action
     end
 
     get '/*/*' do |path, handler_name|
       process path, handler_name
     end
 
-    get '/*/*/*' do |path, handler_name, action|
-      process path, handler_name, action
+    get '/*' do |path|
+      process path
     end
 
 
