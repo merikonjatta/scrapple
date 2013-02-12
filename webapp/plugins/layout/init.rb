@@ -1,14 +1,25 @@
 module Layout
   class << self
 
-    def use_layout(app)
-      layout_file = app.params[:directives]['layout'] || "layout"
-      app.body app.process(layout_file, app.params)
+    def within_layout(page)
+      return if page.directives['layout'].nil?
+
+      layout_file = Compund::Webapp.find_file(page.directives['layout'])
+
+      wrapper_page = Compund::Page.new
+      wrapper_page.file = layout_file
+      wrapper_page.locals = {:content => page.body}
+      wrapper_page.params = page.params
+      wrapper_page.handler_name = page.handler_name
+      wrapper_page.action = page.action
+      wrapper_page.headers = page.headers
+      wrapper_page.status = page.status
+      (page.status, page.headers, page.body) = wrapper_page.render
     end
 
   end
 end
 
-Compund::Webapp.hook(:after_render) do |app|
-  app.body Layout.use_layout(app)
+Compund::Page.hook(:after_render) do |page|
+  Layout.within_layout(page)
 end

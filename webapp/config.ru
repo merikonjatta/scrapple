@@ -1,2 +1,3 @@
-require File.join(File.dirname(__FILE__), 'core', 'webapp')
+$: << File.expand_path(File.dirname(__FILE__))
+require 'core/webapp'
 run Compund::Webapp

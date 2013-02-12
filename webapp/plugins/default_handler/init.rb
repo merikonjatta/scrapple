@@ -2,16 +2,21 @@ module DefaultHandler
   class << self
 
     # The `view` action 
-    def view(app)
-      app.body Tilt.new(app.params[:file]).render(app, :content => app.body.first)
+    def view(page)
+      if page.content
+        ext = page.file.sub(/\A.*\./, '')
+        page.body = Tilt[ext].new{ page.content }.render(page, page.locals)
+      else
+        page.body = Tilt.new(page.file).render(page, page.locals)
+      end
     end
 
-    def edit(app)
-      "Editing:\n" + File.open(app.params[:file]){ |f| f.read }
+    def edit(page)
+      "Editing:\n" + page.file
     end
 
-    def write(app)
-      "Wrote #{app.params[:file]} with:\n\n#{params[:content]}"
+    def write(page)
+      "Wrote #{page.file} with:\n\n#{page.params[:content]}"
     end
 
   end
