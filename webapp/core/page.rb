@@ -25,17 +25,12 @@ module Scrapple
     # Set this to false to ignore them.
     attr_accessor :ignore_settings_files
 
-    # The handler this page will use on render.
-    # Will be overridden by locals and params.
-    attr_accessor :handler
-
     # What file in the content dir this page represents.
     # Note that this may not be a real file.
     attr_accessor :file
 
-    # The contents of the file this page represents.
-    # The main job of plugin hooks would be to overwrite this with modified strings.
-    attr_accessor :content
+    # The content body of the file this page represents.
+    attr_accessor :file_body
 
     # Body, headers and status to be returned on render to Scrapple::Webapp
     # The main job of handlers would be to overwrite these.
@@ -49,10 +44,9 @@ module Scrapple
 
       yield(self) if block_given?
 
-      @content ||= File.read(@file) unless @file.nil?
-      @handler ||= self["handler"] || "default"
-      @headers ||= self["headers"] || {}
-      @status  ||= self["status"]  || 200
+      @file_body ||= File.read(@file) unless @file.nil?
+      @headers   ||= self["headers"] || {}
+      @status    ||= self["status"]  || 200
 
       unless @ignore_settings_files
         settings_files = FileFinder.find_in_ancestors("_settings", @file, Scrapple::Webapp.content_dir)
@@ -61,10 +55,8 @@ module Scrapple
         end
       end
 
-      (@content, directives) = FileParser.parse(@content)
+      (@file_body, directives) = FileParser.parse(@file_body)
       @locals.merge!(directives)
-
-      apply_locals
     end
 
 
@@ -83,20 +75,11 @@ module Scrapple
     # Render this page. Returns a Rack response array.
     def render
       call_hooks(:before_render)
-      Scrapple::Webapp.handlers[@handler].handle(self)
+      Scrapple::Webapp.handlers[self['handler']].handle(self)
       call_hooks(:after_render)
 
       [@status, @headers, @body]
     end
 
-
-    def apply_locals
-      @locals.each do |key, value|
-        case key
-        when "handler"
-          @handler= value
-        end
-      end
-    end
   end
 end

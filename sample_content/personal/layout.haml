@@ -1,0 +1,14 @@
+!!! 5
+
+%html
+  %head
+    %title Scrapple
+    :css
+      body { font-family: "Helvetica Neue LT Std" }
+  %body
+    %div
+      %strong Personal area!
+    %div(style="float:left; width: 600px; border:1px solid #ccc; padding: 10px;")
+      = self['content']
+    %div(style="float:left; width: 300px; border:1px solid #ccc; padding: 10px;")
+      = self['tags']

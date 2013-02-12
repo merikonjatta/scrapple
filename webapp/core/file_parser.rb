@@ -28,8 +28,8 @@ module Scrapple
           end
         end
 
-        content = text.lines.to_a[num_noncontent_lines..-1].join
-        return [content, directives]
+        body = text.lines.to_a[num_noncontent_lines..-1].join
+        return [body, directives]
       end
 
     end

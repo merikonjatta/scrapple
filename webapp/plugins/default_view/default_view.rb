@@ -5,9 +5,9 @@ module DefaultView
       ext = page.file.sub(/^.*\./, '')
       engine = Tilt[ext]
       if engine.nil?
-        page.body = page.content
+        page.body = page.file_body
       else
-        page.body = engine.new{ page.content }.render(page)
+        page.body = engine.new{ page.file_body }.render(page)
       end
     end
 
