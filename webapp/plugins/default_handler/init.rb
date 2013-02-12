@@ -2,16 +2,16 @@ module DefaultHandler
   class << self
 
     # The `view` action 
-    def view(file)
-      Tilt.new(file).render
+    def view(app)
+      app.body Tilt.new(app.params[:file]).render
     end
 
-    def edit(request)
-      "Editing:\n" + File.open(request[:path]){ |f| f.read }
+    def edit(app)
+      "Editing:\n" + File.open(app.params[:file]){ |f| f.read }
     end
 
-    def write(request)
-      "Wrote #{request[:path]} with:\n\n#{params[:content]}"
+    def write(app)
+      "Wrote #{app.params[:file]} with:\n\n#{params[:content]}"
     end
 
   end

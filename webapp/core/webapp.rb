@@ -57,10 +57,10 @@ module Compund
 
 
     def process(path=nil, handler_name=nil, action=nil)
-      @file = find_file(path)
-      @handler_name ||= "default"
-      @action ||= "view"
-      body self.class.handlers[@handler_name].send(@action, @file)
+      params[:file] = find_file(path)
+      params[:handler_name] ||= "default"
+      params[:action] ||= "view"
+      self.class.handlers[params[:handler_name]].send(params[:action], self)
     end
 
 
