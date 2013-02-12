@@ -5,6 +5,7 @@ require 'active_support/core_ext'
 require 'pry'
 
 require 'core/page'
+require 'core/file_parser'
 
 module Compund
   class HandlerNotFound < Exception; end

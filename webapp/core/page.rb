@@ -47,7 +47,9 @@ module Compund
       @handler ||= self["handler"] || "default"
       @headers ||= self["headers"] || {}
       @status  ||= self["status"]  || 200
-      parse_content
+
+      (@content, directives) = FileParser.parse(@content)
+      @locals.merge!(directives)
       apply_locals
     end
 
@@ -71,35 +73,6 @@ module Compund
       call_hooks(:after_render)
 
       [@status, @headers, @body]
-    end
-
-
-    # Parse the content and extract directives into locals.
-    # Also delete the lines that represented locals.
-    def parse_content
-      num_noncontent_lines = 0
-      directives = {}
-      rdirective = /\A(.*?):(.*)\Z/
-
-      @content.each_line do |line|
-        if md = line.match(rdirective)
-          directives[md[1].strip] = md[2].strip
-          num_noncontent_lines += 1
-        else
-          if line.strip.blank? 
-            if directives.count == 0
-              num_noncontent_lines += 1 and next
-            else
-              num_noncontent_lines += 1 and break
-            end
-          else
-            break
-          end
-        end
-      end
-
-      @content = @content.lines.to_a[num_noncontent_lines..-1].join
-      @locals.merge!(directives)
     end
 
 

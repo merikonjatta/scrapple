@@ -3,7 +3,12 @@ module DefaultView
 
     def handle(page)
       ext = page.file.sub(/\A.*\./, '')
-      page.body = Tilt[ext].new{ page.content }.render(page)
+      engine = Tilt[ext]
+      if engine.nil?
+        page.body = page.content
+      else
+        page.body = engine.new{ page.content }.render(page)
+      end
     end
 
   end
