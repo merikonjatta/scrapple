@@ -3,7 +3,7 @@ module Compund
     class << self
 
       def parse_file(file)
-        parse(file.read(file))
+        parse(File.read(file))
       end
 
       def parse(text)

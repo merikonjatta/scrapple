@@ -17,8 +17,13 @@ module Compund
     attr_accessor :params
     
     # Local settings for this page. Includes directives found in file,
-    # but can be used to store arbitrary data
+    # and directives found in _settings.txt in parent directories.
+    # But can be used to store arbitrary data
     attr_accessor :locals
+
+    # Normally, directives found in _settings.txt files are taken into locals.
+    # Set this to false to ignore them.
+    attr_accessor :ignore_settings_files
 
     # The handler this page will use on render.
     # Will be overridden by locals and params.
@@ -38,8 +43,9 @@ module Compund
 
     # Pass a block to configure this page.
     def initialize
-      @locals       ||= {}
-      @params       ||= {}
+      @locals = {}
+      @params = {}
+      @ignore_settings_files = false
 
       yield(self) if block_given?
 
@@ -48,8 +54,16 @@ module Compund
       @headers ||= self["headers"] || {}
       @status  ||= self["status"]  || 200
 
+      unless @ignore_settings_files
+        settings_files = FileFinder.find_in_ancestors("_settings", @file, Compund::Webapp.content_dir)
+        settings_files.reverse_each do |settings_file|
+          @locals.merge! FileParser.parse_file(settings_file)[1]
+        end
+      end
+
       (@content, directives) = FileParser.parse(@content)
       @locals.merge!(directives)
+
       apply_locals
     end
 
@@ -60,7 +74,7 @@ module Compund
     end
 
 
-    # Get variables from params, and locals, in that order of priority
+    # Get variables from params, locals, and settings, in that order of priority
     def [](key)
       @params[key] || @locals[key]
     end

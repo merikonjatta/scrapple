@@ -2,7 +2,7 @@ module DefaultView
   class << self
 
     def handle(page)
-      ext = page.file.sub(/\A.*\./, '')
+      ext = page.file.sub(/^.*\./, '')
       engine = Tilt[ext]
       if engine.nil?
         page.body = page.content

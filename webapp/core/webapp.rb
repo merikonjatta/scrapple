@@ -5,10 +5,12 @@ require 'active_support/core_ext'
 require 'pry'
 
 require 'core/page'
+require 'core/file_finder'
 require 'core/file_parser'
 
 module Compund
   class HandlerNotFound < Exception; end
+  class FileNotFound < Exception; end
 
   module Handlers; end
   module Plugins; end
@@ -23,32 +25,10 @@ module Compund
       def register_handler(mod, name)
         @handlers[name] = mod
       end
-
-      # Find the appropriate file based on the given path
-      def find_file(path=nil)
-        file = nil
-        if path.blank?
-          file = Dir[File.join(settings.content_dir, "index.*")].first
-        else
-          file = File.join(settings.content_dir, path)
-        end
-
-        if file.nil? || !File.exist?(file)
-          file = Dir[File.join(settings.content_dir, "#{path}.*")].first
-        end
-
-        #raise Sinatra::NotFound if file.nil? || File.exist?(file)
-        raise "File not found: #{file} for #{path}" if file.nil? || !File.exist?(file)
-
-        return file
-      end
-
     end
 
     configure do
       set :root, File.expand_path("..", File.dirname(__FILE__))
-      set :public_folder, File.join(settings.root, 'core', 'public')
-      set :views, File.join(settings.root)
       set :content_dir, File.expand_path(ENV['CONTENT_DIR'])
 
       # Require all <plugin>.rb scripts in plugins dir
@@ -79,7 +59,7 @@ module Compund
       params["handler"] ||= "default"
 
       page = Page.new do |pg|
-        pg.file = self.class.find_file(_path)
+        pg.file = FileFinder.find(_path, settings.content_dir)
         pg.params = self.params
       end
 
