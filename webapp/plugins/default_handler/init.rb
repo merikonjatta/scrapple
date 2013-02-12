@@ -5,9 +5,9 @@ module DefaultHandler
     def view(page)
       if page.content
         ext = page.file.sub(/\A.*\./, '')
-        page.body = Tilt[ext].new{ page.content }.render(page, page.locals)
+        page.body = Tilt[ext].new{ page.content }.render(page)
       else
-        page.body = Tilt.new(page.file).render(page, page.locals)
+        page.body = Tilt.new(page.file).render(page)
       end
     end
 

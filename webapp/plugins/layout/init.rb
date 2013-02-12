@@ -2,19 +2,22 @@ module Layout
   class << self
 
     def within_layout(page)
-      return if page.directives['layout'].nil?
-      return if page.handler_name != "default"
+      return if page['layout'].nil?
+      return if page['handler'] != "default"
 
-      layout_file = Compund::Webapp.find_file(page.directives['layout'])
+      layout_file = Compund::Webapp.find_file(page['layout'])
 
-      wrapper_page = Compund::Page.new
-      wrapper_page.file = layout_file
-      wrapper_page.locals = {:content => page.body}
-      wrapper_page.params = page.params
-      wrapper_page.handler_name = page.handler_name
-      wrapper_page.action = page.action
-      wrapper_page.headers = page.headers
-      wrapper_page.status = page.status
+      wrapper_page = Compund::Page.new do |pg|
+        pg.file = layout_file
+        pg.locals['content'] = page.body
+
+        pg.params = page.params
+        pg.handler = page.handler
+        pg.action = page.action
+        pg.headers = page.headers
+        pg.status = page.status
+      end
+
       (page.status, page.headers, page.body) = wrapper_page.render
     end
 

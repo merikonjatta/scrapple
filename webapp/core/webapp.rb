@@ -65,12 +65,12 @@ module Compund
       process nil
     end
 
-    get '/*/*/*' do |path, handler_name, action|
-      process path, handler_name, action
+    get '/*/*/*' do |path, handler, action|
+      process path, handler, action
     end
 
-    get '/*/*' do |path, handler_name|
-      process path, handler_name
+    get '/*/*' do |path, handler|
+      process path, handler
     end
 
     get '/*' do |path|
@@ -78,12 +78,14 @@ module Compund
     end
 
 
-    def process(path=nil, handler_name=nil, action=nil)
-      page = Page.new
-      page.file = self.class.find_file(path)
-      page.handler_name = handler_name
-      page.action = action
-      page.params = params
+    def process(_path=nil, _handler_name=nil, _action=nil)
+      params["handler"] ||= "default"
+      params["action"] ||= "view"
+
+      page = Page.new do |pg|
+        pg.file = self.class.find_file(_path)
+        pg.params = self.params
+      end
 
       page.render
     end

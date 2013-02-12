@@ -12,38 +12,40 @@ module Compund
       end
     end
 
-
-    attr_accessor :file, :content, :directives, :params,
-                  :locals, :handler_name, :action,
-                  :body, :headers, :status
+    attr_accessor :params, :locals, :body, :headers, :status
+    attr_accessor :handler, :action
+    attr_accessor :file, :content
 
     def initialize
+      @locals       ||= {}
+      @params       ||= {}
+
       yield(self) if block_given?
+
+      @content ||= File.read(@file) unless @file.nil?
+      @handler ||= self["handler"] || "default"
+      @action  ||= self["action"]  || "view"
+      @headers ||= self["headers"] || {}
+      @status  ||= self["status"]  || 200
+      parse_content
+      apply_locals
     end
 
 
     # Call hooks registered for point.
     def call_hooks(point)
-      self.class.hooks[point].each do |block|
-        block.call(self)
-      end
+      self.class.hooks[point].map { |block| block.call(self) }
+    end
+
+    # Get variables from params, and locals, in that order of priority
+    def [](key)
+      @params[key] || @locals[key]
     end
 
 
     def render
       call_hooks(:before_render)
-      @content = File.read(@file) if (!@file.nil? && @content.nil?)
-      @directives   ||= {}
-      @handler_name ||= "default"
-      @action       ||= "view"
-      @status  ||= 200
-      @headers ||= {}
-      @locals  ||= {}
-      parse_content
-      apply_directives
-
-      Compund::Webapp.handlers[@handler_name].send(@action, self)
-
+      Compund::Webapp.handlers[@handler].send(@action, self)
       call_hooks(:after_render)
 
       [@status, @headers, @body]
@@ -73,17 +75,15 @@ module Compund
       end
 
       @content = @content.lines.to_a[num_noncontent_lines..-1].join
-      @directives.merge!(directives)
+      @locals.merge!(directives)
     end
 
 
-    def apply_directives
-      @directives.each do |key, value|
+    def apply_locals
+      @locals.each do |key, value|
         case key
         when "handler"
-          @handler_name = value
-        when "status"
-          @status = value
+          @handler= value
         end
       end
     end
