@@ -5,10 +5,10 @@ module Layout
       return if page['handler'] != "default"
       return if page['layout'].nil?
 
-      layout_file = Compund::FileFinder.find(page['layout'], Compund::Webapp.content_dir)
+      layout_file = Scrapple::FileFinder.find(page['layout'], Scrapple::Webapp.content_dir)
       return if page.file == layout_file
 
-      wrapper_page = Compund::Page.new do |pg|
+      wrapper_page = Scrapple::Page.new do |pg|
         pg.file = layout_file
         pg.locals['content'] = page.body
 
@@ -24,6 +24,6 @@ module Layout
   end
 end
 
-Compund::Page.hook(:after_render) do |page|
+Scrapple::Page.hook(:after_render) do |page|
   Layout.within_layout(page)
 end

@@ -14,4 +14,4 @@ module RawView
   end
 end
 
-Compund::Webapp.register_handler(RawView, "raw")
+Scrapple::Webapp.register_handler(RawView, "raw")

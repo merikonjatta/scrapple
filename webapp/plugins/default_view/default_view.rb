@@ -14,4 +14,4 @@ module DefaultView
   end
 end
 
-Compund::Webapp.register_handler(DefaultView, "default")
+Scrapple::Webapp.register_handler(DefaultView, "default")

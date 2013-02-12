@@ -1,4 +1,4 @@
-module Compund
+module Scrapple
   class Page
     @hooks = {
       :before_render => [],
@@ -37,7 +37,7 @@ module Compund
     # The main job of plugin hooks would be to overwrite this with modified strings.
     attr_accessor :content
 
-    # Body, headers and status to be returned on render to Compund::Webapp
+    # Body, headers and status to be returned on render to Scrapple::Webapp
     # The main job of handlers would be to overwrite these.
     attr_accessor :body, :headers, :status
 
@@ -55,7 +55,7 @@ module Compund
       @status  ||= self["status"]  || 200
 
       unless @ignore_settings_files
-        settings_files = FileFinder.find_in_ancestors("_settings", @file, Compund::Webapp.content_dir)
+        settings_files = FileFinder.find_in_ancestors("_settings", @file, Scrapple::Webapp.content_dir)
         settings_files.reverse_each do |settings_file|
           @locals.merge! FileParser.parse_file(settings_file)[1]
         end
@@ -83,7 +83,7 @@ module Compund
     # Render this page. Returns a Rack response array.
     def render
       call_hooks(:before_render)
-      Compund::Webapp.handlers[@handler].handle(self)
+      Scrapple::Webapp.handlers[@handler].handle(self)
       call_hooks(:after_render)
 
       [@status, @headers, @body]

@@ -8,7 +8,7 @@ require 'core/page'
 require 'core/file_finder'
 require 'core/file_parser'
 
-module Compund
+module Scrapple
   class HandlerNotFound < Exception; end
   class FileNotFound < Exception; end
 
@@ -38,8 +38,8 @@ module Compund
       end
     end
 
-    get '/compund' do
-      'Compund'
+    get '/scrapple' do
+      'Scrapple'
     end
 
     get '/' do

@@ -1,4 +1,4 @@
-module Compund
+module Scrapple
   class FileParser
     class << self
 
