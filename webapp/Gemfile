@@ -11,7 +11,6 @@ group :development do
   gem 'shotgun'
   gem 'pry'
   gem 'minitest'
-  gem 'shoulda'
 end
 
 Dir[File.join(File.dirname(__FILE__), "plugins", "**", "Gemfile")].each do |plugin_gemfile|
