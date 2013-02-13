@@ -48,15 +48,16 @@ module Scrapple
 
     get '/*' do |path|
       unless file = FileFinder.find(path, settings.content_dir)
-        pass
         # See if the last path component was a handler
-        #if md = path.match(/^(.*)\/([-a-zA-Z_]+)/)
-        #  path = md[1]
-        #  params["handler"] = md[2]
-        #  unless file = FileFinder.find(path, settings.content_dir)
-        #    pass
-        #  end
-        #end
+        if md = path.match(/^(.*)\/([-a-zA-Z_]+)/)
+          path = md[1]
+          params["handler"] = md[2]
+          unless file = FileFinder.find(path, settings.content_dir)
+            pass
+          end
+        else
+          pass
+        end
       end
 
       params["handler"] ||= "default"
