@@ -3,12 +3,7 @@ module RawView
 
     def handle(page)
       page.headers['content-type'] = 'text/plain'
-
-      if page.content
-        page.body = page.content
-      else
-        page.body = File.read(page.file)
-      end
+      page.body = page.file_body
     end
 
   end

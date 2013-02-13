@@ -11,6 +11,5 @@
           = self['content']
         .col.subcol
           %ul
-            - self['tags'].each do |tag|
+            - (self['tags']||[]).each do |tag|
               %li= tag
-

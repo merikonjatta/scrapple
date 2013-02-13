@@ -41,21 +41,25 @@ module Scrapple
       end
     end
 
+
     get '/scrapple' do
       'Scrapple'
     end
 
     get '/*' do |path|
-      process path
-    end
-
-
-    def process(_path=nil, _handler_name=nil)
-      params["handler"] ||= "default"
-
-      unless file = FileFinder.find(_path, settings.content_dir)
-        raise FileNotFound, "Can't find \"#{_path}\" in #{settings.content_dir}"
+      unless file = FileFinder.find(path, settings.content_dir)
+        pass
+        # See if the last path component was a handler
+        #if md = path.match(/^(.*)\/([-a-zA-Z_]+)/)
+        #  path = md[1]
+        #  params["handler"] = md[2]
+        #  unless file = FileFinder.find(path, settings.content_dir)
+        #    pass
+        #  end
+        #end
       end
+
+      params["handler"] ||= "default"
 
       page = Page.new do |pg|
         pg.file = file
@@ -64,7 +68,6 @@ module Scrapple
 
       page.render
     end
-
 
   end
 end
