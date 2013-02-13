@@ -9,6 +9,12 @@ module DefaultView
       else
         page.body = engine.new{ page.file_body }.render(page)
       end
+
+      if %(sass scss).include?(ext)
+        page.headers['content-type'] = "text/css"
+      elsif mime_type = Scrapple::Webapp.mime_type(ext)
+        page.headers['content-type'] = mime_type
+      end
     end
 
   end

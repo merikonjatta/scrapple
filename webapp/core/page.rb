@@ -33,8 +33,9 @@ module Scrapple
     attr_accessor :file_body
 
     # Body, headers and status to be returned on render to Scrapple::Webapp
-    # The main job of handlers would be to overwrite these.
+    # The main job of handlers and hooks would be to overwrite these.
     attr_accessor :body, :headers, :status
+
 
     # Pass a block to configure this page.
     def initialize
@@ -43,8 +44,9 @@ module Scrapple
       @ignore_settings_files = false
 
       yield(self) if block_given?
-
       @file_body ||= File.read(@file) unless @file.nil?
+
+      @body      ||= self["body"]    || ""
       @headers   ||= self["headers"] || {}
       @status    ||= self["status"]  || 200
 

@@ -2,13 +2,15 @@
 
 %html
   %head
-    %title Scrapple
-    :css
-      body { font-family: "Helvetica Neue LT Std" }
+    %title #{self['title']} - Scrapple
+    %link(rel="stylesheet" type="text/css" href="/css/main.scss")
   %body
-    %div
-      %strong Personal area!
-    %div(style="float:left; width: 600px; border:1px solid #ccc; padding: 10px;")
-      = self['content']
-    %div(style="float:left; width: 300px; border:1px solid #ccc; padding: 10px;")
-      = self['tags']
+    .container
+      .row
+        .col.maincol
+          = self['content']
+        .col.subcol
+          %ul
+            - self['tags'].each do |tag|
+              %li= tag
+
