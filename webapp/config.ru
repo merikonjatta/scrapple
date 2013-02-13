@@ -1,3 +1,6 @@
-$: << File.expand_path(File.dirname(__FILE__))
-require 'core/webapp'
-run Scrapple::Webapp
+require File.expand_path('../core/scrapple', __FILE__)
+
+Scrapple.middleware_stack[0..-2].each do |middleware|
+  use middleware
+end
+run Scrapple.middleware_stack.last

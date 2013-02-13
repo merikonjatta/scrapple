@@ -1,5 +1,6 @@
 tags: marco, tech
 title: Personal Area
+layout: nested
 
 Personal Area
 =============

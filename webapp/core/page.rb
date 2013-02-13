@@ -1,22 +1,8 @@
 require 'uri'
 require 'pathname'
-require 'core/file_finder'
-require 'core/settings'
 
 module Scrapple
   class Page
-    @hooks = {
-      :before_render => [],
-      :after_render => [],
-    }
-
-    class << self
-      attr_reader :hooks
-      def hook(point, &block)
-        @hooks[point] << block
-      end
-    end
-
     # Local settings for this page. Includes directives found in file,
     # and directives found in _settings.txt in parent directories.
     # But can be used to store arbitrary data
@@ -93,24 +79,9 @@ module Scrapple
     end
 
 
-    # Call hooks registered for point.
-    def call_hooks(point)
-      self.class.hooks[point].map { |block| block.call(self) }
-    end
-
-
     # Get variables from settings
     def [](key)
       @settings[key]
-    end
-
-    # Render this page. Returns a Rack response array.
-    def render
-      call_hooks(:before_render)
-      Scrapple::Webapp.handlers[self['handler']].handle(self)
-      call_hooks(:after_render)
-
-      [@status, @headers, @body]
     end
 
   end

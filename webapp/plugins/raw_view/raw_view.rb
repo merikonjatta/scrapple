@@ -2,11 +2,10 @@ module RawView
   class << self
 
     def handle(page)
-      page.headers['content-type'] = 'text/plain'
-      page.body = page.file_body
+      return [200, {"content-type" => "text/plain"}, [page.content]]
     end
 
   end
 end
 
-Scrapple::Webapp.register_handler(RawView, "raw")
+Scrapple::PageApp.register_handler(RawView, "raw")

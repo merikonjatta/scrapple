@@ -2,25 +2,30 @@ module DefaultView
   class << self
 
     def handle(page)
-      ext = page.file.sub(/^.*\./, '')
+      ext = page.fullpath.sub(/^.*\./, '')
       engine = Tilt[ext]
 
+      headers = {}
+      body = ""
+
       if engine.nil?
-        page.body = page.file_body
+        body = page.content
       else
-        page.body = engine.new{ page.file_body }.render(page)
+        body = engine.new{ page.content }.render(page)
       end
 
       if %(sass scss).include?(ext)
-        page.headers['content-type'] = "text/css"
+        headers['content-type'] = "text/css"
       elsif mime_type = Scrapple::Webapp.mime_type(ext)
-        page.headers['content-type'] = mime_type
+        headers['content-type'] = mime_type
       else
-        page.headers['content-type'] = "text/html"
+        headers['content-type'] = "text/html"
       end
+
+      return [200, headers, [body]]
     end
 
   end
 end
 
-Scrapple::Webapp.register_handler(DefaultView, "default")
+Scrapple::PageApp.register_handler(DefaultView, "default")
