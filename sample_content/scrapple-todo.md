@@ -2,7 +2,6 @@ layout: progit
 
 Scrapple To-DO
 
-* HTTP headers Capitalized or lower-case?
 * Find files in plugin dirs as well
 * Make sure raw and title-from-file is working
 * plugin: breadcrumbs

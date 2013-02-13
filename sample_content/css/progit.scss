@@ -3,6 +3,7 @@
 $baseFontSize:    16px;
 $sansFontFamily:  "Myriad Pro", "Helvetica Neue", "Arial", sans-serif;
 $serifFontFamily: "Adobe Garamond Pro", "Garamond", "FF Scala", "Times New Roman", serif;
+$slabFontFamily:  "Kefa", "Palatino Linotype";
 $monoFontFamily:  "Consolas", "Liberation Mono", Courier, monospace;
 $baseLineHeight:  1.5;
 
@@ -55,7 +56,7 @@ $baseTone: #F4F5EE;
 }
 
 body {
-   font-family: $sansFontFamily; 
+   font-family: $slabFontFamily; 
    font-size: $baseFontSize;
    line-height: $baseLineHeight;
    color: #333333;
