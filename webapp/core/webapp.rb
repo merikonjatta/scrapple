@@ -46,25 +46,24 @@ module Scrapple
       'Scrapple'
     end
 
+
     get '/*' do |path|
-      unless file = FileFinder.find(path, settings.content_dir)
+      # Was the whole path just path and not include the handler?
+      if file = FileFinder.find(path, settings.content_dir)
+        handler = params["handler"] || "default"
+      else
         # See if the last path component was a handler
         if md = path.match(/^(.*)\/([-a-zA-Z_]+)/)
-          path = md[1]
-          params["handler"] = md[2]
-          unless file = FileFinder.find(path, settings.content_dir)
-            pass
-          end
-        else
-          pass
+          file = FileFinder.find(md[1], settings.content_dir)
+          handler = md[2]
         end
       end
 
-      params["handler"] ||= "default"
+      pass if file.nil? || self.class.handlers[handler].nil?
 
       page = Page.new do |pg|
         pg.file = file
-        pg.params = self.params
+        pg.params = self.params.merge({"handler" => handler})
       end
 
       page.render
