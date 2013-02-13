@@ -4,7 +4,11 @@ module Scrapple
     class << self
       # Find a file by relative path to a root path
       def find(path, root)
-        file = File.join(root, path)
+        find_absolute(File.join(root, path))
+      end
+
+      def find_absolute(path)
+        file = path
         
         # If the path is a directory, try to find a index file
         if File.directory?(file)
@@ -15,7 +19,7 @@ module Scrapple
 
         # Still not a valid file, so try to add some extensions
         unless File.file?(file)
-          if file_with_extension = Dir[File.join(root, "#{path}.*")].first
+          if file_with_extension = Dir["#{path}.*"].first
             file = file_with_extension
           end
         end

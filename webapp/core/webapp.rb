@@ -52,15 +52,25 @@ module Scrapple
 
 
     get '/*' do |path|
+      page = Page.for(path, settings.content_dir, :fetch => true)
+
+      # See if the last path component was a handler
+      if page.nil? && md = path.match(/^(.*)\/([-a-zA-Z_]+)/)
+        page = Page.for(md[1], settings.content_dir, :fetch => true)
+        params['handler'] = md[2]
+      end
+
+      # Not found if still not found
+      pass if page.nil?
+
+      return PageRequest(page, params).render
+
+=begin
+      page.render
       # Was the whole path just path and not include the handler?
       if file = FileFinder.find(path, settings.content_dir)
         handler = params["handler"] || "default"
       else
-        # See if the last path component was a handler
-        if md = path.match(/^(.*)\/([-a-zA-Z_]+)/)
-          file = FileFinder.find(md[1], settings.content_dir)
-          handler = md[2]
-        end
       end
 
       pass if file.nil? || self.class.handlers[handler].nil?
@@ -71,6 +81,7 @@ module Scrapple
       end
 
       page.render
+=end
     end
 
   end
