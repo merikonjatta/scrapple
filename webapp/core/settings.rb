@@ -1,15 +1,35 @@
 require 'active_support/core_ext'
 
 module Scrapple
-  class SettingsParser
-    attr_reader :result
+  class Settings
+    attr_reader :hash
+
+    @array_fields = []
+    def self.array_fields; @array_fields; end
 
     # Get a new instance specifying a starting hash of settings
-    def initialize(initial = {}, options = {})
-      @options = {
-        :array_fields => []
-      }.merge(options)
-      @result = initial
+    def initialize(hash = {}, options = {})
+      @hash = hash
+    end
+
+    def keys
+      @hash.keys
+    end
+
+    def values
+      @hash.values
+    end
+
+    def each(&block)
+      @hash.each(&block)
+    end
+
+    def [](key)
+      @hash[key]
+    end
+
+    def []=(key, value)
+      @hash[key] = value
     end
 
     # Parse a settings file and merge the results with existing settings.
@@ -23,14 +43,15 @@ module Scrapple
     # Return the remaining body section of the text as a String.
     def parse_and_merge(text)
       (body, hash) = parse(text)
-      merge_hash(hash)
+      merge(hash)
       return body
     end
 
 
     # Merge a parsed hash to the results hash
-    def merge_hash(hash)
-      @result.merge!(hash)
+    def merge(hash)
+      hash = Settings.hash if hash.is_a? Settings
+      @hash.merge!(hash)
     end
 
 
@@ -57,19 +78,19 @@ module Scrapple
         end
       end
 
-      directives = normalize_hash(directives)
+      directives = normalize(directives)
       body = text.lines.to_a[num_noncontent_lines..-1].join
       return [body, directives]
     end
 
 
     # Normalize and type-cast keys and values of a parsed hash
-    def normalize_hash(hash)
+    def normalize(hash)
       result = {}
       hash.each do |key, value|
         key = key.strip.downcase
         value = value.strip
-        if @options[:array_fields].include? key
+        if self.class.array_fields.include? key
           result[key] = value.split(",").map(&:strip)
         else
           result[key] = value

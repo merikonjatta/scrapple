@@ -15,7 +15,7 @@ module Layout
       return if layout_file.nil?
 
       wrapper_page = Scrapple::Page.new do |wp|
-        wp.locals = page.locals
+        wp.settings = page.settings
         wp.params = page.params
         wp.headers = page.headers
         wp.status = page.status
@@ -23,7 +23,7 @@ module Layout
         # Please render the layout file
         wp.file = layout_file
         # Set the original content as a local data
-        wp.locals['content'] = page.body
+        wp.settings['content'] = page.body
         # Don't read settings files, they might cause infinite loops rendering layouts
         wp.ignore_settings_files = true
       end

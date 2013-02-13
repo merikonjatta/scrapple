@@ -6,7 +6,7 @@ require 'pry'
 
 require 'core/page'
 require 'core/file_finder'
-require 'core/settings_parser'
+require 'core/settings'
 
 module Scrapple
   class HandlerNotFound < Exception; end
@@ -30,6 +30,9 @@ module Scrapple
     configure do
       set :root, File.expand_path("..", File.dirname(__FILE__))
       set :content_dir, File.expand_path(ENV['CONTENT_DIR'])
+
+      # Some fields are array by default
+      Settings.array_fields << 'tags'
 
       # Require all <plugin>.rb scripts in plugins dir
       Dir[settings.root + "/plugins/*"].each do |plugin_dir|

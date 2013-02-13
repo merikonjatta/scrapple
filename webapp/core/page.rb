@@ -19,7 +19,7 @@ module Scrapple
     # Local settings for this page. Includes directives found in file,
     # and directives found in _settings.txt in parent directories.
     # But can be used to store arbitrary data
-    attr_accessor :locals
+    attr_accessor :settings
 
     # Normally, directives found in _settings.txt files are taken into locals.
     # Set this to false to ignore them.
@@ -38,7 +38,7 @@ module Scrapple
 
     # Pass a block to configure this page.
     def initialize
-      @locals = {}
+      @settings = Settings.new
       @params = {}
       @ignore_settings_files = false
 
@@ -48,17 +48,14 @@ module Scrapple
       @headers   ||= self["headers"] || {}
       @status    ||= self["status"]  || 200
 
-      sp = SettingsParser.new(@locals)
-
       unless @ignore_settings_files
         settings_files = FileFinder.find_in_ancestors("_settings", @file, Scrapple::Webapp.content_dir)
         settings_files.reverse_each do |settings_file|
-          sp.parse_and_merge_file(settings_file)
+          @settings.parse_and_merge_file(settings_file)
         end
       end
 
-      @file_body = sp.parse_and_merge(@file_body)
-      @locals = sp.result
+      @file_body = @settings.parse_and_merge(@file_body)
     end
 
 
@@ -70,7 +67,7 @@ module Scrapple
 
     # Get variables from params, locals, and settings, in that order of priority
     def [](key)
-      @params[key] || @locals[key]
+      @params[key] || @settings[key]
     end
 
 
