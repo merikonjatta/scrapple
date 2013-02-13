@@ -46,6 +46,10 @@ module Scrapple
       'Scrapple'
     end
 
+    get '/scrapple/login' do
+      'Login'
+    end
+
 
     get '/*' do |path|
       # Was the whole path just path and not include the handler?
