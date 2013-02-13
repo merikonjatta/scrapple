@@ -2,7 +2,7 @@ module RawView
   class << self
 
     def handle(page)
-      return [200, {"content-type" => "text/plain"}, [page.content]]
+      return [200, {"Content-Type" => "text/plain"}, [page.content]]
     end
 
   end

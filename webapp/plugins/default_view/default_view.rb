@@ -15,11 +15,11 @@ module DefaultView
       end
 
       if %(sass scss).include?(ext)
-        headers['content-type'] = "text/css"
+        headers['Content-Type'] = "text/css"
       elsif mime_type = Scrapple::Webapp.mime_type(ext)
-        headers['content-type'] = mime_type
+        headers['Content-Type'] = mime_type
       else
-        headers['content-type'] = "text/html"
+        headers['Content-Type'] = "text/html"
       end
 
       return [200, headers, [body]]

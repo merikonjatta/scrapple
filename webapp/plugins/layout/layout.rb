@@ -12,7 +12,7 @@ class Layout
     status, headers, body = @app.call(env)
 
     # Only for text/html
-    return [status, headers, body] if headers['content-type'] !~ %r{text/html}
+    return [status, headers, body] if headers['Content-Type'] !~ %r{text/html}
 
     page = env['scrapple.page']
     new_content = wrap_in_layout(page, body.join)

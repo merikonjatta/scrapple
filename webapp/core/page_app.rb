@@ -20,7 +20,7 @@ module Scrapple
       @env = env
       @page = env['scrapple.page']
       @params = env['scrapple.params']
-      @headers = {"content-type" => "text/html"}
+      @headers = {"Content-Type" => "text/html"}
       @body = nil
       @status = 200
     end
