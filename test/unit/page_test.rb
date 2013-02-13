@@ -1,7 +1,5 @@
 require File.expand_path("../../test_helper", __FILE__)
 
-require "core/page.rb"
-
 describe Scrapple::Page do
   before do
     SUT ||= Scrapple::Page

@@ -3,6 +3,7 @@ layout: progit
 Scrapple To-DO
 
 * Find files in plugin dirs as well
+* Validate presence of content_dir (and plugin-dir?)
 * Make sure raw and title-from-file is working
 * plugin: breadcrumbs
 * plugin: ls

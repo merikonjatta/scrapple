@@ -1,7 +1,5 @@
 require File.expand_path("../../test_helper", __FILE__)
 
-require "core/settings.rb"
-
 describe Scrapple::Settings do
   after do
     Scrapple::Settings.array_fields.clear
