@@ -14,7 +14,6 @@ module Scrapple
 
       # Some fields are array by default
       Settings.array_fields << 'tags'
-
     end
 
     get '/*' do |path|
