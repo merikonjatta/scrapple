@@ -13,22 +13,14 @@ module Layout
       return if page.file == layout_file
       # Layout file not found? Give up.
       return if layout_file.nil?
+      
+      ext = layout_file.sub(/^.*\./, '')
+      engine = Tilt[ext]
+      # Tilt doesn't know how? Give up.
+      return if engine.nil?
 
-      wrapper_page = Scrapple::Page.new do |wp|
-        wp.settings = page.settings
-        wp.params = page.params
-        wp.headers = page.headers
-        wp.status = page.status
-
-        # Please render the layout file
-        wp.file = layout_file
-        # Set the original content as a local data
-        wp.settings['content'] = page.body
-        # Don't read settings files, they might cause infinite loops rendering layouts
-        wp.ignore_settings_files = true
-      end
-
-      (page.status, page.headers, page.body) = wrapper_page.render
+      page.body = engine.new(layout_file).render(page) { page.body }
+      page.headers['content-type'] = "text/html"
     end
 
   end

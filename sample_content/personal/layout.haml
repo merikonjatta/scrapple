@@ -8,7 +8,7 @@
     .container
       .row
         .col.maincol
-          = self['content']
+          = yield
         .col.subcol
           %ul
             - (self['tags']||[]).each do |tag|
