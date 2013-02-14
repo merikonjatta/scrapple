@@ -57,9 +57,8 @@ class Layout
     # Create a new Page object for the layout file
     layout_page = Scrapple::Page.for(layout_file, page.root, :fetch => true)
     # Copy settings from original to layout page, except for which layout to use
-    settings_hash = page.settings.hash
-    settings_hash.delete('layout')
-    layout_page.settings.merge(settings_hash)
+    page.settings.hash.delete("layout")
+    layout_page.settings.merge(page.settings)
 
     return layout_page
   end

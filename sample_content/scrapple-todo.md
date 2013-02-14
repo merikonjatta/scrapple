@@ -2,7 +2,9 @@ layout: progit
 
 Scrapple To-DO
 
+* Doc
 * Find files in plugin dirs as well
+* Edit handler
 * Validate presence of content_dir (and plugin-dir?)
 * Make sure raw and title-from-file is working
 * plugin: breadcrumbs

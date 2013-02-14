@@ -33,8 +33,8 @@ describe Scrapple::Settings do
   end
 
 
-  describe "parse" do
-    it "should parse a string and return the content body and settings hash" do
+  describe "#parse" do
+    it "should parse an IO and return the content body and settings hash" do
       text = %Q{
         layout: mobile
         category: notes
@@ -43,35 +43,37 @@ describe Scrapple::Settings do
         Content starts here.
       }
 
-      (body, hash) = Scrapple::Settings.new.parse(text)
+      (body, hash) = Scrapple::Settings.new.parse(StringIO.new(text))
 
-      hash.must_equal({"layout"=> "mobile", "category" => "notes", "future"=> "bright"})
+      hash.must_equal( {"layout"=> "mobile", "category" => "notes", "future"=> "bright"} )
       body.must_match /\A\s+Content starts here\.\s+\Z/
     end
 
-    it "should parse keys to lowercase" do
-      text = "Foo: bar"
-      (body, hash) = Scrapple::Settings.new.parse(text)
 
-      hash.must_equal({"foo" => "bar"})
+    it "should parse whole IO as directives if :dont_stop" do
+      text = %Q{
+        layout: mobile
+
+        uninteresting stuff
+
+        future: bright
+      }
+
+      (body, hash) = Scrapple::Settings.new.parse(StringIO.new(text), :dont_stop => true)
+      hash.must_equal( {"layout" => "mobile", "future" => "bright"} )
     end
 
 
-    it "should parse comma-separated values to array if specified as such" do
-      text = %Q{
-        foo: bar
-        tags: tech, ruby
-      }
+    it "should open and read from file if given a string" do
+      assert File.exist?( @content_root+"/_settings.txt" )
 
-      Scrapple::Settings.array_fields << 'tags'
-      (body, hash) = Scrapple::Settings.new.parse(text)
-
-      hash.must_equal({"foo" => "bar", "tags" => ["tech", "ruby"]})
+      (body, hash) = Scrapple::Settings.new.parse(@content_root+"/_settings.txt")
+      hash.must_equal( {"readable" => "public"} )
     end
   end
 
 
-  describe "parse_and_merge" do
+  describe "#parse_and_merge" do
     it "should parse, then merge into result hash" do
       initial = {"layout" => "voodoo", "foo" => "bar"}
       text = %Q{
@@ -80,9 +82,31 @@ describe Scrapple::Settings do
       }
 
       s = Scrapple::Settings.new(initial)
-      s.parse_and_merge(text)
+      s.parse_and_merge(StringIO.new(text))
 
-      s.hash.must_equal({"layout" => "voodoo", "foo" => "BAZ!", "hoge" => "piyo"})
+      s.hash.must_equal( {"layout" => "voodoo", "foo" => "BAZ!", "hoge" => "piyo"} )
+    end
+  end
+
+
+  describe "#normalize" do
+    it "should downcase keys and strip whitespace" do
+      hash = {" FiZz" => "Buzz  "}
+      normalized = Scrapple::Settings.new.normalize(hash)
+      normalized.must_equal( {"fizz" => "Buzz"} )
+    end
+
+
+    it "should parse comma-separated values to array if specified as such" do
+      hash = {
+        "foo" => "bar",
+        "tags" => " tech, ruby , "
+      }
+
+      Scrapple::Settings.array_fields << 'tags'
+      normalized = Scrapple::Settings.new.normalize(hash)
+
+      normalized.must_equal( {"foo" => "bar", "tags" => ["tech", "ruby"]} )
     end
   end
 

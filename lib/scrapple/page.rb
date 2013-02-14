@@ -67,11 +67,11 @@ module Scrapple
       unless @ignore_settings_files
         settings_files = FileLookup.find_all_ascending("_settings", fullpath)
         settings_files.reverse_each do |settings_file|
-          @settings.parse_and_merge_file(settings_file)
+          @settings.parse_and_merge(settings_file)
         end
       end
 
-      @content = @settings.parse_and_merge(File.read(fullpath))
+      @content = @settings.parse_and_merge(fullpath)
 
       return self
     end
