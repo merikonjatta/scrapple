@@ -11,7 +11,6 @@ SCRAPPLE_ROOT = File.expand_path('../../', __FILE__)
 ENV['CONTENT_DIR'] ||= File.join(SCRAPPLE_ROOT, "sample_content")
 
 %W(
-  file_finder
   file_lookup
   settings
   page

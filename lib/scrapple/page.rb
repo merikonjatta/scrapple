@@ -37,11 +37,9 @@ module Scrapple
       root = File.expand_path(root)
 
       if path_pn.absolute?
-        fullpath = FileFinder.find_absolute(path)
         path = path_pn.relative_path_from(Pathname.new(root)).to_s
-      else
-        fullpath = FileFinder.find(path, root)
       end
+      fullpath = FileLookup.find(path)
 
       return nil if fullpath.nil?
 
@@ -67,7 +65,7 @@ module Scrapple
     # @return [Page] self, for chainability
     def fetch
       unless @ignore_settings_files
-        settings_files = FileFinder.find_in_ancestors("_settings", fullpath, root)
+        settings_files = FileLookup.find_all_ascending("_settings", fullpath)
         settings_files.reverse_each do |settings_file|
           @settings.parse_and_merge_file(settings_file)
         end

@@ -14,6 +14,9 @@ module Scrapple
 
       # Some fields are array by default
       Settings.array_fields << 'tags'
+
+      # Configure FileLookup
+      FileLookup.base_paths << settings.content_dir
     end
 
     get '/*' do |path|

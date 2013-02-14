@@ -1,4 +1,4 @@
-layout: nested_layout
+layout: progit
 
 A page with a layout
 ====================

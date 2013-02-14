@@ -48,7 +48,7 @@ class Layout
     return nil if page['layout'].nil?
 
     # Try to find the actual layout file
-    layout_file = Scrapple::FileFinder.find_nearest_in_ancestors(page['layout'], page.fullpath, page.root)
+    layout_file = Scrapple::FileLookup.find_first_ascending(page['layout'], page.fullpath)
     # Layout file not found?
     return nil if layout_file.nil?
     # Layout file is the same as the file to be wrapped?
