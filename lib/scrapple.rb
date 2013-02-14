@@ -12,6 +12,7 @@ ENV['CONTENT_DIR'] ||= File.join(SCRAPPLE_ROOT, "sample_content")
 
 %W(
   file_finder
+  file_lookup
   settings
   page
   webapp
