@@ -1,21 +1,26 @@
 module Scrapple
+  # Utility class that finds files for you.
   class FileLookup
 
     @base_paths = []
 
     class << self
       # The base paths that FileLookup will search in by default.
+      # This is meant to be mutated.
+      # @return [Array]
       def base_paths; @base_paths; end
 
       # Find a file within any of the base paths. Return the first one found.
       # @param file    [String] Relative filename/path of what you want.
       # @param options [Hash] Options hash.
       #
-      # @option options [Boolean] :raise      (false)       Raise an exception if file not found.
-      # @option options [Array]   :base_paths (@base_paths) Supply a list of base paths to look in.
+      # @option options [Bool]  :raise      (false) Raise an exception if file not found.
+      # @option options [Array] :base_paths (FileLookup.base_paths) Supply a list of base paths
+      #                                     to look in.
       # 
       # @return [String, nil]             Full path of the file found first.
-      # @raise  [Scrapple::FileNotFound]  When :raise option is true and specified file was not found in any of the base paths
+      # @raise  [Scrapple::FileNotFound]  When :raise option is true and specified file was
+      #                                   not found in any of the base paths
       def find(file, options = {})
         options = {
           :raise => false,
@@ -38,8 +43,9 @@ module Scrapple
       #
       # @option options [Boolean] :raise (false)  Raise an exception if file not found.
       #
-      # @return [String, nil]             Full path of the file found.
-      # @raise  [Scrapple::FileNotFound]  When :raise option is true and specified file was not found in the base path
+      # @return [String, nil]             Full path of the file found, or nil if not found
+      # @raise  [Scrapple::FileNotFound]  When :raise option is true and specified file was
+      #                                   not found in the base path
       def find_in_base_path(file, base_path, options = {})
         options = { :raise => false }.merge!(options)
 
@@ -66,14 +72,15 @@ module Scrapple
       end
 
 
-      # Find a file, starting next to "near", and in directories ascending up to one of the {.base_path}s.
+      # Find a file, starting next to "near", and going up.
+      # Search will continue until it hits one of the {.base_path}s.
       # Return the first file found.
       # @param file    [String]  Relative filename/path of what you want.
       # @param near    [String]  Absolute path of directory to starting looking in, or file to start looking next to.
       # @param options [Hash]    Options hash.
       #
-      # @option options [Boolean] :raise (false)            Raise an exception if file not found.
-      # @option options [Array]   :base_paths (@base_paths) Supply a list of base paths to stop at.
+      # @option options [Bool]  :raise      (false) Raise an exception if file not found.
+      # @option options [Array] :base_paths Supply a list of base paths to use instead of {.base_paths}.
       #
       # @return [String]                  Full path of first file found
       # @raise  [Scrapple::FileNotFound]  When :raise option is true and specified file was not found
@@ -92,16 +99,17 @@ module Scrapple
       end
 
 
-      # Find matching files, starting next to "near", and in directories ascending up to one of the {.base_path}s.
+      # Find matching files, starting next to "near", and going up.
+      # Search will continue until it hits one of the of the {.base_paths}.
       # Return all that are found.
       # @param file    [String]  Relative filename/path of what you want.
       # @param near    [String]  Absolute path of directory to starting looking in, or file to start looking next to.
       # @param options [Hash]    Options hash.
       #
-      # @option options [Boolean] :raise (false)            Raise an exception if file not found.
-      # @option options [Array]   :base_paths (@base_paths) Supply a list of base paths to stop at.
+      # @option options [Bool]   :raise      (false) Raise an exception if file not found.
+      # @option options [Array]  :base_paths Supply a list of base paths to use instead of {.base_paths}.
       #
-      # @return [String]                  Full path of first file found
+      # @return [Array<String>]           Full paths of all file found
       # @raise  [Scrapple::FileNotFound]  When :raise option is true and specified file was not found
       # @raise  [ArgumentError]           When near is not a descendant of any of the base paths
       # @raise  [ArgumentError]           When near doesn't exist

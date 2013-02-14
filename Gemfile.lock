@@ -61,6 +61,7 @@ GEM
     tzinfo (0.3.32)
     warden (1.1.1)
       rack (>= 1.0)
+    yard (0.8.3)
 
 PLATFORMS
   ruby
@@ -83,3 +84,4 @@ DEPENDENCIES
   sqlite3
   tilt
   warden (~> 1.1)
+  yard

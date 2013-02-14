@@ -8,6 +8,7 @@ gem 'sqlite3'
 gem 'warden',          '~>1.1'
 
 group :development do
+  gem 'yard'
   gem 'rake'
   gem 'shotgun'
   gem 'pry', '0.9.10'       # 0.9.11.4 does not work with pry-stack_explorer 0.4.7

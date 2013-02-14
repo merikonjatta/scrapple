@@ -1,0 +1,10 @@
+--embed-mixins
+--hide-void-return
+--main README.md
+-m markdown
+-o doc
+
+lib/**/*.rb
+
+-
+*.md

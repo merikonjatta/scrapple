@@ -1,4 +1,7 @@
 module Scrapple
+  # Final endpoint Rack app for Scrapple.
+  # Responsible for deciding on a handler to invoke,
+  # invoking the handler, and returning its output to the underlying Rack middleware stack.
   class PageApp
 
     @handlers = {}

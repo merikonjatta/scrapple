@@ -1,6 +1,7 @@
 require 'active_support/core_ext'
 
 module Scrapple
+  # Hash-like data store for {Page}s that is also responsible for parsing directives.
   class Settings
 
     @array_fields = []
