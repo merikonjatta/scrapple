@@ -71,6 +71,14 @@ describe Scrapple::FileLookup do
     end
 
 
+    it "should find with a fullpath" do
+      assert File.exists?(@content_root + "/john/index.md")
+
+      found = Scrapple::FileLookup.find(@content_root + "/john/index.md")
+      found.must_equal @content_root + "/john/index.md"
+    end
+
+
     it "should look in base paths given as options" do
       found = Scrapple::FileLookup.find("index", :base_paths => [@content_root + "/john/private"])
       found.must_equal @content_root + "/john/private/index.md"
@@ -156,6 +164,18 @@ describe Scrapple::FileLookup do
     end
 
   end # find_all_ascending
+
+
+  describe "parent_base_path" do
+    it "should return which basepath a fullpath is within" do
+      Scrapple::FileLookup.base_paths.clear
+      Scrapple::FileLookup.base_paths << @content_root + "/john"
+      Scrapple::FileLookup.base_paths << @content_root + "/frank"
+
+      base = Scrapple::FileLookup.parent_base_path(@content_root + "/john/index.md")
+      base.must_equal @content_root + "/john"
+    end
+  end
 
 
 end

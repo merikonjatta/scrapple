@@ -1,3 +1,5 @@
+require 'pathname'
+
 module Scrapple
   # Utility class that finds files for you.
   class FileLookup
@@ -11,7 +13,7 @@ module Scrapple
       def base_paths; @base_paths; end
 
       # Find a file within any of the base paths. Return the first one found.
-      # @param file    [String] Relative filename/path of what you want.
+      # @param file    [String] Relative or full filename/path of what you want.
       # @param options [Hash] Options hash.
       #
       # @option options [Bool]  :raise      (false) Raise an exception if file not found.
@@ -26,6 +28,12 @@ module Scrapple
           :raise => false,
           :base_paths => self.base_paths
         }.merge!(options)
+
+        if absolute?(file)
+          base = parent_base_path(file, :base_paths => options[:base_paths])
+          file = relative_path(file, base)
+          options[:base_paths] = [base]
+        end
 
         found = nil
         options[:base_paths].each do |base_path|
@@ -135,6 +143,37 @@ module Scrapple
 
         raise FileNotFound, "Couldn't find \"#{file}\" anywhere between #{near} and #{base_path}" if options[:raise] && found.nil?
         return found.compact
+      end
+
+
+      # Check if a path is an absolute path
+      def absolute?(path)
+        Pathname.new(path).absolute?
+      end
+
+
+      # Relative path to a base path
+      def relative_path(path, base_path)
+        return nil unless absolute?(path)
+        Pathname.new(path).relative_path_from(Pathname.new(base_path))
+      end
+
+
+      # Check if an absolute path is within any of the {.base_paths}.
+      # If it is, returns that base path.
+      # If not, returns nil.
+      # @param path [String]
+      # @param options [Hash]
+      # @option options :base_paths [Array]  Base paths to use instead of {.base_paths}.
+      # @return [String]
+      def parent_base_path(fullpath, options = {})
+        options = {
+          :base_paths => self.base_paths
+        }.merge!(options)
+
+        return nil unless absolute?(fullpath)
+
+        return options[:base_paths].find { |base| fullpath[0, base.length] == base }
       end
 
     end
