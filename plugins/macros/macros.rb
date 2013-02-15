@@ -57,7 +57,11 @@ class ExpandMacros
         macro_brackets
       end
     rescue Exception => e
-      Rack::Utils.escape_html("(Sorry, couldn't expand macro [[#{code}]]: #{e.class.name}: #{e.message})")
+      str = "(Sorry, couldn't expand macro [[#{unescape_html(code)}]]: #{e.class.name}: #{e.message})"
+      if @page['macro_debug']
+        str << e.backtrace.join("\n")
+      end
+      Rack::Utils.escape_html(str)
     end
 
 
