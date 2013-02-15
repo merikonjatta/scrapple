@@ -45,7 +45,8 @@ module Scrapple
     # Choose a suitable handler for this page and request.
     # @return [Module]
     def choose_handler
-      return @params['handler'] unless @params['handler'].nil?
+      specified = self.class.handlers[@params['handler'] || @page['handler']]
+      return specified unless specified.nil?
 
       extension = File.extname(page.fullpath)[1..-1]
       (name, mod) = self.class.handlers.find { |name, mod| mod.can_handle? extension }

@@ -5,7 +5,12 @@ module Scrapple
   # Hash-like data store for {Page}s that is also responsible for parsing directives.
   class Settings
 
-    def self.directive_regexp; /^(.*?):(.*)$/; end
+
+    @directive_aliases = {}
+
+    class << self
+      def directive_regexp; /^(.*?):(.*)$/; end
+    end
 
     # Get a new instance specifying a starting hash of settings.
     # @param hash [Hash, Settings]
@@ -124,12 +129,14 @@ module Scrapple
 
       hash.each do |key, value|
         key = key.strip.downcase
+        key = Scrapple.resolve_directive_alias(key)
         value = value.strip if value.is_a? String
         result[key] = value
       end
 
       result
     end
+
 
   end
 end

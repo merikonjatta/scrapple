@@ -3,6 +3,19 @@ Bundler.require(:default, :development)
 module Scrapple
   class HandlerNotFound < Exception; end
   class FileNotFound < Exception; end
+
+  @directive_aliases = {}
+  class << self
+    attr_reader :directive_aliases
+
+    def alias_directive(allass, to)
+      @directive_aliases[allass] = to
+    end
+
+    def resolve_directive_alias(allass)
+      @directive_aliases[allass] || allass
+    end
+  end
 end
 
 SCRAPPLE_ROOT = File.expand_path('../../', __FILE__)
@@ -33,3 +46,7 @@ end
 Dir[SCRAPPLE_PLUGINS_ROOT + "/*/content"].each do |plugin_content_dir|
   Scrapple::FileLookup.base_paths << plugin_content_dir if File.directory?(plugin_content_dir)
 end
+
+# Define some directive aliases up front
+Scrapple.alias_directive("as", "handler")
+Scrapple.alias_directive("with", "handler")

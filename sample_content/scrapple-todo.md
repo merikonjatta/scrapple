@@ -3,7 +3,6 @@ Scrapple To-Do
 
 * Plugin precedence
 * Edit handler
-* Choose handler with "as: html"
 * Directive aliases
 * Handler aliases
 * FileLookup's options :base_paths can be substitued by a with_base_paths block method
