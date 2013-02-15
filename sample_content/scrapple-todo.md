@@ -1,10 +1,8 @@
 Scrapple To-Do
 ==============
 
-* Plugin precedence
 * Edit handler
 * Handler aliases
-* FileLookup's options :base_paths can be substitued by a with_base_paths block method
 * FileLookup should consider "/index" as a kind of relative path
 * Page uses "root", FileLookup uses "base_path"
 * Validate presence of content_dir (and plugin-dir?)

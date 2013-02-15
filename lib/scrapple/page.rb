@@ -61,7 +61,7 @@ module Scrapple
       return nil if fullpath.nil?
 
       root = FileLookup.parent_root(fullpath)
-      path = FileLookup.relative_path(fullpath, root)
+      path = "/" + FileLookup.relative_path(fullpath, root)
       type = File.directory?(fullpath) ? "directory" : File.extname(fullpath)[1..-1]
 
       instance = self.new do |page|

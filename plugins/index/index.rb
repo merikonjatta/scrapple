@@ -49,7 +49,7 @@ module IndexHelper
       html << "<li class=\""
       html << "active " if entry[:fullpath] == self.fullpath
       html << (entry[:is_dir] ? "directory" : "file")
-      html << "\"><a href=\"/"
+      html << "\"><a href=\""
       html << entry[:page].path
       html << "\">"
       html << (entry[:page]['title'] || File.basename(entry[:fullpath]))

@@ -16,7 +16,7 @@ module BreadcrumbsHelper
 
     str = "<ul class=\"breadcrumb\">\n"
     pages.uniq[0...-1].each do |page|
-      str << "<li><a href=\"/"
+      str << "<li><a href=\""
       str << page.path
       str << "\">"
       str << ( page['title'] || File.basename(page.fullpath) )
