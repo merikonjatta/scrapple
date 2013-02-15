@@ -1,4 +1,4 @@
-class Macro
+class ExpandMacros
   def initialize(app)
     @app = app
   end
@@ -11,11 +11,12 @@ class Macro
     page = env['scrapple.page']
     params = env['scrapple.params']
 
-    new_body = Expand.new(page).expand_macros(body)
+    new_body = Expand.new(page).expand_macros(body.join)
     return [status, headers, [new_body]]
   end
 
 
+  # Class that handles macro expansions.
   class Expand
     UNESCAPE_HTML = Rack::Utils::ESCAPE_HTML.invert
     UNESCAPE_HTML_PATTERN = Regexp.new(UNESCAPE_HTML.keys.map {|pat| Regexp.escape(pat)}.join("|"))
@@ -34,20 +35,35 @@ class Macro
     end
 
 
+    # Expand all allowed macros in a body string.
+    # @param body [String]
+    # @return [String]
     def expand_macros(body)
-      body.join.gsub(/\[\[(.*?)\]\]/) do |macro_brackets|
+      body.gsub(/\[\[(.*?)\]\]/) do |macro_brackets|
         code = macro_brackets[2...-2].strip
-        macro_name = code.match(/^[^\s(]+/)[0]
-
-        if allowed?(macro_name)
-          expand_macro(code)
-        else
-          macro_brackets
-        end
+        expand_macro(code)
       end
     end
 
 
+    # Expand a piece of macro code.
+    # @param code [String]
+    # @return [String] output returned from the code
+    def expand_macro(code)
+      macro_name = code.match(/^[^\s(]+/)[0]
+      if allowed?(macro_name)
+        @page.instance_eval(unescape_html(code)).to_s
+      else
+        macro_brackets
+      end
+    rescue Exception => e
+      Rack::Utils.escape_html("(Sorry, couldn't expand macro [[#{code}]]: #{e.class.name}: #{e.message})")
+    end
+
+
+    # Check if this macro is allowed in the current page.
+    # @param macro_name [String]  The name of the macro
+    # @return [Bool]
     def allowed?(macro_name)
       case @allowed_macros
       when Array
@@ -57,14 +73,7 @@ class Macro
       end
     end
 
-
-    def expand_macro(code)
-      @page.instance_eval(unescape_html(code))
-    rescue Exception => e
-      Rack::Utils.escape_html("(Sorry, couldn't expand macro [[#{code}]]: #{e.class.name}: #{e.message})")
-    end
-
-
+    # Unescape HTML entities in the macro code
     def unescape_html(code)
       code.gsub(UNESCAPE_HTML_PATTERN) { |pattern| UNESCAPE_HTML[pattern] || pattern }
     end
@@ -81,8 +90,8 @@ class Macro
 
 end
 
-Scrapple.insert_middleware_before(Scrapple::PageApp, Macro)
+Scrapple.insert_middleware_before(Scrapple::PageApp, ExpandMacros)
 
 class Scrapple::Page
-  include Macro::DefaultMacros
+  include ExpandMacros::DefaultMacros
 end
