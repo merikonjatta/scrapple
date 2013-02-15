@@ -10,8 +10,6 @@
         .col.maincol
           = yield
         .col.subcol
-          %ul
-            - (self['tags']||[]).each do |tag|
-              %li= tag
+          = index
       .row
         %pre= html_escape(settings.hash.pretty_inspect)
