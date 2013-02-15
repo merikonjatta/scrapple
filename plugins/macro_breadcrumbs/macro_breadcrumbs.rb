@@ -2,7 +2,7 @@ module MacroBreadcrumbs
 
   # Produce an HTML list of breadcrumbs.
   def breadcrumbs
-    components = ("/" + self.path).split('/')
+    components = self.path.split('/')
 
     entries = {}
     components.count.times do |i|

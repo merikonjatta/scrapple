@@ -23,6 +23,7 @@ SCRAPPLE_ROOT = File.expand_path('../../', __FILE__)
 %W(
   file_lookup
   settings
+  hookable
   page
   webapp
   page_app

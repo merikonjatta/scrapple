@@ -4,6 +4,8 @@ require 'pathname'
 module Scrapple
   # Represents a single page (or file) in the filesystem and during a request.
   class Page
+    include Hookable
+
     # Local settings for this page. Includes directives found in file,
     # and directives found in _settings.txt in parent directories.
     # But can be used to store arbitrary data.
@@ -77,12 +79,13 @@ module Scrapple
       return instance
     end
 
-
     # Manually create an instance. Note that {Page.for} is the recommended
     # way of getting new instances.
     def initialize
       @settings = Settings.new
       yield(self) if block_given?
+
+      call_hooks(:after_initialize)
     end
     
 
