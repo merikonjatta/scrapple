@@ -2,8 +2,7 @@ Scrapple To-DO
 ==============
 
 
-* Extension mapping / handler detection
-* Treat directive value "none" as nil
+* Plugin dependencies
 * Edit handler
 * Choose handler with "as: html"
 * FileLookup's options :base_paths can be substitued by a with_base_paths block method

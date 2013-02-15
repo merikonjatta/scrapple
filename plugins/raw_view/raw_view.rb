@@ -1,13 +1,13 @@
 module RawView
   class << self
 
-    def can_handle?
+    def can_handle?(extension)
       true
     end
 
-
     def handle(page)
-      return [200, {"Content-Type" => "text/plain"}, [page.content]]
+      mime_type = Scrapple::Webapp.mime_type(File.extname(page.fullpath)) || "text/plain"
+      return [200, {"Content-Type" => mime_type}, [page.content]]
     end
 
   end

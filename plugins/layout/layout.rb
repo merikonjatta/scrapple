@@ -15,6 +15,8 @@ class Layout
 
     # Only for text/html
     return [status, headers, body] if headers['Content-Type'] !~ %r{text/html}
+    # Avoid wrapping html in html (this might not work if the given "html" is badly malformed)
+    return [status, headers, body] if looks_like_html?(body.join)
 
     page = env['scrapple.page']
     new_content = wrap_in_layout(page, body.join)
@@ -64,6 +66,12 @@ class Layout
     layout_page.settings.merge(page.settings)
 
     return layout_page
+  end
+
+
+  # Determine if a string looks like an html document.
+  def looks_like_html?(string)
+    [/\<html/i, /\<head/i, /\<body/i].all? { |regexp| string =~ regexp }
   end
 end
 
