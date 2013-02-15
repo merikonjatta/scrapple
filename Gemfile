@@ -14,6 +14,7 @@ group :development do
   gem 'pry', '0.9.10'       # 0.9.11.4 does not work with pry-stack_explorer 0.4.7
   gem 'pry-stack_explorer', :require => false
   gem 'minitest'
+  gem 'unindent'
 end
 
 Dir[File.join(File.dirname(__FILE__), "plugins", "**", "Gemfile")].each do |plugin_gemfile|

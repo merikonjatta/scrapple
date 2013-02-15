@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'pathname'
+require 'syck'
 require 'yaml'
 require 'active_support/core_ext'
 require 'pry'
@@ -12,12 +13,10 @@ module Scrapple
       set :root, File.expand_path("..", File.dirname(__FILE__))
       set :content_dir, File.expand_path(ENV['CONTENT_DIR'])
 
-      # Some fields are array by default
-      Settings.array_fields << 'tags'
-
       # Configure FileLookup
       FileLookup.base_paths << settings.content_dir
     end
+
 
     get '/*' do |path|
       page = Page.for(path, :fetch => true)

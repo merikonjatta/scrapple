@@ -1,11 +1,9 @@
 require 'active_support/core_ext'
+require 'syck'
 
 module Scrapple
   # Hash-like data store for {Page}s that is also responsible for parsing directives.
   class Settings
-
-    @array_fields = []
-    def self.array_fields; @array_fields; end
 
     def self.directive_regexp; /^(.*?):(.*)$/; end
 
@@ -56,8 +54,7 @@ module Scrapple
     # a file, unless :dont_stop is true, in which case the whole file is treated
     # as a set of directives, and the body will be an empty string.
     #
-    # * One directive per line.
-    # * A directive is in the form of ``key: value''.
+    # * Settings are parsed as YAML.
     # * Keys and values are normalized (see {#normalize}).
     # * The first empty line after a set of directives marks the end of directives,
     #   and the rest is returned as file body.
@@ -78,29 +75,26 @@ module Scrapple
       }.merge!(options)
 
       io = File.open(io) if io.is_a? String
-
       io.rewind
-      directives = {}
-      body = ""
+
+      yaml = ""
 
       io.each_line do |line|
-        if ma = line.match(self.class.directive_regexp)
-          directives[ma[1]] = ma[2]
-          next
-        end
-
-        next if options[:dont_stop]
-
         if line.strip.blank?
-          (directives.count > 0) ? break : next
-        else
-          body << line
-          break
+          break if yaml.length > 0 && !options[:dont_stop]
         end
+
+        unless line =~ self.class.directive_regexp
+          break if yaml.length == 0 && !options[:dont_stop]
+        end
+
+        yaml << line
       end
 
-      directives = normalize(directives)
-      body << io.read
+      # The rest is body
+      body = io.read
+
+      directives = normalize(Syck.load(yaml) || {})
       io.close rescue NoMethodError
       return [body, directives]
     end
@@ -110,19 +104,13 @@ module Scrapple
     # Returns a normalized copy.
     # * Whitespace is stripped from both ends of the keys and values.
     # * Keys are downcased.
-    # * Values for keys specified as array keys are converted to arrays.
     def normalize(hash)
       result = {}
 
       hash.each do |key, value|
         key = key.strip.downcase
-        value = value.strip
-
-        if self.class.array_fields.include? key
-          result[key] = value.split(",").map(&:strip).compact
-        else
-          result[key] = value
-        end
+        value = value.strip if value.is_a? String
+        result[key] = value
       end
 
       result

@@ -1,3 +1,5 @@
-title: "BOO!"
-
 readable: public
+writable:
+  - marco
+  - kitar
+  - ryan
