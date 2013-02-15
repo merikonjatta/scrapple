@@ -1,4 +1,4 @@
-module DefaultHandler
+module HandlerDefault
   class << self
 
     def can_handle?(type)
@@ -42,4 +42,4 @@ module DefaultHandler
   end
 end
 
-Scrapple::PageApp.register_handler(DefaultHandler, :name => "default")
+Scrapple::PageApp.register_handler(HandlerDefault, :name => "default")

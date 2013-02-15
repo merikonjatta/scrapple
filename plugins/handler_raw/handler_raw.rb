@@ -1,4 +1,4 @@
-module RawHandler
+module HandlerRaw
   class << self
 
     def can_handle?(type)
@@ -13,4 +13,4 @@ module RawHandler
   end
 end
 
-Scrapple::PageApp.register_handler(RawHandler, :name => "raw")
+Scrapple::PageApp.register_handler(HandlerRaw, :name => "raw")

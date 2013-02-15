@@ -1,4 +1,4 @@
-module BreadcrumbsHelper
+module MacroBreadcrumbs
 
   # Produce an HTML list of breadcrumbs.
   def breadcrumbs
@@ -33,5 +33,5 @@ module BreadcrumbsHelper
 end
 
 class Scrapple::Page
-  include BreadcrumbsHelper
+  include MacroBreadcrumbs
 end

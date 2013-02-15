@@ -1,4 +1,4 @@
-module MarkdownHandler
+module HandlerMarkdown
   class << self
 
     def can_handle?(type)
@@ -27,4 +27,4 @@ module MarkdownHandler
   end
 end
 
-Scrapple::PageApp.register_handler(MarkdownHandler, :name => "markdown")
+Scrapple::PageApp.register_handler(HandlerMarkdown, :name => "markdown")

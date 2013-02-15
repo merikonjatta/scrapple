@@ -1,4 +1,4 @@
-module IndexHelper
+module MacroIndex
 
   # Produce an HTML list of child pages.
   def index(options = {})
@@ -66,5 +66,5 @@ end
 
 
 class Scrapple::Page
-  include IndexHelper
+  include MacroIndex
 end
