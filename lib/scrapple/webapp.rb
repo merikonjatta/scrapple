@@ -9,25 +9,21 @@ module Scrapple
 
   class Webapp < Sinatra::Base
 
-    configure do
-      set :root, File.expand_path("..", File.dirname(__FILE__))
-      set :content_dir, File.expand_path(ENV['CONTENT_DIR'])
-
-      # Configure FileLookup
-      FileLookup.roots << settings.content_dir
+    get %r{(.*)/(as|with)/(.+)} do |path, dummy, handler|
+      binding.pry
+      params['path'] = path
+      params['handler'] = handler
+      for_path(path)
     end
 
 
     get '/*' do |path|
+      for_path(path)
+    end
+
+
+    def for_path(path = '')
       page = Page.for(path, :fetch => true)
-
-      # See if the last path component was a handler
-      if page.nil? && md = path.match(/^(.*)\/([-a-zA-Z_]+)/)
-        page = Page.for(md[1], :fetch => true)
-        @params['handler'] = md[2]
-      end
-
-      # Not found if still not found
       raise Sinatra::NotFound if page.nil?
 
       @params = normalize(@params)
@@ -35,7 +31,6 @@ module Scrapple
       # Call PageApp
       env['scrapple.page'] = page
       env['scrapple.params'] = @params
-      env['scrapple.content_dir'] = settings.content_dir
 
       response = @app.call(env)
       return response

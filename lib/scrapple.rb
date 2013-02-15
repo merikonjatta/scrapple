@@ -20,9 +20,6 @@ end
 
 SCRAPPLE_ROOT = File.expand_path('../../', __FILE__)
 
-# If no content dir was specified, just run with sample content
-ENV['CONTENT_DIR'] ||= File.join(SCRAPPLE_ROOT, "sample_content")
-
 %W(
   file_lookup
   settings
@@ -33,17 +30,21 @@ ENV['CONTENT_DIR'] ||= File.join(SCRAPPLE_ROOT, "sample_content")
 ).each { |lib| require File.join(SCRAPPLE_ROOT, "lib/scrapple/#{lib}") }
 
 
-# TODO Don't hardcode this here
-SCRAPPLE_PLUGINS_ROOT = File.join(SCRAPPLE_ROOT, "plugins")
+# If no content dir was specified, just run with sample content
+ENV['CONTENT_DIR'] ||= File.join(SCRAPPLE_ROOT, "sample_content")
+Scrapple::FileLookup.roots << ENV['CONTENT_DIR']
+
+# If no plugins dir was specified, use the local directory
+ENV['PLUGINS_DIR'] ||= File.join(SCRAPPLE_ROOT, "plugins")
 
 # Require all <plugins_root>/<plugin>/<plugin>.rb scripts in plugins dir
-Dir[SCRAPPLE_PLUGINS_ROOT + "/*"].each do |plugin_dir|
+Dir[ENV['PLUGINS_DIR'] + "/*"].each do |plugin_dir|
   plugin_name = plugin_dir.match(/.*\/(.*)$/)[1]
   require File.join(plugin_dir, plugin_name)
 end
 
 # Add all <plugins_root>/<plugin>/content directories to FileLookup.roots
-Dir[SCRAPPLE_PLUGINS_ROOT + "/*/content"].each do |plugin_content_dir|
+Dir[ENV['PLUGINS_DIR'] + "/*/content"].each do |plugin_content_dir|
   Scrapple::FileLookup.roots << plugin_content_dir if File.directory?(plugin_content_dir)
 end
 
