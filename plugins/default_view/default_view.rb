@@ -28,4 +28,6 @@ module DefaultView
   end
 end
 
-Scrapple::PageApp.register_handler(DefaultView, "default")
+Scrapple::PageApp.register_handler(DefaultView,
+                                   :name => "default",
+                                   :can_handle => Tilt.mappings.keys)

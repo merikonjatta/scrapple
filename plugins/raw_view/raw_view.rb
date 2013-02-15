@@ -8,4 +8,6 @@ module RawView
   end
 end
 
-Scrapple::PageApp.register_handler(RawView, "raw")
+Scrapple::PageApp.register_handler(RawView,
+                                   :name => "raw",
+                                   :can_handle => [/.*/])

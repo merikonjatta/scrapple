@@ -2,9 +2,10 @@ Scrapple To-DO
 ==============
 
 
-* Edit handler
 * Extension mapping / handler detection
 * Treat directive value "none" as nil
+* Edit handler
+* Choose handler with "as: html"
 * FileLookup's options :base_paths can be substitued by a with_base_paths block method
 * FileLookup should consider "/index" as a kind of relative path
 * Page uses "root", FileLookup uses "base_path"
