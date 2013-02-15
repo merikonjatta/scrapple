@@ -1,5 +1,5 @@
 module IndexHelper
-  def index
+  def index(options = {})
     dirname = File.dirname(self.fullpath)
 
     entries = Dir.entries(dirname)[2..-1]

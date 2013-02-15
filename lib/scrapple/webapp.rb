@@ -10,7 +10,6 @@ module Scrapple
   class Webapp < Sinatra::Base
 
     get %r{(.*)/(as|with)/(.+)} do |path, dummy, handler|
-      binding.pry
       params['path'] = path
       params['handler'] = handler
       for_path(path)

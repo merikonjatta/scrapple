@@ -14,7 +14,7 @@ class Layout
     status, headers, body = @app.call(env)
 
     # Only for text/html
-    return [status, headers, body] if headers['Content-Type'] !~ %r{text/html}
+    return [status, headers, body] unless headers['Content-Type'] =~ %r{text/html}
     # Avoid wrapping html in html (this might not work if the given "html" is badly malformed)
     return [status, headers, body] if looks_like_html?(body.join)
 
