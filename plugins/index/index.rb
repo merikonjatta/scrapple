@@ -13,7 +13,7 @@ module IndexHelper
     pages.each do |page|
       html << %Q(<li)
       html << %Q( class="active") if page.path == self.path
-      html << %Q(><a href="#{File.basename(page.path)}">)
+      html << %Q(><a href="#{Scrapple::FileLookup.relative_path(page.fullpath, File.dirname(self.fullpath))}">)
       html << (page['title'] || File.basename(page.path))
       html << %Q(</a></li>\n)
     end
