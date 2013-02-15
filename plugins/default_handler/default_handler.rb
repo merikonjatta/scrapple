@@ -1,8 +1,8 @@
-module DefaultView
+module DefaultHandler
   class << self
 
-    def can_handle?(extension)
-      (Tilt.mappings.keys - %w(markdown md mkd)).include? extension
+    def can_handle?(type)
+      (Tilt.mappings.keys - %w(markdown md mkd)).include? type
     end
 
 
@@ -42,4 +42,4 @@ module DefaultView
   end
 end
 
-Scrapple::PageApp.register_handler(DefaultView, :name => "default")
+Scrapple::PageApp.register_handler(DefaultHandler, :name => "default")

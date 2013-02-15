@@ -19,7 +19,6 @@ module Scrapple
       # @option properties [String] :name        The name of this module.
       def register_handler(mod, properties)
         raise ArgumentError "Please specify a name for this handler." if properties[:name].blank?
-
         @handlers[properties[:name]] = mod
       end
     end

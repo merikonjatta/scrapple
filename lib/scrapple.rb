@@ -42,9 +42,9 @@ Dir[SCRAPPLE_PLUGINS_ROOT + "/*"].each do |plugin_dir|
   require File.join(plugin_dir, plugin_name)
 end
 
-# Add all <plugins_root>/<plugin>/content directories to FileLookup.base_paths
+# Add all <plugins_root>/<plugin>/content directories to FileLookup.roots
 Dir[SCRAPPLE_PLUGINS_ROOT + "/*/content"].each do |plugin_content_dir|
-  Scrapple::FileLookup.base_paths << plugin_content_dir if File.directory?(plugin_content_dir)
+  Scrapple::FileLookup.roots << plugin_content_dir if File.directory?(plugin_content_dir)
 end
 
 # Define some directive aliases up front

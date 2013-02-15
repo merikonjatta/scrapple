@@ -1,8 +1,8 @@
-module MarkdownView
+module MarkdownHandler
   class << self
 
-    def can_handle?(extension)
-      %w(md mkd markdown mdown).include? extension
+    def can_handle?(type)
+      %w(md mkd markdown mdown).include? type
     end
 
 
@@ -27,4 +27,4 @@ module MarkdownView
   end
 end
 
-Scrapple::PageApp.register_handler(MarkdownView, :name => "markdown")
+Scrapple::PageApp.register_handler(MarkdownHandler, :name => "markdown")

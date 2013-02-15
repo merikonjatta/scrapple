@@ -14,7 +14,7 @@ module Scrapple
       set :content_dir, File.expand_path(ENV['CONTENT_DIR'])
 
       # Configure FileLookup
-      FileLookup.base_paths << settings.content_dir
+      FileLookup.roots << settings.content_dir
     end
 
 

@@ -1,4 +1,4 @@
-class DirectoryView
+class DirectoryHandler
   class << self
 
     def can_handle?(type)
@@ -13,4 +13,4 @@ class DirectoryView
   end
 end
 
-Scrapple::PageApp.register_handler(DirectoryView, :name => "directory")
+Scrapple::PageApp.register_handler(DirectoryHandler, :name => "directory")

@@ -4,71 +4,60 @@ module Scrapple
   # Utility class that finds files for you.
   class FileLookup
 
-    @base_paths = []
+    @roots = []
 
     class << self
       # The base paths that FileLookup will search in by default.
       # This is meant to be mutated.
       # @return [Array]
-      def base_paths; @base_paths; end
+      def roots; @roots; end
 
-      # Find a file within any of the base paths. Return the first one found.
-      # @param file    [String] Relative or full filename/path of what you want.
-      # @param options [Hash] Options hash.
+
+      # Find a file within any of the roots. Return the first one found.
       #
-      # @option options [Bool]  :raise      (false) Raise an exception if file not found.
-      # @option options [Array] :base_paths (FileLookup.base_paths) Supply a list of base paths
-      #                                     to look in.
-      # 
-      # @return [String, nil]             Full path of the file found first.
-      # @raise  [Scrapple::FileNotFound]  When :raise option is true and specified file was
-      #                                   not found in any of the base paths
-      def find(file, options = {})
-        options = {
-          :raise => false,
-          :base_paths => self.base_paths
-        }.merge!(options)
+      # @param file [String]   Relative or full filename/path of what you want.
+      # @return [String, nil]  Full path of the file found first.
+      def find(file)
+        found = nil
 
         if absolute?(file)
-          base = parent_base_path(file, :base_paths => options[:base_paths])
-          file = relative_path(file, base)
-          options[:base_paths] = [base]
+          rewt = parent_root(file)
+          file = relative_path(file, rewt)
+          rewts = [rewt]
+        else
+          rewts = self.roots
         end
 
-        found = nil
-        options[:base_paths].each do |base_path|
-          break if found = find_in_base_path(file, base_path); 
+        rewts.each do |root|
+          break if found = find_in_root(file, root); 
         end
 
-        raise FileNotFound, "Couldn't find \"#{file}\" in any of the base paths" if options[:raise] && found.nil?
         return found
       end
 
 
-      # Find a file within one base path.
-      # @param file    [String] Relative filename/path of what you want.
-      # @param options [Hash]   Options hash.
+      # Find a file within one root.
       #
-      # @option options [Boolean] :raise (false)  Raise an exception if file not found.
-      #
-      # @return [String, nil]             Full path of the file found, or nil if not found
-      # @raise  [Scrapple::FileNotFound]  When :raise option is true and specified file was
-      #                                   not found in the base path
-      def find_in_base_path(file, base_path, options = {})
-        options = { :raise => false }.merge!(options)
-
+      # @param file [String]   Relative filename/path of what you want.
+      # @return [String, nil]  Full path of the file found, or nil if not found
+      def find_in_root(file, root)
         found = nil
-        try = File.join(base_path, file)
+
+        if descendant?(file, root)
+          file = relative_path(file, root)
+        end
+
+        try = File.join(root, file)
         found = try if File.file?(try)
 
         if found.nil?
           file_with_ext_glob = file + ".*"
-          try = Dir[File.join(base_path, file_with_ext_glob)].first
+          try = Dir[File.join(root, file_with_ext_glob)].first
           found = try if try && File.file?(try)
         end
 
         if found.nil?
-          try_dir = File.join(base_path, file)
+          try_dir = File.join(root, file)
           if File.directory?(try_dir)
             try = Dir[File.join(try_dir, "index.*")].first
             found = try if try && File.file?(try)
@@ -76,111 +65,103 @@ module Scrapple
         end
 
         if found.nil?
-          try_dir = File.join(base_path, file)
+          try_dir = File.join(root, file)
           if File.directory?(try_dir)
             found = try_dir
           end
         end
 
-        raise FileNotFound, "Couldn't find \"#{file}\" in #{base_path}" if options[:raise] && found.nil?
         return found
       end
 
 
       # Find a file, starting next to "near", and going up.
-      # Search will continue until it hits one of the {.base_path}s.
+      # Search will continue until it hits one of the {.root}s.
       # Return the first file found.
+      #
       # @param file    [String]  Relative filename/path of what you want.
       # @param near    [String]  Absolute path of directory to starting looking in, or file to start looking next to.
-      # @param options [Hash]    Options hash.
-      #
-      # @option options [Bool]  :raise      (false) Raise an exception if file not found.
-      # @option options [Array] :base_paths Supply a list of base paths to use instead of {.base_paths}.
       #
       # @return [String]                  Full path of first file found
-      # @raise  [Scrapple::FileNotFound]  When :raise option is true and specified file was not found
-      # @raise  [ArgumentError]           When near is not a descendant of any of the base paths
+      # @raise  [ArgumentError]           When near is not a descendant of any of the {.roots}
       # @raise  [ArgumentError]           When near doesn't exist
-      def find_first_ascending(file, near, options = {})
-        options = {
-          :raise => false,
-          :base_paths => self.base_paths
-        }.merge!(options)
-
-        found = find_all_ascending(file, near, options.merge(:raise => false))
-
-        raise FileNotFound, "Couldn't find \"#{file}\" anywhere between #{near} and #{base_path}" if options[:raise] && found.empty?
+      def find_first_ascending(file, near)
+        found = find_all_ascending(file, near)
         return found.first
       end
 
 
       # Find matching files, starting next to "near", and going up.
-      # Search will continue until it hits one of the of the {.base_paths}.
+      # Search will continue until it hits one of the of the {.roots}.
       # Return all that are found.
       # @param file    [String]  Relative filename/path of what you want.
       # @param near    [String]  Absolute path of directory to starting looking in, or file to start looking next to.
-      # @param options [Hash]    Options hash.
-      #
-      # @option options [Bool]   :raise      (false) Raise an exception if file not found.
-      # @option options [Array]  :base_paths Supply a list of base paths to use instead of {.base_paths}.
       #
       # @return [Array<String>]           Full paths of all file found
-      # @raise  [Scrapple::FileNotFound]  When :raise option is true and specified file was not found
-      # @raise  [ArgumentError]           When near is not a descendant of any of the base paths
+      # @raise  [ArgumentError]           When near is not a descendant of any of the {.roots}
       # @raise  [ArgumentError]           When near doesn't exist
-      def find_all_ascending(file, near, options = {})
-        options = {
-          :raise => false,
-          :base_paths => self.base_paths
-        }.merge!(options)
+      def find_all_ascending(file, near)
+        found = []
+        root = parent_root(near)
 
-        base_path = options[:base_paths].find { |base| near[0, base.length] == base }
-        raise ArgumentError, "#{near} is not a descendant of any of the base paths" if base_path.nil?
-
+        raise ArgumentError, "#{near} is not a descendant of any of the base paths" if root.nil?
         raise ArgumentError, "#{near} does not exist" unless File.exist?(near)
 
         look_in = File.file?(near) ? File.dirname(near) : near
-        found = []
-        found << find_in_base_path(file, look_in)
 
-        if look_in != base_path
+        found << find_in_root(file, look_in)
+
+        if look_in != root
           look_in = File.dirname(look_in)
-          found << find_first_ascending(file, look_in, {:raise => false, :base_paths => [base_path]})
+          found += find_all_ascending(file, look_in)
         end
 
-        raise FileNotFound, "Couldn't find \"#{file}\" anywhere between #{near} and #{base_path}" if options[:raise] && found.nil?
         return found.compact
       end
 
 
-      # Check if a path is an absolute path
+      # Calculates the relative path from `path` to `root`.
+      # Returns nil if it can't be calculated.
+      # @param path [String] Absolute path
+      # @param root [String] Absolute path
+      def relative_path(path, root)
+        Pathname.new(path).relative_path_from(Pathname.new(root)).to_s
+      rescue ArgumentError
+        return nil
+      end
+
+
+
+      # Check if a path is an absolute path.
+      # Returns true if the path starts with one of the {.roots}.
+      # So if given something like "/etc/init.d" and /etc nor /etc/init.d is in the {.roots},
+      # then that's a relative path (returns false).
+      # @param path [String]
+      # @return [Bool]
       def absolute?(path)
-        Pathname.new(path).absolute?
+        self.roots.any? { |root| descendant?(path, root) }
       end
 
 
-      # Relative path to a base path
-      def relative_path(path, base_path)
-        return nil unless absolute?(path)
-        Pathname.new(path).relative_path_from(Pathname.new(base_path)).to_s
-      end
-
-
-      # Check if an absolute path is within any of the {.base_paths}.
+      # Check if an absolute path is a descendant any of the {.roots}.
       # If it is, returns that base path.
       # If not, returns nil.
       # @param path [String]
-      # @param options [Hash]
-      # @option options :base_paths [Array]  Base paths to use instead of {.base_paths}.
       # @return [String]
-      def parent_base_path(fullpath, options = {})
-        options = {
-          :base_paths => self.base_paths
-        }.merge!(options)
+      def parent_root(fullpath)
+        return self.roots.find { |root| descendant?(fullpath, root) }
+      end
 
-        return nil unless absolute?(fullpath)
 
-        return options[:base_paths].find { |base| fullpath[0, base.length] == base }
+      # Check if one absolute `path` looks like it's a descendant of `root`.
+      # Note that this doesn't actually look for the file, it only compares path strings.
+      # @param path [String]
+      # @param root [String]
+      # @return [Bool]
+      def descendant?(path, root)
+        relative = relative_path(path, root)
+        return false if relative.nil?
+        return relative !~ /\.\./
       end
 
     end

@@ -1,5 +1,4 @@
 title: Personal Area
-layout: nested
 
 Personal Area
 =============

@@ -3,8 +3,8 @@ require File.expand_path("../../test_helper", __FILE__)
 describe Scrapple::Page do
   before do
     SUT ||= Scrapple::Page
-    Scrapple::FileLookup.base_paths.clear
-    Scrapple::FileLookup.base_paths << @content_root
+    Scrapple::FileLookup.roots.clear
+    Scrapple::FileLookup.roots << @content_root
   end
   
   describe "for" do
@@ -35,9 +35,10 @@ describe Scrapple::Page do
       page.must_be_nil
     end
 
-    it "should return nil if directory exists but no index file" do
+    it "should return Page for directory if directory exists but no index file" do
       page = SUT.for "tony"
-      page.must_be_nil
+      page.fullpath.must_equal @content_root+"/tony"
+      page.type.must_equal "directory"
     end
 
     it "should fetch if :fetch => true option passed" do

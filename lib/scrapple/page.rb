@@ -53,15 +53,16 @@ module Scrapple
       }.merge(options)
 
       if options[:root]
-        fullpath = FileLookup.find(path, :base_paths => [:options[:root]], :raise => true)
-        root = options[:root]
+        fullpath = FileLookup.find_in_root(path, options[:root])
       else
-        fullpath = FileLookup.find(path, :raise => true)
-        root = FileLookup.parent_base_path(fullpath)
+        fullpath = FileLookup.find(path)
       end
 
+      return nil if fullpath.nil?
+
+      root = FileLookup.parent_root(fullpath)
       path = FileLookup.relative_path(fullpath, root)
-      type = File.directory?(fullpath) ? "directory" : File.extname(fullpath)
+      type = File.directory?(fullpath) ? "directory" : File.extname(fullpath)[1..-1]
 
       instance = self.new do |page|
         page.path = path
@@ -74,8 +75,6 @@ module Scrapple
       instance.fetch if options[:fetch]
 
       return instance
-    rescue FileNotFound
-      return nil
     end
 
 
