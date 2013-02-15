@@ -59,7 +59,6 @@ module Scrapple
 
       path = FileLookup.relative_path(fullpath, root)
 
-
       instance = self.new do |page|
         page.path = path
         page.root = root

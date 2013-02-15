@@ -6,13 +6,16 @@ module IndexHelper
 
     directories = entries.select {|entry| File.directory?(File.join(dirname, entry)) }.sort
     files = (entries - directories).sort
-    pages = (directories + files).map { |entry| Scrapple::Page.for(entry) }
+    paths = (directories + files).map { |entry| Pathname.new(File.join(self.path, "..", entry)).cleanpath.to_s }
+    pages = paths.map { |path| Scrapple::Page.for(path, :fetch => true, :ignore_settings_files => true) }
 
     html = %Q(<ul class="index">\n)
     pages.each do |page|
       html << %Q(<li)
       html << %Q( class="active") if page.path == self.path
-      html << %Q(><a href=\"#{page.path}\">#{page.path}</a></li>\n)
+      html << %Q(><a href="#{File.basename(page.path)}">)
+      html << (page['title'] || File.basename(page.path))
+      html << %Q(</a></li>\n)
     end
     html << %Q(</ul>\n)
     html
