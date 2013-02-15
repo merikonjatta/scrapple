@@ -75,6 +75,13 @@ module Scrapple
           end
         end
 
+        if found.nil?
+          try_dir = File.join(base_path, file)
+          if File.directory?(try_dir)
+            found = try_dir
+          end
+        end
+
         raise FileNotFound, "Couldn't find \"#{file}\" in #{base_path}" if options[:raise] && found.nil?
         return found
       end

@@ -26,6 +26,9 @@ module Scrapple
     # @return [String]
     attr_accessor :fullpath
 
+    # Type of this Page. The extension, or "directory"
+    attr_accessor :type
+
     # The content body of the file this page represents.
     # Does not include the directives section.
     # @return [String]
@@ -58,11 +61,13 @@ module Scrapple
       end
 
       path = FileLookup.relative_path(fullpath, root)
+      type = File.directory?(fullpath) ? "directory" : File.extname(fullpath)
 
       instance = self.new do |page|
         page.path = path
         page.root = root
         page.fullpath = fullpath
+        page.type = type
         page.ignore_settings_files = options[:ignore_settings_files]
       end
 
@@ -92,7 +97,7 @@ module Scrapple
         end
       end
 
-      @content = @settings.parse_and_merge(fullpath)
+      @content = @settings.parse_and_merge(fullpath) unless self.type == "directory"
 
       return self
     end

@@ -48,8 +48,7 @@ module Scrapple
       specified = self.class.handlers[@params['handler'] || @page['handler']]
       return specified unless specified.nil?
 
-      extension = File.extname(page.fullpath)[1..-1]
-      (name, mod) = self.class.handlers.find { |name, mod| mod.can_handle? extension }
+      (name, mod) = self.class.handlers.find { |name, mod| mod.can_handle? @page.type }
 
       return mod
     end
