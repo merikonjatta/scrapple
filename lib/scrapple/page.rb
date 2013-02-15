@@ -33,27 +33,32 @@ module Scrapple
 
     # Pass the request filename to get a new Page instance.
     # @param [String] path   Absolute or relative path to the page file or directory.
-    # @param [String] root   Absolute root path, determines lookup scope for parent pages and settings files.
     # @param [Hash] options  Options for the instance.
-    # @option options [Bool] :fetch (false)                 Whether to do a fetch after initialize.
-    #                                                       Not fetching means no parsing for directives,
-    #                                                       no looking for _settings.txt, so leave it as false
-    #                                                       unless you need the contents.
+    # @option options [String] :root (nil)          Specify the absolute root path to look in, if known. 
+    # @option options [Bool] :fetch (false)         Whether to do a fetch after initialize.
+    #                                               Not fetching means no parsing for directives,
+    #                                               no looking for _settings.txt, so leave it as false
+    #                                               unless you need the contents.
     # @option options [Bool] :ignore_settings_files (false) Whether to ignore surrounding _settings.txt files
     #
     # @return [Page, nil] A Page if file is found, nil if not
-    def self.for(path, root, options = {})
+    def self.for(path, options = {})
       options = {
+        :root => nil,
         :fetch => false,
         :ignore_settings_files => false
       }.merge(options)
 
-      path_pn = Pathname.new(path)
-      root = File.expand_path(root)
-      path = path_pn.relative_path_from(Pathname.new(root)).to_s if path_pn.absolute?
-      fullpath = FileLookup.find(path)
+      if options[:root]
+        fullpath = FileLookup.find(path, :base_paths => [:options[:root]], :raise => true)
+        root = options[:root]
+      else
+        fullpath = FileLookup.find(path, :raise => true)
+        root = FileLookup.parent_base_path(fullpath)
+      end
 
-      return nil if fullpath.nil?
+      path = FileLookup.relative_path(fullpath, root)
+
 
       instance = self.new do |page|
         page.path = path
@@ -65,6 +70,8 @@ module Scrapple
       instance.fetch if options[:fetch]
 
       return instance
+    rescue FileNotFound
+      return nil
     end
 
 
@@ -95,6 +102,11 @@ module Scrapple
     # Get variables from settings
     def [](key)
       @settings[key]
+    end
+
+    # Set settings value
+    def []=(key, value)
+      @settings[key] = value
     end
 
   end
