@@ -1,4 +1,4 @@
-macro_debug: true
+title: Top
 
 Hello! Welcome to my Scrapple
 =============================
@@ -7,4 +7,4 @@ This is the index page.
 
 ![Trainyard](trainyard.jpg)
 
-[[index :of => self.fullpath, :depth => 2]]
+[[index :of => self.fullpath, :depth => 500]]

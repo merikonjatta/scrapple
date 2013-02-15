@@ -1,4 +1,6 @@
 module IndexHelper
+
+  # Produce an HTML list of child pages.
   def index(options = {})
     options = {
       :of => nil,
