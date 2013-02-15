@@ -1,9 +1,6 @@
-Scrapple To-DO
+Scrapple To-Do
 ==============
 
-
-* YAMLでいいやん
-* Get rid of array_keys
 * Plugin dependencies
 * Edit handler
 * Choose handler with "as: html"

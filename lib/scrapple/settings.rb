@@ -77,22 +77,28 @@ module Scrapple
       io = File.open(io) if io.is_a? String
       io.rewind
 
-      yamlpart = io.each_line.inject("") do |yaml, line|
+      body = ""
+      yaml = ""
+
+      io.each_line do |line|
         if line.strip.blank?
-          break yaml if yaml.length > 0 && !options[:dont_stop]
+          break if yaml.length > 0 && !options[:dont_stop]
         end
 
         unless line =~ self.class.directive_regexp
-          break yaml if yaml.length == 0 && !options[:dont_stop]
+          if yaml.length == 0 && !options[:dont_stop]
+            body << line
+            break
+          end
         end
 
-        yaml + line
+        yaml << line
       end
 
       # The rest is body
-      body = io.read
+      body << io.read
 
-      directives = normalize(Syck.load(yamlpart) || {})
+      directives = normalize(Syck.load(yaml) || {})
       io.close rescue NoMethodError
       return [body, directives]
     end
