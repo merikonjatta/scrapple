@@ -17,19 +17,10 @@ module Scrapple
       # @param [Module] mod    Handler module.
       # @param [Hash] properties  Properties of the handler.
       # @option properties [String] :name        The name of this module.
-      # @option properties [Array]  :can_handle  Extensions that this handler can handle.
-      #                                          Do not include the dots. Can also be Regexps.
       def register_handler(mod, properties)
         raise ArgumentError "Please specify a name for this handler." if properties[:name].blank?
-        raise ArgumentError "Please specify a list of extensions this handler can handle." if properties[:can_handle].blank?
 
-        properties[:module] = mod
-
-        properties[:can_handle] = properties[:can_handle].map do |ext|
-          (ext.is_a? Regexp) ? ext : Regexp.new("^"+Regexp.escape(ext)+"$", "i")
-        end
-
-        @handlers[properties[:name]] = properties
+        @handlers[properties[:name]] = mod
       end
     end
 
@@ -57,11 +48,9 @@ module Scrapple
       return @params['handler'] unless @params['handler'].nil?
 
       extension = File.extname(page.fullpath)[1..-1]
-      (name, handler) = self.class.handlers.find do |name, properties|
-        properties[:can_handle].any? { |ext_r| extension =~ ext_r }
-      end
+      (name, mod) = self.class.handlers.find { |name, mod| mod.can_handle? extension }
 
-      return handler[:module]
+      return mod
     end
 
     attr_reader :page, :params

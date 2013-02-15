@@ -1,6 +1,11 @@
 module DefaultView
   class << self
 
+    def can_handle?(extension)
+      Tilt.mappings.keys.include? extension
+    end
+
+
     def handle(page)
       ext = page.fullpath.sub(/^.*\./, '')
       engine = Tilt[ext]
@@ -28,6 +33,4 @@ module DefaultView
   end
 end
 
-Scrapple::PageApp.register_handler(DefaultView,
-                                   :name => "default",
-                                   :can_handle => Tilt.mappings.keys)
+Scrapple::PageApp.register_handler(DefaultView, :name => "default")

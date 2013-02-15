@@ -1,6 +1,11 @@
 module RawView
   class << self
 
+    def can_handle?
+      true
+    end
+
+
     def handle(page)
       return [200, {"Content-Type" => "text/plain"}, [page.content]]
     end
@@ -8,6 +13,4 @@ module RawView
   end
 end
 
-Scrapple::PageApp.register_handler(RawView,
-                                   :name => "raw",
-                                   :can_handle => [/.*/])
+Scrapple::PageApp.register_handler(RawView, :name => "raw")
