@@ -1,1 +1,3 @@
 title: "BOO!"
+
+readable: public

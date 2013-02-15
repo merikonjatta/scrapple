@@ -2,6 +2,7 @@ Scrapple To-DO
 ==============
 
 
+* YAMLでいいやん
 * Plugin dependencies
 * Edit handler
 * Choose handler with "as: html"

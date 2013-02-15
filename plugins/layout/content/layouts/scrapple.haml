@@ -13,3 +13,5 @@
           %ul
             - (self['tags']||[]).each do |tag|
               %li= tag
+      .row
+        %pre= html_escape(settings.hash.pretty_inspect)
