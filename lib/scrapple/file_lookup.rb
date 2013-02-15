@@ -155,7 +155,7 @@ module Scrapple
       # Relative path to a base path
       def relative_path(path, base_path)
         return nil unless absolute?(path)
-        Pathname.new(path).relative_path_from(Pathname.new(base_path))
+        Pathname.new(path).relative_path_from(Pathname.new(base_path)).to_s
       end
 
 

@@ -23,8 +23,13 @@ ENV['CONTENT_DIR'] ||= File.join(SCRAPPLE_ROOT, "sample_content")
 # TODO Don't hardcode this here
 SCRAPPLE_PLUGINS_ROOT = File.join(SCRAPPLE_ROOT, "plugins")
 
-# Require all <plugin>.rb scripts in plugins dir
+# Require all <plugins_root>/<plugin>/<plugin>.rb scripts in plugins dir
 Dir[SCRAPPLE_PLUGINS_ROOT + "/*"].each do |plugin_dir|
   plugin_name = plugin_dir.match(/.*\/(.*)$/)[1]
   require File.join(plugin_dir, plugin_name)
+end
+
+# Add all <plugins_root>/<plugin>/content directories to FileLookup.base_paths
+Dir[SCRAPPLE_PLUGINS_ROOT + "/*/content"].each do |plugin_content_dir|
+  Scrapple::FileLookup.base_paths << plugin_content_dir if File.directory?(plugin_content_dir)
 end

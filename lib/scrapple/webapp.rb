@@ -20,11 +20,11 @@ module Scrapple
     end
 
     get '/*' do |path|
-      page = Page.for(path, settings.content_dir, :fetch => true)
+      page = Page.for(path, :fetch => true)
 
       # See if the last path component was a handler
       if page.nil? && md = path.match(/^(.*)\/([-a-zA-Z_]+)/)
-        page = Page.for(md[1], settings.content_dir, :fetch => true)
+        page = Page.for(md[1], :fetch => true)
         params['handler'] = md[2]
       end
 

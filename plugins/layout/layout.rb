@@ -3,6 +3,8 @@ class Layout
 
   class GiveUp < Exception; end
 
+  DEFAULT_LAYOUT = "layouts/scrapple.haml"
+
   def initialize(app=nil)
     @app = app
   end
@@ -16,6 +18,7 @@ class Layout
 
     page = env['scrapple.page']
     new_content = wrap_in_layout(page, body.join)
+
     return [status, headers, [new_content]]
   end
 
@@ -42,20 +45,20 @@ class Layout
 
   # Get the Scrapple::Page object for the layout file that
   # should be used to wrap the specified Page.
-  # @param [Scrapple::Page] page  The original page
+  # @param [Scrapple::Page] page   The original page
   # @return [Scrapple::Page, nil]  The page that should be used to wrap the original page, or nil if not found
   def get_layout_page_for(page)
-    return nil if page['layout'].nil?
+    page['layout'] ||= DEFAULT_LAYOUT
+    return nil if page['layout'] =~ /^none$/i
 
     # Try to find the actual layout file
-    layout_file = Scrapple::FileLookup.find_first_ascending(page['layout'], page.fullpath)
-    # Layout file not found?
-    return nil if layout_file.nil?
-    # Layout file is the same as the file to be wrapped?
-    return nil if page.fullpath == layout_file
-
     # Create a new Page object for the layout file
-    layout_page = Scrapple::Page.for(layout_file, page.root, :fetch => true)
+    layout_page = Scrapple::Page.for(page['layout'], :fetch => true)
+    # Layout file not found?
+    return nil if layout_page.nil?
+    # Layout file is the same as the file to be wrapped?
+    return nil if page.fullpath == layout_page.fullpath
+
     # Copy settings from original to layout page, except for which layout to use
     page.settings.hash.delete("layout")
     layout_page.settings.merge(page.settings)

@@ -1,10 +1,13 @@
-layout: progit
-
 Scrapple To-DO
+==============
 
-* Doc
-* Find files in plugin dirs as well
+
 * Edit handler
+* Extension mapping / handler detection
+* Treat directive value "none" as nil
+* FileLookup's options :base_paths can be substitued by a with_base_paths block method
+* FileLookup should consider "/index" as a kind of relative path
+* Page uses "root", FileLookup uses "base_path"
 * Validate presence of content_dir (and plugin-dir?)
 * Make sure raw and title-from-file is working
 * plugin: breadcrumbs
