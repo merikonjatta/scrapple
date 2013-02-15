@@ -81,6 +81,8 @@ module Scrapple
       yaml = ""
 
       io.each_line do |line|
+        io.rewind && break unless line.valid_encoding?
+
         if line.strip.blank?
           break if yaml.length > 0 && !options[:dont_stop]
         end
@@ -98,7 +100,16 @@ module Scrapple
       # The rest is body
       body << io.read
 
-      directives = normalize(Syck.load(yaml) || {})
+      directives = Syck.load(yaml)
+
+      # Directives are not hash? Something must be wrong.
+      # Let's just say the line wasn't yaml at all
+      unless directives.is_a? Hash
+        directives = {}
+        io.rewind
+        body = io.read
+      end
+
       io.close rescue NoMethodError
       return [body, directives]
     end

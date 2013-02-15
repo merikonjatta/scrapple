@@ -2,7 +2,7 @@ module DefaultView
   class << self
 
     def can_handle?(extension)
-      Tilt.mappings.keys.include? extension
+      (Tilt.mappings.keys - %w(markdown md mkd)).include? extension
     end
 
 
@@ -10,24 +10,33 @@ module DefaultView
       ext = page.fullpath.sub(/^.*\./, '')
       engine = Tilt[ext]
 
-      headers = {}
-      body = ""
-
-      if engine.nil?
-        body = page.content
-      else
-        body = engine.new{ page.content }.render(page)
-      end
-
-      if %(sass scss).include?(ext)
-        headers['Content-Type'] = "text/css"
-      elsif mime_type = Scrapple::Webapp.mime_type(ext)
-        headers['Content-Type'] = mime_type
-      else
-        headers['Content-Type'] = "text/html"
-      end
+      body = engine.new(engine_options(ext)){ page.content }.render(page)
+      headers = {'Content-Type' => content_type_for(ext) }
 
       return [200, headers, [body]]
+    end
+
+
+    def engine_options(ext)
+      case ext
+      when nil
+      else
+        nil
+      end
+    end
+
+
+    def content_type_for(ext)
+      case ext
+      when "sass", "scss", "less"
+        "text/css"
+      when "coffee"
+        "text/javascript"
+      when "builder"
+        "text/xml"
+      else
+        Scrapple::Webapp.mime_type(ext) || "text/html"
+      end
     end
 
   end
