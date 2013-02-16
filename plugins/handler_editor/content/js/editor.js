@@ -37,6 +37,10 @@ $(document).ready(function(){
         this.rCommandArgs = /(.+)\((.+)\)/;
         this.rInt         = /^-?[0-9]+$/;
 
+        this.keyscope = null;
+        this.lastKeyEvents = null;
+        this.vanchor = null;
+
         this.buildElements();
         this.toInsertMode();
 
@@ -69,25 +73,40 @@ $(document).ready(function(){
             "s65" : 'movetoLineEnd toInsertMode', // A
             "79"  : 'movetoLineEnd insertNewline toInsertMode', // o
             "s79" : 'movetoLineStart move(-1) insertNewline toInsertMode', // O
-            "72"  : 'move(-1)', // h
+            "72"  : 'moveInLine(-1)', // h
             "74"  : 'moveVert(1)', // j
             "75"  : 'moveVert(-1)',   // k
-            "76"  : 'move(1)',// l
+            "76"  : 'moveInLine(1)',// l
             "8"   : 'move(-1)', // BS
             "32"  : 'move(1)', // Space
             "187" : 'movetoLineStart', // ^
             "s52" : 'movetoLineEnd',   // $
             "71"  : { "71" : 'movetoStart' },  // gg
             "s71" : 'movetoEnd', // G
+            "88"  : "deleteForward(1)", // x
             "68"  : { "68" : 'deleteLine' }, // dd
             "80"  : 'paste', // p
-            "s80"  : 'pasteBefore', // P
+            "s80" : 'pasteBefore', // P
+            "86"  : 'toVisualMode', // v
+            "s86" : 'toVisualLineMode', // V
             "9"   : 'debug' // TAB
+        },
+        'visual' : {
+            "72" : 'moveInLine(-1)', // h
+            "74" : 'moveVert(1)', // j
+            "75" : 'moveVert(-1)', // k
+            "76" : 'moveInLine(1)', // l
+            "s86"  : 'toVisualLineMode', // V
+            "27"   : 'toNormalMode', // ESC
+            "c219" : 'toNormalMode' // C-[
+        },
+        'visualline' : {
+            "74"   : 'moveVert(1)', // j
+            "75"   : 'moveVert(-1)', // k
+            "27"   : 'toNormalMode', // ESC
+            "c219" : 'toNormalMode' // C-[
         }
     };
-
-    Vproto.keyscope = null;
-    Vproto.lastKeyEvents = null;
 
     // Get a keymap-expression for the keydown event.
     function keyexpr(e){
@@ -107,7 +126,7 @@ $(document).ready(function(){
         },
     
         keydown: function(e){
-            if (this.mode == "normal") { e.preventDefault(); }
+            if (this.mode != "insert") { e.preventDefault(); }
 
             this.lastKeyEvent = e;
             this.auto_clear_keyscope(false);
@@ -187,13 +206,17 @@ $(document).ready(function(){
             this.keyscope = this.keymap[mode];
             this.$modedisplay.text(mode.toUpperCase());
             this.$wrap.removeClass().addClass("vimarea-wrap " + mode);
+            if (this.mode == "normal" || this.mode == "insert") {
+                this.moveto(this.pos());
+            }
+            if (this.mode == "visual" || this.mode == "visualline") {
+                this.vanchor = this.pos();
+            }
         },
-        toNormalMode: function() {
-            this.toMode("normal");
-        },
-        toInsertMode: function() {
-            this.toMode("insert");
-        }
+        toNormalMode: function() { this.toMode("normal"); },
+        toInsertMode: function() { this.toMode("insert"); },
+        toVisualMode: function() { this.toMode("visual"); },
+        toVisualLineMode: function() { this.toMode("visualline"); }
     };
     $.extend(Vproto, VprotoModeSwitching);
 
@@ -281,6 +304,7 @@ $(document).ready(function(){
         moveto: function(pos){
             this.$a.prop('selectionStart', pos);
             this.$a.prop('selectionEnd',   pos);
+            this.vupdate();
         },
 
         movetoLineStart: function(){
@@ -317,6 +341,30 @@ $(document).ready(function(){
 
         move : function(number) {
             this.moveto(this.pos() + number);
+        },
+
+        moveInLine: function(number) {
+            for (var i = 0; i<Math.abs(number); i++){
+                if (number > 0){
+                    if (this.charAt(this.pos()) != "\n") {
+                        this.move(1);
+                    }
+                } else {
+                    if (this.charAt(this.pos()-1) != "\n") {
+                        this.move(-1);
+                    }
+                }
+            }
+        },
+
+        vupdate: function() {
+            if (this.mode == "visual") {
+                if (this.pos() > this.vanchor) {
+                    this.vselect(this.vanchor, this.pos());
+                } else {
+                    this.vselect(this.pos(), this.vanchor);
+                }
+            }
         },
 
         vselect: function(start, end) {
@@ -369,6 +417,16 @@ $(document).ready(function(){
             newtext    += this.textAfter();
             this.val(newtext);
             this.moveto(pos - number);
+        },
+
+        deleteForward: function(number){
+            var pos = this.pos();
+            var yank = this.substring(pos, pos+number);
+            var newtext = this.textBefore();
+            newtext    += this.textAfter().substring(number, this.textLength());
+            this.val(newtext);
+            this.moveto(pos);
+            this.reg('"', yank);
         },
 
         deleteText: function(start, end) {
@@ -487,10 +545,14 @@ $(document).ready(function(){
 
         var css = '';
         css += '<style type="text/css">';
-        css += '    .vimarea-wrap.insert textarea { background: #FFFFFF; color: $baseFontColor; }';
-        css += '    .vimarea-wrap.normal textarea { background: #F0F0F0; color: $baseFontColor; }';
-        css += '    .vimarea-wrap.insert .vimarea-modedisplay { background: #999999; color: #FFF; }';
-        css += '    .vimarea-wrap.normal .vimarea-modedisplay { background: #694A4A; color: #FFF; }';
+        css += '    .vimarea-wrap.insert     textarea { background: #FFFFFF; color: $baseFontColor; }';
+        css += '    .vimarea-wrap.normal     textarea { background: #F9F9F9; color: $baseFontColor; }';
+        css += '    .vimarea-wrap.visual     textarea { background: #F9F9F9; color: $baseFontColor; }';
+        css += '    .vimarea-wrap.visualline textarea { background: #F9F9F9; color: $baseFontColor; }';
+        css += '    .vimarea-wrap.insert     .vimarea-modedisplay { background: #999999; color: #FFF; }';
+        css += '    .vimarea-wrap.normal     .vimarea-modedisplay { background: #694A4A; color: #FFF; }';
+        css += '    .vimarea-wrap.visual     .vimarea-modedisplay { background: #576949; color: #FFF; }';
+        css += '    .vimarea-wrap.visualline .vimarea-modedisplay { background: #576949; color: #FFF; }';
         css += '</style>';
         this.$css = $(css);
         this.$css.appendTo($('head'));

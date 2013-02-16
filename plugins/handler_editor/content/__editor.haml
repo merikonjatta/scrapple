@@ -11,5 +11,5 @@
     .container
       .maincol
         %form(action="#" method="post")
-          %textarea#content= self['editing_content']
+          %textarea#content(name=content)= self['editing_content']
           %input(type="submit" value="Save" class="button")
