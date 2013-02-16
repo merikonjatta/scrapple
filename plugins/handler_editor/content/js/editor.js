@@ -17,6 +17,10 @@ $(document).ready(function(){
 
     resize();
     $area.trigger('focus');
+
+    $v.onSave = function(){
+        $('form').submit();
+    };
 });
 
 
@@ -45,6 +49,8 @@ $(document).ready(function(){
         this.toInsertMode();
 
         this.$a.on("keydown", $.proxy(this.keydown, this));
+
+        this.onSave = function(){};
     }
 
     var Vproto = VimArea.prototype;
