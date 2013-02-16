@@ -35,11 +35,16 @@ body.editor {
 
 
 body.editor {
+    #textarea-wrap {
+        margin: 0px; padding: 0px; position:relative; width: 100%;
+    }
+
     textarea { 
         @include border-box;
+        position: relative;
         padding: 7px;
         border: 1px solid #cccccc;
         width:100%; height:300px;
-        font-size: $baseFontSize * 0.9; font-family: monospace; font-weight: 200;
+        font-size: $baseFontSize * 0.8; font-family: $monoFontFamily; font-weight: 200;
     }
 }
