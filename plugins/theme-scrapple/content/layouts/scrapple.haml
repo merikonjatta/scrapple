@@ -15,7 +15,7 @@
           - if self.type != "directory"
             %ul.action-links
               %li
-                %a(href="in/editor") Edit
+                %a(href="#{self.path}/in/editor") Edit
           = yield
         .col.subcol
           = index

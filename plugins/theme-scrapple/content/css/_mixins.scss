@@ -10,6 +10,10 @@ $baseFontColor: #333333;
 $baseFontFamily: $slabFontFamily;
 $baseTone: #F4F5EE;
 
+$linkColor:        #2A86BB;
+$linkColorVisited: #5A91B1;
+$linkColorHover:   #4CACE4;
+
 // From Bootstrap
 @mixin clearfix {
     *zoom: 1;

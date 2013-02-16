@@ -47,16 +47,30 @@ body {
     color: #999;
 }
 
-a:link    { color: #2A86BB; text-decoration: none; }
-a:visited { color: #5C7192; text-decoration: none; }
-a:hover   { color: #4CACE4; text-decoration: underline; }
+a:link    { color: $linkColor; text-decoration: none; }
+a:visited { color: $linkColorVisited; text-decoration: none; }
+a:hover   { color: $linkColorHover; text-decoration: underline; }
 
 h1 { margin: 0px 0px; border-bottom: 1px solid darken($baseTone, 15%); }
 
 ul.breadcrumb      { margin:0px; padding:0px; display:inline-block; list-style:none; background:none; font-size: $baseFontSize * 0.85; color: #999; }
 ul.breadcrumb li   { margin:0px 3px 0px 0px; padding:0px; display:inline-block; list-style:none; }
+ul.breadcrumb      { a:link, a:visited { color: $linkColor; } }
 ul.action-links    { margin:0px; padding:0px; display:inline-block; list-style:none; background:none; font-size: $baseFontSize * 0.85; color: #999; }
 ul.action-links li { margin:0px 0px 0px 5px; padding:0px; display:inline-block; list-style:none; }
+ul.action-links    { a:link, a:visited { color: $linkColor; } }
+
+pre, code { font-size: $baseFontSize * 0.8; line-height: 1.3; font-family: $monoFontFamily; }
+pre {
+    padding: 5px;
+    border: 1px solid #d9d9d9;
+    @include border-radius(4px);
+    background: #f6f6f6;
+    overflow: auto;
+    @include box-shadow(inset 0px 1px 2px 0px rgba(0, 0, 0, 0.1));
+}
+
+
 
 .button { 
     display: inline-block;
