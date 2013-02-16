@@ -5,6 +5,9 @@ module HandlerDefault
       (Tilt.mappings.keys - %w(markdown md mkd)).include? type
     end
 
+    def priority
+      1000
+    end
 
     def handle(page)
       ext = page.fullpath.sub(/^.*\./, '')

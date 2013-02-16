@@ -1,0 +1,74 @@
+@import "mixins";
+
+body {
+    margin: 10px;
+    font-family: $slabFontFamily; 
+    font-size: $baseFontSize;
+    line-height: $baseLineHeight;
+    color: #333333;
+    background: $baseTone; 
+}
+
+.container {
+    width: 940px;
+    margin: 20px auto 0px;
+}
+
+.row {
+    margin-left: -10px;
+    clear:both;
+    @include clearfix;
+}
+
+.col {
+    float:left;
+    margin-left: 10px;
+    @include border-box();
+    background: #f9f9f9;
+    @include border-radius(5px);
+    @include box-shadow(0px 0px 5px rgba(0,0,0,0.1));
+}
+
+.maincol {
+    padding: 10px;
+    width: 640px;
+}
+
+.subcol {
+    padding: 10px;
+    width: 290px;
+}
+
+.footer {
+    @extend .row;
+    margin-top: 20px;
+    padding: 0px 10px;
+    font-size: $baseFontSize * 0.8;
+    color: #999;
+}
+
+
+h1 { margin: 0px 0px; border-bottom: 1px solid darken($baseTone, 15%); }
+
+ul.breadcrumb    { margin:0px; padding:0px; list-style:none; background:none; font-size: $baseFontSize * 0.8; color: #999;}
+ul.breadcrumb li { margin:0px 5px 0px 0px; padding:0px; list-style:none; display:inline-block; }
+
+.button { 
+    display: inline-block;
+    margin: 0px;  padding: 4px 12px;
+    font-size: $baseFontSize; line-height: $baseLineHeight; font-family: $baseFontFamily;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #bbbbbb;
+    @include border-radius(4px);
+    @include gradient-vertical(#f9f9f9, #e0e0e0);
+
+    &:hover {
+        @include gradient-vertical(#fcfcfc, #f0f0f0);
+    }
+
+    &:active {
+        border: 1px solid #a0a0a0;
+        @include gradient-vertical(#e0e0e0, #f9f9f9);
+    }
+}

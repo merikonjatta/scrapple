@@ -50,5 +50,6 @@ Dir[ENV['PLUGINS_DIR'] + "/*/content"].each do |plugin_content_dir|
 end
 
 # Define some directive aliases up front
-Scrapple.alias_directive("as", "handler")
+Scrapple.alias_directive("as",   "handler")
 Scrapple.alias_directive("with", "handler")
+Scrapple.alias_directive("in",   "handler")

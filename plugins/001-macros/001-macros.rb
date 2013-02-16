@@ -25,7 +25,7 @@ class ExpandMacros
       @page = page
 
       @allowed_macros = case page['macros']
-                        when /^(false|no|none)/i
+                        when false, /^(false|no|none)/i
                           []
                         when String
                           page['macros'].split(',').map(&:strip)
@@ -54,7 +54,7 @@ class ExpandMacros
       if allowed?(macro_name)
         @page.instance_eval(unescape_html(code)).to_s
       else
-        macro_brackets
+        [[code]]
       end
     rescue Exception => e
       str = "(Sorry, couldn't expand macro [[#{unescape_html(code)}]]: #{e.class.name}: #{e.message})"

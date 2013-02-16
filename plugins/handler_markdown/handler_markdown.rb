@@ -5,6 +5,9 @@ module HandlerMarkdown
       %w(md mkd markdown mdown).include? type
     end
 
+    def priority
+      1000
+    end
 
     def handle(page)
       options = {

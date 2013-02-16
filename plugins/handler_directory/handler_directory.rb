@@ -6,6 +6,11 @@ class HandlerDirectory
     end
 
 
+    def priority
+      1000
+    end
+
+
     def handle(page)
       depth = page['directory_handler']['depth'] || 2 rescue 2
       body = "<h1>" + (page['title'] || File.basename(page.fullpath)) + "</h1>\n"

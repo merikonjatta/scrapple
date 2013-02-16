@@ -9,7 +9,7 @@ module Scrapple
 
   class Webapp < Sinatra::Base
 
-    get %r{(.*)/(as|with)/(.+)} do |path, dummy, handler|
+    get %r{(.*)/(as|with|in)/(.+)} do |path, dummy, handler|
       params['path'] = path
       params['handler'] = handler
       for_path(path)
@@ -18,6 +18,10 @@ module Scrapple
 
     get '/*' do |path|
       for_path(path)
+    end
+
+    post '/*' do |path|
+      "noop"
     end
 
 

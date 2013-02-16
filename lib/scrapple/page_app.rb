@@ -47,7 +47,7 @@ module Scrapple
       specified = self.class.handlers[@params['handler'] || @page['handler']]
       return specified unless specified.nil?
 
-      (name, mod) = self.class.handlers.find { |name, mod| mod.can_handle? @page.type }
+      mod = self.class.handlers.values.select { |mod| mod.can_handle? @page.type }.sort { |a,b| a.priority <=> b.priority }.reverse.first
 
       return mod
     end
