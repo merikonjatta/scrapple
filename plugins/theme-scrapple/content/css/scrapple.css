@@ -1,7 +1,7 @@
 body {
   margin: 10px;
   font-family: "Kefa", "Palatino Linotype";
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.5;
   color: #333333;
   background: #f4f5ee; }
@@ -46,8 +46,20 @@ body {
 .footer {
   margin-top: 20px;
   padding: 0px 10px;
-  font-size: 12.8px;
+  font-size: 12px;
   color: #999; }
+
+a:link {
+  color: #2A86BB;
+  text-decoration: none; }
+
+a:visited {
+  color: #5C7192;
+  text-decoration: none; }
+
+a:hover {
+  color: #4CACE4;
+  text-decoration: underline; }
 
 h1 {
   margin: 0px 0px;
@@ -56,22 +68,38 @@ h1 {
 ul.breadcrumb {
   margin: 0px;
   padding: 0px;
+  display: inline-block;
   list-style: none;
   background: none;
-  font-size: 12.8px;
+  font-size: 12.75px;
   color: #999; }
 
 ul.breadcrumb li {
-  margin: 0px 5px 0px 0px;
+  margin: 0px 3px 0px 0px;
   padding: 0px;
+  display: inline-block;
+  list-style: none; }
+
+ul.action-links {
+  margin: 0px;
+  padding: 0px;
+  display: inline-block;
   list-style: none;
-  display: inline-block; }
+  background: none;
+  font-size: 12.75px;
+  color: #999; }
+
+ul.action-links li {
+  margin: 0px 0px 0px 5px;
+  padding: 0px;
+  display: inline-block;
+  list-style: none; }
 
 .button {
   display: inline-block;
   margin: 0px;
   padding: 4px 12px;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.5;
   font-family: "Kefa", "Palatino Linotype";
   text-align: center;

@@ -105,6 +105,12 @@ module Scrapple
     end
 
 
+    # Write given contents to file. No-op unless this file is in the main content dir.
+    def write(content)
+      return if self.root != FileLookup.roots.first
+      File.open(self.fullpath, 'w') { |f| f.write(content) }
+    end
+
     # Get variables from settings
     def [](key)
       @settings[key]

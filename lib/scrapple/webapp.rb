@@ -20,8 +20,12 @@ module Scrapple
       for_path(path)
     end
 
-    post '/*' do |path|
-      "noop"
+    post '/' do
+      if FileLookup.parent_root(params['fullpath']) == FileLookup.roots.first
+        page = Page.for(params['fullpath'])
+        page.write(params['content']);
+        redirect to(page.path)
+      end
     end
 
 

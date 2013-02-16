@@ -74,7 +74,7 @@ $(document).ready(function(){
             "c219" : 'toNormalMode' // C-[
         },
         'normal': {
-            "73"  : 'toInsertMode', // i
+            "c83" : 'save',  // C-s
             "s73" : 'movetoLineStart toInsertMode', // I
             "s65" : 'movetoLineEnd toInsertMode', // A
             "79"  : 'movetoLineEnd insertNewline toInsertMode', // o
@@ -93,6 +93,7 @@ $(document).ready(function(){
             "68"  : { "68" : 'deleteLine' }, // dd
             "80"  : 'paste', // p
             "s80" : 'pasteBefore', // P
+            "73"  : 'toInsertMode', // i
             "86"  : 'toVisualMode', // v
             "9"   : 'debug' // TAB
         },
@@ -114,7 +115,7 @@ $(document).ready(function(){
         if (e.shiftKey) { expr += "s"; }
         if (e.ctrlKey) { expr += "c"; }
         expr += e.which;
-        console.log(expr);
+        //console.log(expr);
         return expr;
     }
 
@@ -170,7 +171,6 @@ $(document).ready(function(){
     // You can't nest commands in command arguments.
     Vproto.run = function(line){
         var commands = compact(line.split(" "));
-        console.log(commands);
         var ret;
 
         for (var i in commands){
@@ -184,11 +184,8 @@ $(document).ready(function(){
                         args[j] = parseInt(args[j], 10);
                     }
                 }
-                console.log(cmd);
-                console.log(args);
                 ret = this[cmd].apply(this, args);
             } else {
-                console.log(cmd);
                 ret = this[cmd].apply(this);
             }
         }
@@ -214,7 +211,7 @@ $(document).ready(function(){
         },
         toNormalMode: function() { this.toMode("normal"); },
         toInsertMode: function() { this.toMode("insert"); },
-        toVisualMode: function() { this.toMode("visual"); },
+        toVisualMode: function() { this.toMode("visual"); }
     };
     $.extend(Vproto, VprotoModeSwitching);
 

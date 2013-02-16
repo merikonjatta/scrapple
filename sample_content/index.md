@@ -3,6 +3,7 @@ title: Top
 Hello! Welcome to my Scrapple
 =============================
 
+Scrapple is a file-based CMS.
 This is the index page.
 
 ![Trainyard](trainyard.jpg)

@@ -10,6 +10,7 @@
   %body( class="editor" )
     .container
       .maincol
-        %form(action="#" method="post")
-          %textarea#content(name=content)= self['editing_content']
+        %form(action="/" method="post")
+          %input(type="hidden" name="fullpath" value="#{self.fullpath}")
+          %textarea#content(name="content")= self['editing_content']
           %input(type="submit" value="Save" class="button")

@@ -54,7 +54,7 @@ class ExpandMacros
       if allowed?(macro_name)
         @page.instance_eval(unescape_html(code)).to_s
       else
-        [[code]]
+        "[[#{code}]]"
       end
     rescue Exception => e
       str = "(Sorry, couldn't expand macro [[#{unescape_html(code)}]]: #{e.class.name}: #{e.message})"

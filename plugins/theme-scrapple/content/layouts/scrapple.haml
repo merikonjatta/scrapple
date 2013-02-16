@@ -12,6 +12,10 @@
       .row
         .col.maincol
           = breadcrumbs
+          - if self.type != "directory"
+            %ul.action-links
+              %li
+                %a(href="in/editor") Edit
           = yield
         .col.subcol
           = index
