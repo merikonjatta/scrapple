@@ -88,7 +88,6 @@ $(document).ready(function(){
             "80"  : 'paste', // p
             "s80" : 'pasteBefore', // P
             "86"  : 'toVisualMode', // v
-            "s86" : 'toVisualLineMode', // V
             "9"   : 'debug' // TAB
         },
         'visual' : {
@@ -96,13 +95,6 @@ $(document).ready(function(){
             "74" : 'moveVert(1)', // j
             "75" : 'moveVert(-1)', // k
             "76" : 'moveInLine(1)', // l
-            "s86"  : 'toVisualLineMode', // V
-            "27"   : 'toNormalMode', // ESC
-            "c219" : 'toNormalMode' // C-[
-        },
-        'visualline' : {
-            "74"   : 'moveVert(1)', // j
-            "75"   : 'moveVert(-1)', // k
             "27"   : 'toNormalMode', // ESC
             "c219" : 'toNormalMode' // C-[
         }
@@ -209,14 +201,14 @@ $(document).ready(function(){
             if (this.mode == "normal" || this.mode == "insert") {
                 this.moveto(this.pos());
             }
-            if (this.mode == "visual" || this.mode == "visualline") {
+            if (this.mode == "visual") {
                 this.vanchor = this.pos();
+                this.vupdate();
             }
         },
         toNormalMode: function() { this.toMode("normal"); },
         toInsertMode: function() { this.toMode("insert"); },
         toVisualMode: function() { this.toMode("visual"); },
-        toVisualLineMode: function() { this.toMode("visualline"); }
     };
     $.extend(Vproto, VprotoModeSwitching);
 
@@ -257,19 +249,29 @@ $(document).ready(function(){
         },
 
         pos: function(){
-            return this.$a.prop('selectionEnd');
+            if (this.mode == "normal" || this.mode=="insert") {
+                return this.$a.prop('selectionEnd');
+            } else {
+                if (this.$a.prop('selectionStart') == this.vanchor){
+                    return this.$a.prop('selectionEnd');
+                } else {
+                    return this.$a.prop('selectionStart');
+                }
+            }
         },
 
         col: function(){
             return this.pos() - this.lineStart();
         },
 
-        textBefore : function() {
-            return this.substring(0, this.pos());
+        textBefore : function(pos) {
+            if (pos===undefined) { pos = this.pos(); }
+            return this.substring(0, pos);
         },
 
-        textAfter : function() {
-            return this.substring(this.pos());
+        textAfter : function(pos) {
+            if (pos===undefined) { pos = this.pos(); }
+            return this.substring(pos);
         },
 
         textLength: function(){
@@ -277,21 +279,25 @@ $(document).ready(function(){
         },
 
         charAt: function(pos){
+            if (pos===undefined) { pos = this.pos(); }
             return this.val().charAt(pos);
         },
 
-        lineStart : function() {
-            return this.textBefore().lastIndexOf("\n") + 1;
+        lineStart : function(pos) {
+            if (pos===undefined) { pos = this.pos(); }
+            return this.textBefore(pos).lastIndexOf("\n") + 1;
         },
 
-        lineEnd : function() {
-            var index = this.textAfter().indexOf("\n");
+        lineEnd : function(pos) {
+            if (pos===undefined) { pos = this.pos(); }
+            var index = this.textAfter(pos).indexOf("\n");
             if (index === -1) { index = this.textLength(); }
-            return this.pos() + index;
+            return pos + index;
         },
 
-        lineLength : function() {
-            return this.lineEnd() - this.lineStart();
+        lineLength : function(pos) {
+            if (pos===undefined) { pos = this.pos(); }
+            return this.lineEnd(pos) - this.lineStart(pos);
         }
     };
     $.extend(Vproto, VprotoTextAccess);
@@ -548,11 +554,9 @@ $(document).ready(function(){
         css += '    .vimarea-wrap.insert     textarea { background: #FFFFFF; color: $baseFontColor; }';
         css += '    .vimarea-wrap.normal     textarea { background: #F9F9F9; color: $baseFontColor; }';
         css += '    .vimarea-wrap.visual     textarea { background: #F9F9F9; color: $baseFontColor; }';
-        css += '    .vimarea-wrap.visualline textarea { background: #F9F9F9; color: $baseFontColor; }';
         css += '    .vimarea-wrap.insert     .vimarea-modedisplay { background: #999999; color: #FFF; }';
         css += '    .vimarea-wrap.normal     .vimarea-modedisplay { background: #694A4A; color: #FFF; }';
         css += '    .vimarea-wrap.visual     .vimarea-modedisplay { background: #576949; color: #FFF; }';
-        css += '    .vimarea-wrap.visualline .vimarea-modedisplay { background: #576949; color: #FFF; }';
         css += '</style>';
         this.$css = $(css);
         this.$css.appendTo($('head'));
