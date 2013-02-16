@@ -80,7 +80,8 @@ $(document).ready(function(){
             "71"  : { "71" : 'movetoStart' },  // gg
             "s71" : 'movetoEnd', // G
             "68"  : { "68" : 'deleteLine' }, // dd
-            "80"  : 'paste', // G
+            "80"  : 'paste', // p
+            "s80"  : 'pasteBefore', // P
             "9"   : 'debug' // TAB
         }
     };
@@ -261,7 +262,9 @@ $(document).ready(function(){
         },
 
         lineEnd : function() {
-            return this.pos() + this.textAfter().indexOf("\n");
+            var index = this.textAfter().indexOf("\n");
+            if (index === -1) { index = this.textLength(); }
+            return this.pos() + index;
         },
 
         lineLength : function() {
@@ -374,14 +377,19 @@ $(document).ready(function(){
             newtext    += this.substring(end);
             this.val(newtext);
             this.reg('"', yank);
+            this.moveto(start);
         },
 
         deleteLine: function(){
             var start = this.lineStart();
             var end = this.lineEnd()+1;
             var col = this.col();
+
+            if (this.charAt(this.lineEnd()) === "") {
+                this.movetoLineEnd();
+                this.insertNewline();
+            }
             this.deleteText(start, end);
-            this.moveto(start);
             this.move(Math.min(col, this.lineLength()));
         },
 
@@ -408,11 +416,29 @@ $(document).ready(function(){
             var reg = this.reg(regname);
             if (reg.charAt(reg.length-1) == "\n"){
                 this.movetoLineEnd();
+                if (this.charAt(this.pos()) === ""){
+                    this.insertNewline();
+                    this.insertText(reg.substring(0, reg.length-1));
+                } else {
+                    this.move(1);
+                    this.insertText(reg);
+                    this.move(-1);
+                }
+            } else {
                 this.move(1);
+                this.insertText(reg);
+            }
+        },
+
+        pasteBefore: function(regname) {
+            if (regname === undefined) { regname = '"'; }
+            var reg = this.reg(regname);
+
+            if (reg.charAt(reg.length-1) == "\n"){
+                this.movetoLineStart();
                 this.insertText(reg);
                 this.move(-1);
             } else {
-                this.move(1);
                 this.insertText(reg);
             }
         }
