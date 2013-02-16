@@ -1,13 +1,8 @@
 class HandlerDirectory
   class << self
 
-    def can_handle?(type)
-      type == "directory"
-    end
-
-
-    def priority
-      1000
+    def confidence(page)
+      page.type == "directory" ? 1000 : 0
     end
 
 

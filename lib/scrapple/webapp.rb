@@ -17,7 +17,7 @@ module Scrapple
 
 
     get '/*' do |path|
-      for_path(path)
+      for_path(CGI.unescape(path))
     end
 
     post '/' do

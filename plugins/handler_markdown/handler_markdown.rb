@@ -1,8 +1,12 @@
 module HandlerMarkdown
   class << self
 
-    def can_handle?(type)
-      %w(md mkd markdown mdown).include? type
+    def confidence(page)
+      if %w(md mkd markdown mdown).include?(page.type)
+        1000
+      else
+        0
+      end
     end
 
     def priority

@@ -47,7 +47,7 @@ module Scrapple
       specified = self.class.handlers[@params['handler'] || @page['handler']]
       return specified unless specified.nil?
 
-      mod = self.class.handlers.values.select { |mod| mod.can_handle? @page.type }.sort { |a,b| a.priority <=> b.priority }.reverse.first
+      mod = self.class.handlers.values.sort { |a,b| a.confidence(page) <=> b.confidence(page) }.reverse.first
 
       return mod
     end

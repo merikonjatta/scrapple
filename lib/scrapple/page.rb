@@ -31,6 +31,9 @@ module Scrapple
     # Type of this Page. The extension, or "directory"
     attr_accessor :type
 
+    # The relative path to be used for links.
+    attr_accessor :link
+
     # The content body of the file this page represents.
     # Does not include the directives section.
     # @return [String]
@@ -71,6 +74,7 @@ module Scrapple
         page.root = root
         page.fullpath = fullpath
         page.type = type
+        page.link = path.split("/").map{|comp| CGI.escape(comp)}.join("/")
         page.ignore_settings_files = options[:ignore_settings_files]
       end
 

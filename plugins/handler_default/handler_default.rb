@@ -1,13 +1,14 @@
 module HandlerDefault
   class << self
 
-    def can_handle?(type)
-      (Tilt.mappings.keys - %w(markdown md mkd)).include? type
+    def confidence(page)
+      if (Tilt.mappings.keys - %w(markdown md mkd)).include?(page.type)
+        1000
+      else
+        0
+      end
     end
 
-    def priority
-      1000
-    end
 
     def handle(page)
       ext = page.fullpath.sub(/^.*\./, '')

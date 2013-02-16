@@ -4,7 +4,10 @@ module MacroIndex
   def index(options = {})
     options = {
       :of => nil,
-      :depth => 1
+      :depth => 1,
+      :ignore_settings_files => true,
+      :ignore_index_files => false,
+      :index_files_at_top => true,
     }.merge!(options)
 
     # Start may be nil, relative, or absolute (against FileLookup.roots), or really absolute.
@@ -40,9 +43,20 @@ module MacroIndex
       }
     end
 
+    if options[:ignore_settings_files]
+      entries.reject! { |entry| entry[:fullpath] =~ /\/_settings\..+$/ }
+    end
+
+    if options[:ignore_index_files]
+      entries.reject! { |entry| entry[:fullpath] =~ /\/index\..+$/ }
+    end
+
     # Sort directories-first, then by name.
     # Got idea from http://stackoverflow.com/questions/3895148/in-ruby-how-do-you-list-sort-files-before-folders-in-a-directory-listing
     entries = entries.map {|en| [(en[:is_dir] ? "0/" : "1/")+en[:fullpath], en] }.sort.map {|schw| schw[1] }
+
+    if options[:index_files_at_top]
+    end
 
     html = "<ul class=\"index\">\n"
     entries.each do |entry|
@@ -50,12 +64,13 @@ module MacroIndex
       html << "active " if entry[:fullpath] == self.fullpath
       html << (entry[:is_dir] ? "directory" : "file")
       html << "\"><a href=\""
-      html << entry[:page].path
+      html << entry[:page].link
       html << "\">"
       html << (entry[:page]['title'] || File.basename(entry[:fullpath]))
       html << "</a>"
       if entry[:is_dir] && options[:depth] > 1
-        html << index(:of => entry[:fullpath], :depth => options[:depth]-1)
+        recurse_options = options.merge(:of => entry[:fullpath], :depth => options[:depth] -1)
+        html << index(recurse_options)
       end
       html << "</li>\n"
     end

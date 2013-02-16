@@ -1,12 +1,12 @@
 class HandlerEditor
   class << self
 
-    def can_handle?(type)
-      type != "directory"
-    end
-
-    def priority
-      0
+    def confidence(page)
+      if page.type != "directory"
+        100
+      else
+        0
+      end
     end
 
 
