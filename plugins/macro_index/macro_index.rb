@@ -4,12 +4,14 @@ module MacroIndex
 	# @param options [Hash]
 	# @option [Page, String] :of            (self) Starting point, either a Page or a path
 	# @option [Number] :depth               (1)    How deep?
+	# @option [Bool] :trailing_slash        (1)    Add trailing slashes after directory names whose contents were not listed
 	# @option [Bool] :ignore_settings_files (true) Do not list _settings.txt files
 	# @option [Array, Page, String] :ignore ([])   Do not list these pages.
   def index(options = {})
     options = {
       :of => self,
       :depth => 1,
+			:trailing_slash => true,
       :ignore_settings_files => true,
       :ignore => []
     }.merge!(options)
@@ -50,7 +52,7 @@ module MacroIndex
 					recurse_options = options.merge(:of => page, :depth => options[:depth]-1, :ignore => page)
 					html << index(recurse_options)
 				else
-					html << "<span class=\"trailing_slash\">/</span>"
+					html << "<span class=\"trailing_slash\">/</span>" if options[:trailing_slash]
 					html << "</a>"
 				end
 			else

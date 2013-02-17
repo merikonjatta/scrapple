@@ -20,6 +20,6 @@
                 %a(href="#{self.path}/as/code") Code
           = yield
         .col.subcol
-          = index
+          = index(:trailing_slash => false)
       .footer
         Powered by Scrapple

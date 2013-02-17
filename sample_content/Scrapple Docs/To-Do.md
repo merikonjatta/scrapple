@@ -3,6 +3,7 @@ Scrapple To-Do
 
 * Document plugin dependencies
 * options for markdown handler
+* 日本語ファイル名が化けたり化けなかったりする
 * Running in subdirectory
 * Handler aliases
 * Page uses "root", FileLookup uses "base_path"
