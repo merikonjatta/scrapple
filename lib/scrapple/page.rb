@@ -180,7 +180,7 @@ module Scrapple
 					sortkey << page.fullpath
 					[sortkey, page]
 				end
-				sh.sort{|a,b| a.first <=> b.first }.map { |schw| schw[1] } rescue binding.pry
+				sh.sort{|a,b| a.first <=> b.first }.map { |schw| schw[1] }
 			else
 				pages.sort
 			end

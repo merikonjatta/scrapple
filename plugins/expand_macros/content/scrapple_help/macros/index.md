@@ -3,7 +3,8 @@ title: Using Macros
 Using macros
 ============
 
-Macros are short commands that you write in your page content.
+Macros are short commands you can write in your page content that will
+expand into something useful.
 
 A quick example would be
 
@@ -18,7 +19,8 @@ they will be executed.
 
 Will result in: [[Time.now]]
 
-Be aware that you could destroy your computer using this.
+Whether or not macros will be expanded depends on which [handler](/scrapple_help/handlers)
+rendered the page. The "default" and "markdown" handlers do support macros.
 
 List of known macros
 --------------------
@@ -26,8 +28,8 @@ List of known macros
 [[index :of => "."]]
 
 
-Macro settings
---------------
+Disabling macros
+----------------
 
 You can limit what macros may be expanded.  In your `_settings.txt` file, put
 

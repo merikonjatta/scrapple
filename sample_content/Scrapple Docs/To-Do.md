@@ -2,6 +2,8 @@ Scrapple To-Do
 ==============
 
 * Maybe macros should be expanded as a PageApp after_render hook
+* Include macro
+* Plugins should be namespaced
 * Document plugin dependencies
 * options for markdown handler
 * 日本語ファイル名が化けたり化けなかったりする

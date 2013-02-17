@@ -14,7 +14,7 @@ module HandlerDefault
       ext = page.fullpath.sub(/^.*\./, '')
       engine = Tilt[ext]
 
-      body = engine.new(engine_options(ext)){ page.content }.render(page)
+      body = engine.new(engine_options(ext)){ page.expand_macros.content }.render(page)
       headers = {'Content-Type' => content_type_for(ext) }
 
       return [200, headers, [body]]

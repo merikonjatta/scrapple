@@ -67,7 +67,4 @@ module MacroIndex
   end
 end
 
-
-class Scrapple::Page
-  include MacroIndex
-end
+Scrapple::Page.send(:include, MacroIndex)

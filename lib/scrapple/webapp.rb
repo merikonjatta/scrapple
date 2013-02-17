@@ -3,7 +3,6 @@ require 'pathname'
 require 'syck'
 require 'yaml'
 require 'active_support/core_ext'
-require 'pry'
 
 module Scrapple
 
