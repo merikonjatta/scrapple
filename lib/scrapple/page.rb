@@ -164,8 +164,11 @@ module Scrapple
 			options[:ignore].map! { |ig| ig.is_a?(Page) ? ig : Page.for(ig) }
 
 			base = (type == "directory") ? fullpath : File.dirname(fullpath)
+
 			pages = Dir[base + "/*"].reject { |entry|
-				entry =~ /\/index\..+$/ || options[:ignore].include?(entry)
+				entry =~ /\/index\..+$/ ||
+					options[:ignore].include?(entry) ||
+					options[:ignore_settings_files] && entry =~ /\/_settings\..+$/
 			}.map { |entry| Page.for(entry, :fetch => true, :ignore_settings_files => true) }.compact
 
 			if options[:directories_first]

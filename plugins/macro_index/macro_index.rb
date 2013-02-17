@@ -34,6 +34,8 @@ module MacroIndex
 			start = Scrapple::Page.for(start)
 		end
 
+		return Rack::Utils.escape_html("index: #{options[:of]} doesn't exist") if start.nil?
+
     # Now find its entries...
 		pages = start.children(options.select { |k,v| [:ignore, :ignore_settings_files].include? k }) 
 

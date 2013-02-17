@@ -24,6 +24,17 @@ module HandlerMarkdown
         :hard_wrap => true
       }
 
+			if page['markdown'].is_a? Hash
+				options_from_page = page['markdown'].inject({}) do |result, (key, value)|
+					case key
+					when "hardwrap"
+						renderer_options[:hard_wrap] = value
+					else
+						options[key.to_sym] = value
+					end
+				end
+			end
+
       renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(renderer_options), options)
       body = renderer.render(page.content)
       headers = {"Content-Type" => "text/html"}

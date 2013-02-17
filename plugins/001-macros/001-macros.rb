@@ -39,9 +39,12 @@ class ExpandMacros
     # @param body [String]
     # @return [String]
     def expand_macros(body)
-      body.gsub(/\[\[(.*?)\]\]/) do |macro_brackets|
-        code = macro_brackets[2...-2].strip
-        expand_macro(code)
+      body.gsub(/(.?)\[\[(.*?)\]\]/) do
+				if $1 == "\\"
+					"[[#{$2}]]"
+				else
+					$1 + expand_macro($2)
+				end
       end
     end
 
