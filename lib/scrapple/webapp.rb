@@ -16,7 +16,6 @@ module Scrapple
 			relroot = setng["relative_url_root"] || "/"
 			set :relative_url_root, relroot.sub(/^[^\/]/, '/\0').sub(/\/$/, '')
 		end
-		
 
 		# A get route with handler specified
     get %r{(.*)/(as|with|in)/(.+)} do |path, dummy, handler|
@@ -42,7 +41,7 @@ module Scrapple
 
     def for_path(path = '')
       page = Page.for(path, :fetch => true)
-      raise Sinatra::NotFound if page.nil?
+      pass if page.nil?
 
       # Call PageApp
       env['scrapple.page'] = page

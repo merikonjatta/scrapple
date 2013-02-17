@@ -10,17 +10,22 @@ module Scrapple::Plugins
 
 
 		def call(env)
-			status, headers, body = @app.call(env)
+			response = @app.call(env)
 
 			# Only for text/html
-			return [status, headers, body] unless headers['Content-Type'] =~ %r{text/html}
+			return response unless response[1]['Content-Type'] =~ %r{text/html}
+			# Some middleware (notably OmniAuth::Strategies::Twitter) return response
+			# that don't respond to join!
+			return response unless response[2].respond_to? :join
 			# Avoid wrapping html in html (this might not work if the given "html" is badly malformed)
-			return [status, headers, body] if looks_like_html?(body.join)
+			return response if looks_like_html?(response.last.join)
 
 			page = env['scrapple.page']
-			new_content = wrap_in_layout(page, body.join)
+			return response if page.nil?
 
-			return [status, headers, [new_content]]
+			new_content = wrap_in_layout(page, response.last.join)
+
+			return [response[0], response[1], [new_content]]
 		end
 
 		
@@ -70,10 +75,10 @@ module Scrapple::Plugins
 
 		# Determine if a string looks like an html document.
 		def looks_like_html?(string)
-			[/\<html/i, /\<head/i, /\<body/i].all? { |regexp| string =~ regexp }
+			string =~ /\<html.*\>.*\<head.*\>.*\<body/im
 		end
 	end
 
 
-	Scrapple.insert_middleware_before(Scrapple::PageApp, Layout)
+	Scrapple.middleware_stack.insert_before(Scrapple::PageApp, Layout)
 end

@@ -10,4 +10,4 @@ writable:
   - ryan
 
 markdown:
-  hardwrap: false
+  hard_wrap: false

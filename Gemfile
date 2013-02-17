@@ -1,11 +1,10 @@
 source :rubygems
 
-gem 'sinatra',         '~>1.3', :require => 'sinatra/base'
-gem 'sinatra-contrib', '~>1.3'
+gem 'sinatra',         '~>1.0', :require => 'sinatra/base'
+gem 'sinatra-contrib', '~>1.0'
 gem 'activerecord',    '~>3.2.0'
 gem 'activesupport',   '~>3.2.0'
 gem 'sqlite3'
-gem 'warden',          '~>1.1'
 
 group :development do
   gem 'yard'

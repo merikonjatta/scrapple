@@ -2,7 +2,7 @@ body {
   margin: 10px;
   font-family: "Kefa", "Palatino Linotype";
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: #333333;
   background: #f4f5ee; }
 
@@ -135,7 +135,7 @@ blockquote {
   margin: 0px;
   padding: 4px 12px;
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.6;
   font-family: "Kefa", "Palatino Linotype";
   text-align: center;
   cursor: pointer;

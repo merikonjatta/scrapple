@@ -1,4 +1,3 @@
-source :rubygems
 gem 'tilt'
 gem 'redcarpet'
 gem 'haml'

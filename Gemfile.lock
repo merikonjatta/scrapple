@@ -1,8 +1,5 @@
 GEM
   remote: http://rubygems.org/
-  remote: http://rubygems.org/
-  remote: http://rubygems.org/
-  remote: http://rubygems.org/
   specs:
     RedCloth (4.2.9)
     activemodel (3.2.2)
@@ -23,11 +20,21 @@ GEM
     coderay (1.0.8)
     eventmachine (0.12.10)
     haml (3.1.7)
+    hashie (1.2.0)
     i18n (0.6.0)
     json (1.7.6)
     method_source (0.8.1)
     minitest (4.5.0)
     multi_json (1.1.0)
+    oauth (0.4.7)
+    omniauth (1.1.3)
+      hashie (~> 1.2)
+      rack
+    omniauth-oauth (1.0.1)
+      oauth
+      omniauth (~> 1.0)
+    omniauth-twitter (0.0.9)
+      omniauth-oauth (~> 1.0)
     pry (0.9.10)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
@@ -62,8 +69,6 @@ GEM
     tilt (1.3.3)
     tzinfo (0.3.32)
     unindent (1.0)
-    warden (1.1.1)
-      rack (>= 1.0)
     yard (0.8.3)
 
 PLATFORMS
@@ -75,6 +80,8 @@ DEPENDENCIES
   activesupport (~> 3.2.0)
   haml
   minitest
+  omniauth (~> 1.0)
+  omniauth-twitter
   pry (= 0.9.10)
   pry-stack_explorer
   rake
@@ -82,10 +89,9 @@ DEPENDENCIES
   redcarpet
   sass
   shotgun
-  sinatra (~> 1.3)
-  sinatra-contrib (~> 1.3)
+  sinatra (~> 1.0)
+  sinatra-contrib (~> 1.0)
   sqlite3
   tilt
   unindent
-  warden (~> 1.1)
   yard
