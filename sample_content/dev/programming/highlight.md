@@ -16,7 +16,3 @@ ul.action-links    { margin:0px; padding:0px; display:inline-block; list-style:n
 ul.action-links li { margin:0px 0px 0px 5px; padding:0px; display:inline-block; list-style:none; }
 ul.action-links    { a:link, a:visited { color: $linkColor; } }
 ```
-
-Hard
-Wrap
-Text
