@@ -1,8 +1,7 @@
 Scrapple To-Do
 ==============
 
-* Maybe macros should be expanded as a PageApp after_render hook
-* Include macro
+* Find pages across roots
 * Plugins should be namespaced
 * Document plugin dependencies
 * options for markdown handler
@@ -26,3 +25,5 @@ Scrapple To-Do
 
 * Think about caching
 * EUC-JP and SJIS
+
+[[include "/remindme.md"]]
