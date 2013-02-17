@@ -1,7 +1,7 @@
 Scrapple To-Do
 ==============
 
-* Edit handler
+* Document plugin dependencies
 * Running in subdirectory
 * Handler aliases
 * Page uses "root", FileLookup uses "base_path"

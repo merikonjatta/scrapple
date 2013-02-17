@@ -57,11 +57,13 @@ class ExpandMacros
         "[[#{code}]]"
       end
     rescue Exception => e
-      str = "(Sorry, couldn't expand macro [[#{unescape_html(code)}]]: #{e.class.name}: #{e.message})"
+      str = "Sorry, couldn't expand macro [[#{unescape_html(code)}]]:\n"
+			str << "#{e.class.name}: #{e.message}\n at #{e.backtrace[1]})"
       if @page['macro_debug']
+				str << "\nBacktrace: "
         str << e.backtrace.join("\n")
       end
-      Rack::Utils.escape_html(str)
+      "<pre>" + Rack::Utils.escape_html(str) + "</pre>"
     end
 
 

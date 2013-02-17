@@ -7,7 +7,7 @@ class HandlerDirectory
 
 
     def handle(page)
-      depth = page['directory_handler']['depth'] || 2 rescue 2
+      depth = page['directory_handler']['depth'] || 3 rescue 3
       body = "<h1>" + (page['title'] || File.basename(page.fullpath)) + "</h1>\n"
       body << page.index(:depth => depth)
       [200, {"Content-Type" => "text/html"}, [body]]

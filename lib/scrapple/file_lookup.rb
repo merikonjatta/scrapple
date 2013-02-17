@@ -111,7 +111,7 @@ module Scrapple
 
         found << find_in_root(file, look_in)
 
-        if look_in != root
+        if relative_path(look_in, root) != "."
           look_in = File.dirname(look_in)
           found += find_all_ascending(file, look_in)
         end

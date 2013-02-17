@@ -1,0 +1,25 @@
+#! /usr/bin/env ruby
+# vim ft=ruby
+
+if File.expand_path($0) == File.expand_path(__FILE__)
+	require 'bundler'
+	Bundler.require
+	require File.expand_path('../../lib/scrapple', __FILE__)
+
+	case ARGV[0]
+	when "c", "console"
+		Bundler.require(:development)
+		Scrapple.pry
+	when "s", "server"
+		# TODO How do I boot rackup or shotgun?
+	when "help", "--help"
+		puts <<-EOF
+Usage:
+	scrapple console # (alias: c) Boot pry in Scrapple module scope
+	scrapple server  # (alias: s) Boot server
+
+	Specify directories with environment variables:
+	CONTENT_DIR=<content_dir> PLUGINS_DIR=<plugins_dir>
+		EOF
+	end
+end

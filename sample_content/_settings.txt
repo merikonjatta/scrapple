@@ -1,5 +1,8 @@
+macro_debug: on
 readable: public
 writable:
   - marco
   - kitar
   - ryan
+markdown:
+  hardwrap: false

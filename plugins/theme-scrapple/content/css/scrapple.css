@@ -65,7 +65,7 @@ h1 {
   margin: 0px 0px;
   border-bottom: 1px solid #d5d9be; }
 
-ul.breadcrumb {
+ul.breadcrumb, ul.action-links {
   margin: 0px;
   padding: 0px;
   display: inline-block;
@@ -73,33 +73,26 @@ ul.breadcrumb {
   background: none;
   font-size: 12.75px;
   color: #999; }
-
-ul.breadcrumb li {
-  margin: 0px 3px 0px 0px;
-  padding: 0px;
-  display: inline-block;
-  list-style: none; }
-
-ul.breadcrumb a:link, ul.breadcrumb a:visited {
-  color: #2a86bb; }
+  ul.breadcrumb li, ul.action-links li {
+    margin: 0px 3px 0px 0px;
+    padding: 0px;
+    display: inline-block;
+    list-style: none; }
+  ul.breadcrumb a:link, ul.action-links a:link,
+  ul.breadcrumb a:visited,
+  ul.action-links a:visited {
+    color: #2a86bb; }
+  ul.breadcrumb a:hover, ul.action-links a:hover {
+    color: #4cace4;
+    text-decoration: none; }
 
 ul.action-links {
-  margin: 0px;
-  padding: 0px;
-  display: inline-block;
-  list-style: none;
-  background: none;
-  font-size: 12.75px;
-  color: #999; }
-
-ul.action-links li {
-  margin: 0px 0px 0px 5px;
-  padding: 0px;
-  display: inline-block;
-  list-style: none; }
-
-ul.action-links a:link, ul.action-links a:visited {
-  color: #2a86bb; }
+  margin: 0px 0px 0px 7px;
+  border-left: 1px solid #cccccc; }
+  ul.action-links li {
+    margin: 0px 15px 0px 0px; }
+  ul.action-links li:first-child {
+    margin: 0px 15px 0px 13px; }
 
 pre, code {
   font-size: 12px;
@@ -114,9 +107,9 @@ pre {
   border-radius: 4px;
   background: #f6f6f6;
   overflow: auto;
-  -webkit-box-shadow: inset 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: inset 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
-  box-shadow: inset 0px 1px 2px 0px rgba(0, 0, 0, 0.1); }
+  -webkit-box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.1); }
 
 .button {
   display: inline-block;
