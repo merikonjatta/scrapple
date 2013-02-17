@@ -14,17 +14,20 @@ module Scrapple::Plugins
 
 			# Only for text/html
 			return response unless response[1]['Content-Type'] =~ %r{text/html}
-			# Some middleware (notably OmniAuth::Strategies::Twitter) return response
-			# that don't respond to join!
-			return response unless response[2].respond_to? :join
-			# Avoid wrapping html in html (this might not work if the given "html" is badly malformed)
-			return response if looks_like_html?(response.last.join)
 
+			body = ""
+			response.last.each { |part| body << part }
+			return response if body.empty?
+
+			# Avoid wrapping html in html (this might not work if the given "html" is badly malformed)
+			return response if looks_like_html?(body)
+
+			# Some requests may not even be a page
+			# TODO support non-page requests
 			page = env['scrapple.page']
 			return response if page.nil?
 
-			new_content = wrap_in_layout(page, response.last.join)
-
+			new_content = wrap_in_layout(page, body)
 			return [response[0], response[1], [new_content]]
 		end
 

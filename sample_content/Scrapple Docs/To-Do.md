@@ -1,6 +1,8 @@
 Scrapple To-Do
 ==============
 
+* Stop relying on body.each
+* Remove settings parsing section from webapp.rb
 * Support slim
 * Support layout for non-page requests
 * Edit new files
