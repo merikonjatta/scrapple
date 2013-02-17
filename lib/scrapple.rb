@@ -1,5 +1,10 @@
 require 'bundler'
 Bundler.require(:default, :development)
+require 'pathname'
+require 'syck'
+require 'yaml'
+require 'active_support/core_ext'
+
 
 module Scrapple
   class HandlerNotFound < Exception; end
@@ -9,6 +14,7 @@ module Scrapple
 
   class << self
 
+		# Require necessary libs and add file lookup paths.
 		def setup
 			load_lib
 
@@ -16,13 +22,15 @@ module Scrapple
 			ENV['CONTENT_DIR'] ||= File.join(ROOT, "sample_content")
 			FileLookup.roots << ENV['CONTENT_DIR']
 
-			# If no plugins dir was specified, use the local directory
-			ENV['PLUGINS_DIR'] ||= File.join(ROOT, "plugins")
+			Scrapple::Webapp.setup
 
 			# Define some directive aliases up front
 			Scrapple::Settings.alias_key("as",   "handler")
 			Scrapple::Settings.alias_key("with", "handler")
 			Scrapple::Settings.alias_key("in",   "handler")
+
+			# If no plugins dir was specified, use the local directory
+			ENV['PLUGINS_DIR'] ||= File.join(ROOT, "plugins")
 
 			load_plugins
 		end

@@ -18,7 +18,7 @@ module Scrapple::Plugins
 			str = "<ul class=\"breadcrumb\">\n"
 			pages.uniq[0...-1].each do |page|
 				str << "<li><a href=\""
-				str << page.path
+				str << Scrapple::Webapp.relative_url_root + page.link
 				str << "\">"
 				str << ( page['title'] || File.basename(page.fullpath) )
 				str << "</a></li>\n"

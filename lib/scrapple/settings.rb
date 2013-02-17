@@ -82,6 +82,7 @@ module Scrapple
     # @option options [Bool] :dont_stop  (false) Treat the whole file as a set of directives,
     #                                    and just skip unappropriate lines instead of
     #                                    returning the rest as the body.
+		# @return [Array] [body, directives]
     def parse(io, options = {})
       options = {
         :dont_stop => false

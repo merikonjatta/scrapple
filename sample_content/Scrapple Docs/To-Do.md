@@ -1,11 +1,13 @@
 Scrapple To-Do
 ==============
 
-* Running in subdirectory
+* Support slim
 * 日本語ファイル名が化けたり化けなかったりする
-* Handler aliases
-* Page uses "root", FileLookup uses "base_path"
+* Make sure \[[ ... ]] macro syntax doesn't conflict with templating languages
+* self['key'] is kinda dull
 * Validate presence of content_dir (and plugin-dir?)
+* ymlでいいやん（Part 2)
+* Respond to write in json
 * Authentication
     * Should I use databases? (probably not)
 * Authorization
@@ -14,20 +16,22 @@ Scrapple To-Do
 * Find pages across roots
 * Write sass cache to temp dir
 * Document
-  * Plugin authoring
+    * How to write settings.txt
+    * Webapp config keys
+    * Plugin authoring
     * Kinds (Handler, Macro, mixin module, Rack middleware, hook, content)
-    * Namespacing
-    * Placement
-    * content dir
-    * Gemfiles
+        * Namespacing
+        * Placement
+        * content dir
+        * Gemfiles
 
 ----
 
 * Plugin: impress.js
 * Plugin: rak search
-
 ----
 
+* Handler aliases
 * Think about caching
 * EUC-JP and SJIS
 

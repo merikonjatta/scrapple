@@ -2,8 +2,10 @@
 
 %html
   %head
-    %title #{self['title']} - Scrapple in Layout
+    %title #{self['title'].try(:+, " - ")} #{self['site_name']}
     %link(rel="stylesheet" type="text/css" href="/css/scrapple.css")
+    - (self['stylesheets'] || []).each do |css|
+      %link(rel="stylesheet" type="text/css" href="#{css}")
     - (self['javascripts'] || []).each do |js|
       %script(type="text/javascript" src="#{js}")
 

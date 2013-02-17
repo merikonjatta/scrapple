@@ -79,15 +79,6 @@ module Scrapple
 
       instance = self.new do |page|
         page.fullpath    = fullpath
-				page.isindexfile = !!(fullpath =~ /(^|\/)index\..+$/)
-        page.root        = FileLookup.parent_root(fullpath)
-        page.path        = "/" + FileLookup.relative_path(fullpath, page.root)
-        page.link        = page.path.split("/").map{ |part| CGI.escape(part) }.join("/")
-        page.type        = if File.directory?(fullpath)
-														 "directory"
-													 else
-														 File.extname(fullpath)[1..-1] || File.basename(fullpath)
-													 end
         page.ignore_settings_files = options[:ignore_settings_files]
       end
 
@@ -103,6 +94,19 @@ module Scrapple
       @settings = Settings.new
       yield(self) if block_given?
 
+			if fullpath
+				@root        = FileLookup.parent_root(fullpath)
+				@path        = "/" + FileLookup.relative_path(fullpath, @root)
+        @link        = @path.split("/").map{ |part| CGI.escape(part) }.join("/")
+				@isindexfile = !!(fullpath =~ /(^|\/)index\..+$/)
+        @type        = if File.directory?(fullpath)
+												 "directory"
+											 else
+												 File.extname(fullpath)[1..-1] || File.basename(fullpath)
+											 end
+				self['title'] ||= File.basename(fullpath)
+			end
+
       call_hooks(:after_initialize)
     end
     
@@ -117,7 +121,7 @@ module Scrapple
         end
       end
 
-      @content = @settings.parse_and_merge(fullpath) unless self.type == "directory"
+      @content = @settings.parse_and_merge(fullpath) unless type == "directory"
 
       return self
     end
@@ -130,7 +134,7 @@ module Scrapple
       if self.root != FileLookup.roots.first
 				raise WriteRefused.new("Refusing to write #{fullpath} outside of #{FileLookup.roots.first}")
 			end
-      File.open(self.fullpath, 'w') { |f| f.write(content) }
+      File.open(fullpath, 'w') { |f| f.write(content) }
     end
 
 
