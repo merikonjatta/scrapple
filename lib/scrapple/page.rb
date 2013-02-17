@@ -97,7 +97,7 @@ module Scrapple
 			if fullpath
 				@root        = FileLookup.parent_root(fullpath)
 				@path        = "/" + FileLookup.relative_path(fullpath, @root)
-        @link        = @path.split("/").map{ |part| CGI.escape(part) }.join("/")
+        @link        = Scrapple::Webapp.relative_url_root + @path.split("/").map{ |part| CGI.escape(part) }.join("/")
 				@isindexfile = !!(fullpath =~ /(^|\/)index\..+$/)
         @type        = if File.directory?(fullpath)
 												 "directory"

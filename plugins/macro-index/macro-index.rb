@@ -46,7 +46,7 @@ module Scrapple::Plugins
 				html << "active " if page.fullpath == self.fullpath
 				html << (page.has_children? ? "directory" : "file")
 				html << "\"><a href=\""
-				html << (Scrapple::Webapp.relative_url_root + page.link)
+				html << page.link
 				html << "\">"
 				html << page['title']
 				if page.has_children?
