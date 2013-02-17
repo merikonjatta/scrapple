@@ -46,7 +46,7 @@ module Scrapple
     def normalize(hash)
       result = {}
       hash.each do |key, value|
-        key = Scrapple.resolve_directive_alias(key)
+        key = Settings.resolve_key_alias(key)
         result[key] = value
       end
       result

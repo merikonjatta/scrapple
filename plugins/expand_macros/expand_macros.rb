@@ -1,7 +1,7 @@
-# Class that handles macro expansions.
 
 module Scrapple::Plugins
 
+	# Mixin modules that handle macro expansions
 	module ExpandMacros
 
     # Expand all allowed macros in a body string.

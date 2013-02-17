@@ -5,10 +5,17 @@ module Scrapple
   # Hash-like data store for {Page}s that is also responsible for parsing directives.
   class Settings
 
+		@key_aliases = {}
 
-    @directive_aliases = {}
+		class << self
+			def alias_key(allass, to)
+				@key_aliases[allass] = to
+			end
 
-    class << self
+			def resolve_key_alias(allass)
+				@key_aliases[allass] || allass
+			end
+			
       def directive_regexp; /^(.*?):(.*)$/; end
     end
 
@@ -18,6 +25,7 @@ module Scrapple
       hash = hash.to_hash if hash.is_a? Settings
       @hash = hash
     end
+
 
     # Return the underlying hash. Not a copy, the hash itself.
     # If you mutate this, the Settings will reflect the changes.
@@ -132,7 +140,7 @@ module Scrapple
 
       hash.each do |key, value|
         key = key.strip.downcase
-        key = Scrapple.resolve_directive_alias(key)
+        key = resolve_key_alias(key)
         value = value.strip if value.is_a? String
         result[key] = value
       end

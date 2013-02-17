@@ -1,12 +1,8 @@
 Scrapple To-Do
 ==============
 
-* Find pages across roots
-* Plugins should be namespaced
-* Document plugin dependencies
-* options for markdown handler
-* 日本語ファイル名が化けたり化けなかったりする
 * Running in subdirectory
+* 日本語ファイル名が化けたり化けなかったりする
 * Handler aliases
 * Page uses "root", FileLookup uses "base_path"
 * Validate presence of content_dir (and plugin-dir?)
@@ -15,6 +11,15 @@ Scrapple To-Do
 * Authorization
 * Think of a way to test plugins
 * Some Rack::Tests
+* Find pages across roots
+* Write sass cache to temp dir
+* Document
+  * Plugin authoring
+    * Kinds (Handler, Macro, mixin module, Rack middleware, hook, content)
+    * Namespacing
+    * Placement
+    * content dir
+    * Gemfiles
 
 ----
 
