@@ -117,6 +117,9 @@ module Scrapple
 
       io.close rescue NoMethodError
       return [body, directives]
+		rescue ArgumentError => e
+			io.rewind
+			return [io.read, {}]
     end
 
 

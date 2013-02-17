@@ -94,6 +94,20 @@ ul.action-links {
   ul.action-links li:first-child {
     margin: 0px 15px 0px 13px; }
 
+ul.index {
+  margin: 1em 0px;
+  padding: 0px 0px 0px 10px;
+  list-style-position: inside; }
+  ul.index li {
+    margin: 0px;
+    padding: 0px; }
+  ul.index ul.index {
+    margin: 0px;
+    padding-left: 2.5em; }
+  ul.index span.trailing_slash {
+    padding-left: 3px;
+    color: #ccc; }
+
 pre, code {
   font-size: 12px;
   line-height: 1.3;

@@ -2,6 +2,7 @@ Scrapple To-Do
 ==============
 
 * Document plugin dependencies
+* options for markdown handler
 * Running in subdirectory
 * Handler aliases
 * Page uses "root", FileLookup uses "base_path"

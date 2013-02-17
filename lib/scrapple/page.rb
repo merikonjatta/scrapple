@@ -82,8 +82,12 @@ module Scrapple
 				page.isindexfile = !!(fullpath =~ /(^|\/)index\..+$/)
         page.root        = FileLookup.parent_root(fullpath)
         page.path        = "/" + FileLookup.relative_path(fullpath, page.root)
-        page.type        = File.directory?(fullpath) ? "directory" : File.extname(fullpath)[1..-1]
         page.link        = page.path.split("/").map{ |part| CGI.escape(part) }.join("/")
+        page.type        = if File.directory?(fullpath)
+														 "directory"
+													 else
+														 File.extname(fullpath)[1..-1] || File.basename(fullpath)
+													 end
         page.ignore_settings_files = options[:ignore_settings_files]
       end
 
@@ -167,12 +171,13 @@ module Scrapple
 			if options[:directories_first]
 				# Sort directories-first, then by name. (A Shwartzian transform)
 				# Got idea from bit.ly/d4UaMM
-				pages.map do |page|
+				sh = pages.map do |page|
 					sortkey = ""
 					sortkey << ((page.type == "directory" || page.indexfile?) ? "0/" : "1/")
 					sortkey << page.fullpath
 					[sortkey, page]
-				end.sort.map { |schw| schw[1] }
+				end
+				sh.sort{|a,b| a.first <=> b.first }.map { |schw| schw[1] } rescue binding.pry
 			else
 				pages.sort
 			end

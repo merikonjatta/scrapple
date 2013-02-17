@@ -39,15 +39,22 @@ module MacroIndex
     pages.each do |page|
       html << "<li class=\""
       html << "active " if page.fullpath == self.fullpath
-      html << (page.type=="directory" ? "directory" : "file")
+      html << (page.has_children? ? "directory" : "file")
       html << "\"><a href=\""
       html << page.link
       html << "\">"
       html << (page['title'] || File.basename(page.fullpath))
-      html << "</a>"
-      if page.has_children? && options[:depth] > 1
-        recurse_options = options.merge(:of => page, :depth => options[:depth]-1, :ignore => page)
-        html << index(recurse_options)
+			if page.has_children?
+				if options[:depth] > 1
+					html << "</a>"
+					recurse_options = options.merge(:of => page, :depth => options[:depth]-1, :ignore => page)
+					html << index(recurse_options)
+				else
+					html << "<span class=\"trailing_slash\">/</span>"
+					html << "</a>"
+				end
+			else
+				html << "</a>"
       end
       html << "</li>\n"
     end

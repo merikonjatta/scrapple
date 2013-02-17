@@ -84,6 +84,14 @@ ul.action-links {
     li:first-child { margin: 0px 15px 0px 13px; }
 }
 
+ul.index {
+    margin: 1em 0px; padding: 0px 0px 0px 10px;
+    list-style-position: inside;
+    li { margin:0px; padding: 0px; }
+    ul.index { margin: 0px; padding-left: 2.5em; }
+    span.trailing_slash { padding-left: 3px; color: #ccc; }
+}
+
 pre, code { font-size: $baseFontSize * 0.8; line-height: 1.3; font-family: $monoFontFamily; }
 pre {
     padding: 5px;
@@ -93,8 +101,6 @@ pre {
     overflow: auto;
     @include box-shadow(inset 0px 0px 2px 0px rgba(0, 0, 0, 0.1));
 }
-
-
 
 .button { 
     display: inline-block;
