@@ -1,47 +1,64 @@
 module Scrapple::Plugins::Auth
   # Handles login UI and callbacks for OmniAuth.
   class App < Sinatra::Base
-    # Add a strategy. Sets up a route that catches its callback.
-    # @param name [String] Name of the Strategy. The OmniAuth::Strategy class
-    #                      must be able to be inferred from the name.
-    def self.strategy(name, *args, &block)
-      match "/auth/#{name}/callback"  do
-        callback(name)
+
+		def call(env)
+			env['scrapple.user'] = User.get(env['rack.session']['user_id'])
+			super
+		end
+
+
+		def self.callback_for(name, &block)
+      match "/auth/#{name}/callback" do
+				ident = block.call(env)
+				process_identity(ident)
       end
-    end
+		end
+
+		def process_identity(ident)
+			binding.pry
+			if already_logged_in = env['scrapple.user']
+				already_logged_in.identities << ident
+				already_logged_in.save
+				redirect to '/'
+			end
+
+			if ident.user.nil?
+				user = User.create(:identities => [ident], :username => ident.nickname)
+				binding.pry
+				env['rack.session']['user_id'] = user.id
+				redirect to '/auth/fill'
+			else
+				env['rack.session']['user_id'] = ident.user.id
+				redirect to '/'
+			end
+		end
 
     # Centralized Login page with links to all /auth/:strategy URLs
-    get '/omniauth/login' do
+    get '/auth/login' do
       haml :login
     end
+
+		# Where new users fill in their profiles, or otherwise choose to merge with another identity
+		get '/auth/profile' do
+			haml :profile
+		end
+
+		# Updating profile info
+		post '/auth/profile' do
+			user = env['scrapple.user']
+			user.username = params['username']
+			if user.save
+				redirect to '/'
+			else
+				# TODO flash
+				haml :profile
+			end
+		end
 
     # Centralized failure page
     get '/auth/failure' do
       haml :failure
-    end
-
-    # Callback routine for all strategies.
-    def callback(strategy_name)
-      auth_hash = env['omniauth.auth']
-      user = User.for_identity(auth_hash['provider'], auth_hash['uid'])
-      identity = user.identities.last
-
-      # This is provider-dependent
-      user.username = auth_hash['info']['nickname']
-      identity.nickname = auth_hash['info']['nickname']
-      identity.image_url = auth_hash['info']['image']
-
-			user.save
-			identity.save
-
-      if user.saved? && user.identities.last.saved?
-        env['rack.session']['user_id'] = user.id
-      else
-        binding.pry
-      end
-			binding.pry
-
-      redirect to("/")
     end
 
     # Helper for defining routes that match any of get, post, put, and delete

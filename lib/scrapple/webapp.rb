@@ -3,7 +3,6 @@ require 'sinatra/base'
 module Scrapple
 
   class Webapp < Sinatra::Base
-
     @handlers = {}
 
     class << self

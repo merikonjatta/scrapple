@@ -25,6 +25,8 @@
         .col.subcol
           = page.index(:trailing_slash => false)
         .col.subcol
-          = env['rack.session'] 
+          - if env['scrapple.user']
+            Logged in as #{env['scrapple.user'].username}
       .footer
+        %pre=html_escape(env.pretty_inspect)
         Powered by Scrapple

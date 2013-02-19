@@ -1,0 +1,20 @@
+- user = env['scrapple.user']
+
+%h1 Profile
+
+%h2 Here are the account identities you own:
+
+%ul
+  - user.identities.each do |ident|
+    %li #{OmniAuth::Utils.camelize(ident.provider)}: #{ident.nickname}
+%p
+  If you've logged in before with another service, you can
+  %a(href="/auth/login") merge those accounts.
+
+%p
+  If you're new to #{Scrapple.settings['site_name']}, you can create a username.
+
+%form(action="/auth/profile" method="post")
+  Username: 
+  %input(type="text" name="username" value="#{env['scrapple.user'].username}")
+  %input(type="submit" value="Save")

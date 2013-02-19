@@ -43,7 +43,7 @@ module Scrapple
 
       # Build basic middleware stack
       @middleware_stack = Scrapple::MiddlewareStack.new
-      @middleware_stack.append Rack::Session::Cookie
+      @middleware_stack.append Rack::Session::Cookie, :key => "scrapple_session"
       @middleware_stack.append Scrapple::Webapp
 
       # Let Webapp do its stuff

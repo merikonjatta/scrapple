@@ -23,11 +23,8 @@ module Scrapple::Plugins
     # Add a strategy. Inserts its middleware in the stack, then delegates to App
     # to set up routes.
     def strategy(name, *args, &block)
-      name = name.to_s
-      ware = OmniAuth::Strategies.const_get(OmniAuth::Utils.camelize(name))
+      ware = OmniAuth::Strategies.const_get(OmniAuth::Utils.camelize(name.to_s))
       Scrapple.middleware_stack.insert_before(App, ware, *args, &block)
-
-      App.strategy(name, *args, &block)
     end
 
   end

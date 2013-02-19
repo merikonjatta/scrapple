@@ -2,7 +2,7 @@ class User
   include DataMapper::Resource
 
   property :id,         Serial
-  property :username,   String,  :required => true, :length => 0..100
+  property :username,   String, :length => 100
   property :expires_at, Time
 
   has n, :identities
