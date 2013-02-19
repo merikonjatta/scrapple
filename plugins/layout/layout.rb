@@ -79,6 +79,9 @@ module Scrapple::Plugins
 		# Determine if a string looks like an html document.
 		def looks_like_html?(string)
 			string =~ /\<html.*\>.*\<head.*\>.*\<body/im
+		rescue
+			# TODO Twitter auth callback body results in "Invalid byte sequence in US-ASCII"
+			true
 		end
 	end
 

@@ -1,6 +1,9 @@
 .rvmrc
+.ruby-version
 .sass-cache
 */.sass-cache
 .yardoc
 doc
+data
+tmp
 sample_content/_secret.txt

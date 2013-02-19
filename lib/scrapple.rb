@@ -9,6 +9,7 @@ require 'active_support/core_ext'
 module Scrapple
   class HandlerNotFound < Exception; end
   class FileNotFound < Exception; end
+	module Plugins; end
 
 	ROOT = File.expand_path('../../', __FILE__)
 

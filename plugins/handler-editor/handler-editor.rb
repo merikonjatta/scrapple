@@ -1,3 +1,5 @@
+require 'sass/sass'
+
 module Scrapple::Plugins
 	# Handler that shows an editor.
 	# Dependencies:
