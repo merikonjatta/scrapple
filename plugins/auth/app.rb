@@ -16,22 +16,19 @@ module Scrapple::Plugins::Auth
 		end
 
 		def process_identity(ident)
-			binding.pry
 			if already_logged_in = env['scrapple.user']
 				already_logged_in.identities << ident
 				already_logged_in.save
-				redirect to '/'
+			else
+				if ident.user.nil?
+					user = User.create(:identities => [ident], :username => ident.nickname)
+					env['rack.session']['user_id'] = user.id
+				else
+					env['rack.session']['user_id'] = ident.user.id
+				end
 			end
 
-			if ident.user.nil?
-				user = User.create(:identities => [ident], :username => ident.nickname)
-				binding.pry
-				env['rack.session']['user_id'] = user.id
-				redirect to '/auth/fill'
-			else
-				env['rack.session']['user_id'] = ident.user.id
-				redirect to '/'
-			end
+			redirect to '/auth/profile'
 		end
 
     # Centralized Login page with links to all /auth/:strategy URLs
@@ -39,8 +36,16 @@ module Scrapple::Plugins::Auth
       haml :login
     end
 
+		# Log out
+		get '/auth/logout' do
+			env['rack.session']['user_id'] = nil
+			env['scrapple.user'] = nil
+			redirect to "/"
+		end
+
 		# Where new users fill in their profiles, or otherwise choose to merge with another identity
 		get '/auth/profile' do
+			redirect to "/auth/login" if env['scrapple.user'].nil?
 			haml :profile
 		end
 

@@ -26,7 +26,10 @@
           = page.index(:trailing_slash => false)
         .col.subcol
           - if env['scrapple.user']
-            Logged in as #{env['scrapple.user'].username}
+            Logged in as 
+            %a(href="/auth/profile") #{env['scrapple.user'].username}
+          - else
+            %a(href="/auth/login") Log in
       .footer
         %pre=html_escape(env.pretty_inspect)
         Powered by Scrapple
