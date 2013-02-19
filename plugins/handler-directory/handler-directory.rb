@@ -9,15 +9,18 @@ module Scrapple::Plugins
       end
 
 
-      def handle(page)
+      def call(env)
+        page = env['scrapple.page']
         depth = page['directory_handler']['depth'] || DEFAULT_DEPTH rescue DEFAULT_DEPTH
+
         body = "<h1>" + (page['title'] || File.basename(page.fullpath)) + "</h1>\n"
         body << page.index(:depth => depth)
+
         [200, {"Content-Type" => "text/html"}, [body]]
       end
 
     end
   end
 
-  Scrapple::PageApp.register_handler(HandlerDirectory, :name => "directory")
+  Scrapple::Webapp.register_handler(HandlerDirectory, :name => "directory")
 end

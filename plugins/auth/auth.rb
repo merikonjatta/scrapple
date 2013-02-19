@@ -7,7 +7,7 @@ DataMapper.finalize
 DataMapper.auto_upgrade!
 
 require 'auth/app'
-Scrapple.middleware_stack.insert_before(Scrapple::PageApp, Scrapple::Plugins::Auth::App)
+Scrapple.middleware_stack.insert_before(Scrapple::Webapp, Scrapple::Plugins::Auth::App)
 
 module Scrapple::Plugins
   # The Auth plugins provides central user management, persistence, and UI for

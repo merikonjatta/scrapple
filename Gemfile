@@ -7,7 +7,8 @@ gem 'activesupport',   '~>3.2.0'
 group :development do
   gem 'yard'
   gem 'rake'
-  gem 'shotgun'
+  gem 'rerun'
+  gem 'rb-fsevent', '~>0.9.0'
   gem 'pry', '0.9.10'       # 0.9.11.4 does not work with pry-stack_explorer 0.4.7
   gem 'pry-stack_explorer', :require => false
   gem 'minitest'

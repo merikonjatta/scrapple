@@ -28,18 +28,18 @@ module Scrapple::Plugins::Auth
 
       # This is provider-dependent
       user.username = auth_hash['info']['nickname']
-      user.identities.last.nickname = auth_hash['info']['nickname']
-      user.identities.last.image_url = auth_hash['info']['image']
+      identity.nickname = auth_hash['info']['nickname']
+      identity.image_url = auth_hash['info']['image']
 
-      unless user.save && user.identities.last.save
-        # Handle validation errors
-      end
+			user.save
+			identity.save
 
       if user.saved? && user.identities.last.saved?
         env['rack.session']['user_id'] = user.id
       else
         binding.pry
       end
+			binding.pry
 
       redirect to("/")
     end

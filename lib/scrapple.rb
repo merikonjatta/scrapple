@@ -44,9 +44,7 @@ module Scrapple
       # Build basic middleware stack
       @middleware_stack = Scrapple::MiddlewareStack.new
       @middleware_stack.append Rack::Session::Cookie
-      @middleware_stack.append OmniAuth::Strategies::Developer
       @middleware_stack.append Scrapple::Webapp
-      @middleware_stack.append Scrapple::PageApp
 
       # Let Webapp do its stuff
       Scrapple::Webapp.setup
@@ -67,7 +65,6 @@ module Scrapple
         hookable
         page
         webapp
-        page_app
         middleware_stack
       ).each { |lib| require @root.join("lib/scrapple/#{lib}") }
     end
@@ -81,7 +78,10 @@ module Scrapple
       # Require all <plugins_root>/<plugin>/<plugin>.rb scripts in plugins dir
       Pathname.glob(@plugins_dir.to_s + "/*") do |plugin_dir|
         plugin_name = plugin_dir.to_s.match(/.*\/(.*)$/)[1]
-        require plugin_dir.join plugin_name
+        begin
+          require plugin_dir.join(plugin_name)
+        rescue LoadError
+        end
       end
 
       # Add all <plugins_root>/<plugin>/content directories to FileLookup.roots

@@ -21,10 +21,10 @@ module Scrapple::Plugins
       end
 
 
-      def handle(page)
+      def call(env)
+        page = env['scrapple.page']
         page['macros'] = false
         page['file_content'] = Rack::Utils.escape_html(File.read(page.fullpath))
-        page['layout'] = false
 
         body = Tilt['haml'].new(File.expand_path("../content/__code.haml", __FILE__)).render(page)
 
@@ -33,5 +33,5 @@ module Scrapple::Plugins
     end
   end
 
-  Scrapple::PageApp.register_handler(HandlerCode, :name => "code")
+  Scrapple::Webapp.register_handler(HandlerCode, :name => "code")
 end

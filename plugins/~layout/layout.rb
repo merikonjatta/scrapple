@@ -27,7 +27,7 @@ module Scrapple::Plugins
       page = env['scrapple.page']
       return response if page.nil?
 
-      new_content = wrap_in_layout(page, body)
+      new_content = wrap_in_layout(page, body, env)
       return [response[0], response[1], [new_content]]
     end
 
@@ -35,7 +35,7 @@ module Scrapple::Plugins
     # Recursively wrap a page in the specified layout Page and return the resulting content
     # @param [Scrapple::Page] original_page  The original Page object
     # @param [String] original_content  The content to yield to the layout page (in other words, the rendered result of original_page)
-    def wrap_in_layout(original_page, original_rendered)
+    def wrap_in_layout(original_page, original_rendered, env)
       layout_page = get_layout_page_for(original_page)
       return original_rendered if layout_page.nil?
 
@@ -43,10 +43,10 @@ module Scrapple::Plugins
       engine = Tilt[ext]
       return original_rendered if engine.nil?
 
-      new_rendered = engine.new{ layout_page.content }.render(original_page){ original_rendered }
+      new_rendered = engine.new{ layout_page.content }.render(self, :page => original_page, :env => env) { original_rendered }
 
       # Call recursively in case layout is nested
-      new_rendered = wrap_in_layout(layout_page, new_rendered)
+      new_rendered = wrap_in_layout(layout_page, new_rendered, env)
 
       return new_rendered
     end
@@ -86,5 +86,5 @@ module Scrapple::Plugins
   end
 
 
-  Scrapple.middleware_stack.insert_before(Scrapple::PageApp, Layout)
+  Scrapple.middleware_stack.insert_before(Scrapple::Webapp, Layout)
 end

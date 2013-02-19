@@ -1,6 +1,6 @@
 title: Top
 
-Hello! Welcome to my Scrapple
+Welcome to my Scrapple
 =============================
 
 Scrapple is a file-based CMS.

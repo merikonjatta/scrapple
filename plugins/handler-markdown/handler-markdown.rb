@@ -14,7 +14,9 @@ module Scrapple::Plugins
         1000
       end
 
-      def handle(page)
+      def call(env)
+        page = env['scrapple.page']
+
         options = {
           :no_intra_emphasis => true,
           :fenced_code_blocks => true,
@@ -46,5 +48,5 @@ module Scrapple::Plugins
     end
   end
 
-  Scrapple::PageApp.register_handler(HandlerMarkdown, :name => "markdown")
+  Scrapple::Webapp.register_handler(HandlerMarkdown, :name => "markdown")
 end

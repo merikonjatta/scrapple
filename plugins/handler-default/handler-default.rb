@@ -11,23 +11,16 @@ module Scrapple::Plugins
       end
 
 
-      def handle(page)
-        ext = page.fullpath.sub(/^.*\./, '')
-        engine = Tilt[ext]
+      def call(env)
+        page = env['scrapple.page']
+        engine = Tilt[page.type]
 
-        body = engine.new(engine_options(ext)){ page.expand_macros.content }.render(page)
-        headers = {'Content-Type' => content_type_for(ext) }
+        # TODO there's no possibility whatsoever that engine may be nil at this time? Really?
+
+        body = engine.new { page.tap{ |o| o.expand_macros}.content }.render(page)
+        headers = {'Content-Type' => content_type_for(page.type) }
 
         return [200, headers, [body]]
-      end
-
-
-      def engine_options(ext)
-        case ext
-        when nil
-        else
-          nil
-        end
       end
 
 
@@ -47,5 +40,5 @@ module Scrapple::Plugins
     end
   end
 
-  Scrapple::PageApp.register_handler(HandlerDefault, :name => "default")
+  Scrapple::Webapp.register_handler(HandlerDefault, :name => "default")
 end

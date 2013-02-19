@@ -2,28 +2,28 @@
 
 %html
   %head
-    %title #{self['title'].try(:+, " - ")} #{self['site_name']}
+    %title #{page['title'].try(:+, " - ")} #{page['site_name']}
     %link(rel="stylesheet" type="text/css" href="/css/scrapple.css")
-    - (self['stylesheets'] || []).each do |css|
+    - (page['stylesheets'] || []).each do |css|
       %link(rel="stylesheet" type="text/css" href="#{css}")
-    - (self['javascripts'] || []).each do |js|
+    - (page['javascripts'] || []).each do |js|
       %script(type="text/javascript" src="#{js}")
 
-  %body{:class => self['body_class']}
+  %body{:class => page['body_class']}
     .container
       .row
         .col.maincol
-          = breadcrumbs
-          - if self.type != "directory"
+          = page.breadcrumbs
+          - if page.type != "directory"
             %ul.action-links
               %li
-                %a(href="#{self.path}/in/editor") Edit
+                %a(href="#{page.path}/in/editor") Edit
               %li
-                %a(href="#{self.path}/as/code") Code
+                %a(href="#{page.path}/as/code") Code
           = yield
         .col.subcol
-          = index(:trailing_slash => false)
+          = page.index(:trailing_slash => false)
         .col.subcol
-          Echo 
+          = env['rack.session'] 
       .footer
         Powered by Scrapple
