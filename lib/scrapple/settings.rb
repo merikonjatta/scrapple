@@ -5,17 +5,17 @@ module Scrapple
   # Hash-like data store for {Page}s that is also responsible for parsing directives.
   class Settings
 
-		@key_aliases = {}
+    @key_aliases = {}
 
-		class << self
-			def alias_key(allass, to)
-				@key_aliases[allass] = to
-			end
+    class << self
+      def alias_key(allass, to)
+        @key_aliases[allass] = to
+      end
 
-			def resolve_key_alias(allass)
-				@key_aliases[allass] || allass
-			end
-			
+      def resolve_key_alias(allass)
+        @key_aliases[allass] || allass
+      end
+      
       def directive_regexp; /^(.*?):(.*)$/; end
     end
 
@@ -82,7 +82,7 @@ module Scrapple
     # @option options [Bool] :dont_stop  (false) Treat the whole file as a set of directives,
     #                                    and just skip unappropriate lines instead of
     #                                    returning the rest as the body.
-		# @return [Array] [body, directives]
+    # @return [Array] [body, directives]
     def parse(io, options = {})
       options = {
         :dont_stop => false
@@ -126,9 +126,9 @@ module Scrapple
 
       io.close rescue NoMethodError
       return [body, directives]
-		rescue ArgumentError => e
-			io.rewind
-			return [io.read, {}]
+    rescue ArgumentError => e
+      io.rewind
+      return [io.read, {}]
     end
 
 

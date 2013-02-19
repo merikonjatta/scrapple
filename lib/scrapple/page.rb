@@ -3,7 +3,7 @@ require 'pathname'
 module Scrapple
   # Represents a single page (or file) in the filesystem.
   class Page
-		class WriteRefused < StandardError; end
+    class WriteRefused < StandardError; end
 
     include Hookable
 
@@ -94,18 +94,18 @@ module Scrapple
       @settings = Settings.new
       yield(self) if block_given?
 
-			if fullpath
-				@root        = FileLookup.parent_root(fullpath)
-				@path        = "/" + FileLookup.relative_path(fullpath, @root)
+      if fullpath
+        @root        = FileLookup.parent_root(fullpath)
+        @path        = "/" + FileLookup.relative_path(fullpath, @root)
         @link        = Scrapple::Webapp.relative_url_root + @path.split("/").map{ |part| CGI.escape(part) }.join("/")
-				@isindexfile = !!(fullpath =~ /(^|\/)index\..+$/)
+        @isindexfile = !!(fullpath =~ /(^|\/)index\..+$/)
         @type        = if File.directory?(fullpath)
-												 "directory"
-											 else
-												 File.extname(fullpath)[1..-1] || File.basename(fullpath)
-											 end
-				self['title'] ||= File.basename(fullpath)
-			end
+                         "directory"
+                       else
+                         File.extname(fullpath)[1..-1] || File.basename(fullpath)
+                       end
+        self['title'] ||= File.basename(fullpath)
+      end
 
       call_hooks(:after_initialize)
     end
@@ -127,13 +127,13 @@ module Scrapple
     end
 
     # Write given contents to file. Raises a WriteRefused if the file is
-		# not under the first entry in {FileLookp.roots}.
-		# @param content [String] The stuff to write.
-		# @raise [WriteRefused]  When the file is outside the first entry in {FileLookp.roots}
+    # not under the first entry in {FileLookp.roots}.
+    # @param content [String] The stuff to write.
+    # @raise [WriteRefused]  When the file is outside the first entry in {FileLookp.roots}
     def write(content)
       if self.root != FileLookup.roots.first
-				raise WriteRefused.new("Refusing to write #{fullpath} outside of #{FileLookup.roots.first}")
-			end
+        raise WriteRefused.new("Refusing to write #{fullpath} outside of #{FileLookup.roots.first}")
+      end
       File.open(fullpath, 'w') { |f| f.write(content) }
     end
 
@@ -150,51 +150,51 @@ module Scrapple
     end
 
 
-		# Get a list of child pages.
-		# @param options [Hash]
-		# @option options [Bool] :directories_first     (true) List directories first.
-		# @option options [Bool] :ignore_settings_files (true) Do not include _settings.txt files
-		# @option options [Array, String] :ignore       ([]) Fullpaths to exclude
-		def children(options = {})
-			return [] unless has_children?
+    # Get a list of child pages.
+    # @param options [Hash]
+    # @option options [Bool] :directories_first     (true) List directories first.
+    # @option options [Bool] :ignore_settings_files (true) Do not include _settings.txt files
+    # @option options [Array, String] :ignore       ([]) Fullpaths to exclude
+    def children(options = {})
+      return [] unless has_children?
 
-			options = {
-				:directories_first => true,
-				:ignore_settings_files => true,
-				:ignore => []
-			}.merge!(options)
+      options = {
+        :directories_first => true,
+        :ignore_settings_files => true,
+        :ignore => []
+      }.merge!(options)
 
-			options[:ignore] = [options[:ignore]] unless options[:ignore].is_a? Array
-			options[:ignore].map! { |ig| ig.is_a?(Page) ? ig : Page.for(ig) }
+      options[:ignore] = [options[:ignore]] unless options[:ignore].is_a? Array
+      options[:ignore].map! { |ig| ig.is_a?(Page) ? ig : Page.for(ig) }
 
-			base = (type == "directory") ? fullpath : File.dirname(fullpath)
+      base = (type == "directory") ? fullpath : File.dirname(fullpath)
 
-			pages = Dir[base + "/*"].reject { |entry|
-				entry =~ /\/index\..+$/ ||
-					options[:ignore].include?(entry) ||
-					options[:ignore_settings_files] && entry =~ /\/_settings\..+$/
-			}.map { |entry| Page.for(entry, :fetch => true, :ignore_settings_files => true) }.compact
+      pages = Dir[base + "/*"].reject { |entry|
+        entry =~ /\/index\..+$/ ||
+          options[:ignore].include?(entry) ||
+          options[:ignore_settings_files] && entry =~ /\/_settings\..+$/
+      }.map { |entry| Page.for(entry, :fetch => true, :ignore_settings_files => true) }.compact
 
-			if options[:directories_first]
-				# Sort directories-first, then by name. (A Shwartzian transform)
-				# Got idea from bit.ly/d4UaMM
-				sh = pages.map do |page|
-					sortkey = ""
-					sortkey << ((page.type == "directory" || page.indexfile?) ? "0/" : "1/")
-					sortkey << page.fullpath
-					[sortkey, page]
-				end
-				sh.sort{|a,b| a.first <=> b.first }.map { |schw| schw[1] }
-			else
-				pages.sort
-			end
-		end
+      if options[:directories_first]
+        # Sort directories-first, then by name. (A Shwartzian transform)
+        # Got idea from bit.ly/d4UaMM
+        sh = pages.map do |page|
+          sortkey = ""
+          sortkey << ((page.type == "directory" || page.indexfile?) ? "0/" : "1/")
+          sortkey << page.fullpath
+          [sortkey, page]
+        end
+        sh.sort{|a,b| a.first <=> b.first }.map { |schw| schw[1] }
+      else
+        pages.sort
+      end
+    end
 
-		# True if this is a directory or an indexfile.
-		# @return [Bool]
-		def has_children?
-			type == "directory" || indexfile?
-		end
+    # True if this is a directory or an indexfile.
+    # @return [Bool]
+    def has_children?
+      type == "directory" || indexfile?
+    end
 
   end
 end

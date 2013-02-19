@@ -1,6 +1,3 @@
-# Needs to be loaded first because other plugins will call
-# Sass::Plugin.add_template_location(css_path, css_path)
-
 require 'sass/plugin/rack'
 Scrapple.middleware_stack.insert_after(Scrapple::Webapp, Sass::Plugin::Rack)
 
