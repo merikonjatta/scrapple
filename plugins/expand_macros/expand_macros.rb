@@ -23,7 +23,7 @@ module Scrapple::Plugins
           sorry_couldnt_expand_macro($2, e)
         end
       end
-      
+
       self
     end
 
