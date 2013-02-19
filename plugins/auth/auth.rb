@@ -1,6 +1,5 @@
 require 'data_mapper'
-# TODO don't put data there
-DataMapper.setup(:default, "sqlite:///#{ENV['CONTENT_DIR']}/scrapple.db")
+DataMapper.setup(:default, "sqlite:///#{Scrapple.data_dir}/auth.db")
 
 require 'auth/models/user'
 require 'auth/models/identity'

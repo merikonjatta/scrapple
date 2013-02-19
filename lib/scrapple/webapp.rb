@@ -40,6 +40,7 @@ module Scrapple
 
 
     def for_path(path = '')
+      binding.pry
       page = Page.for(path, :fetch => true)
       pass if page.nil?
 

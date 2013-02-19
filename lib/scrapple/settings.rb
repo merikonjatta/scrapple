@@ -88,7 +88,7 @@ module Scrapple
         :dont_stop => false
       }.merge!(options)
 
-      io = File.open(io) if io.is_a? String
+      io = File.open(io.to_s) if [String, Pathname].any?{|k| k === io }
       io.rewind
 
       body = ""

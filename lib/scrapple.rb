@@ -11,32 +11,42 @@ module Scrapple
   class FileNotFound < Exception; end
   module Plugins; end
 
-  ROOT = File.expand_path('../../', __FILE__)
-
   class << self
 
-    attr_reader :middleware_stack
+    attr_reader :root
+    attr_reader :content_dir
+    attr_reader :plugins_dir
+    attr_reader :data_dir
+    attr_reader :tmp_dir
     attr_reader :settings
+    attr_reader :middleware_stack
 
-    # Require necessary libs aOAuth::Unauthorized at /auth/twitternd add file lookup paths.
+    # Require necessary libs and add file lookup paths.
     def setup
+      @root = Pathname.new(File.expand_path("../../", __FILE__))
+
       load_lib
 
-      # If no content dir was specified, just run with sample content
-      ENV['CONTENT_DIR'] ||= File.join(ROOT, "sample_content")
-      FileLookup.roots << ENV['CONTENT_DIR']
+      # TODO make these configurable
+      # TODO make sure tmp and data are writeable
+      @data_dir    = @root.join("data")
+      @tmp_dir     = @root.join("tmp")
+      @plugins_dir = @root.join("plugins")
+      @content_dir ||= @root.join("sample_content")
+      FileLookup.roots << @content_dir
 
-      # Build middleware stack
+      # Load global settings
+      @settings = Settings.new
+      @settings.parse_and_merge(FileLookup.find("_settings"), :root => @content_dir)
+      # TODO cope with config.yml not being there. Run some friendly install flow in that case
+      @settings.parse_and_merge(@data_dir.join("config.yml"))
+
+      # Build basic middleware stack
       @middleware_stack = Scrapple::MiddlewareStack.new
       @middleware_stack.append Rack::Session::Cookie
       @middleware_stack.append OmniAuth::Strategies::Developer
       @middleware_stack.append Scrapple::Webapp
       @middleware_stack.append Scrapple::PageApp
-
-      # Load global settings
-      @settings = Settings.new
-      @settings.parse_and_merge(FileLookup.find("_settings"), :root => ENV['CONTENT_DIR'])
-      @settings.parse_and_merge(FileLookup.find("_secret"), :root => ENV['CONTENT_DIR'])
 
       # Let Webapp do its stuff
       Scrapple::Webapp.setup
@@ -45,13 +55,6 @@ module Scrapple
       Scrapple::Settings.alias_key("as",   "handler")
       Scrapple::Settings.alias_key("with", "handler")
       Scrapple::Settings.alias_key("in",   "handler")
-
-      # If no plugins dir was specified, use the local directory
-      ENV['PLUGINS_DIR'] ||= File.join(ROOT, "plugins")
-
-      # Add plugins dir to load path so that plugins with dependencies can
-      # require them early.
-      $: << ENV['PLUGINS_DIR']
 
       load_plugins
     end
@@ -66,20 +69,24 @@ module Scrapple
         webapp
         page_app
         middleware_stack
-      ).each { |lib| require File.join(ROOT, "lib/scrapple/#{lib}") }
+      ).each { |lib| require @root.join("lib/scrapple/#{lib}") }
     end
 
 
     def load_plugins
+      # Add plugins dir to load path so that plugins with dependencies can
+      # require them early.
+      $: << @plugins_dir
+
       # Require all <plugins_root>/<plugin>/<plugin>.rb scripts in plugins dir
-      Dir[ENV['PLUGINS_DIR'] + "/*"].each do |plugin_dir|
-        plugin_name = plugin_dir.match(/.*\/(.*)$/)[1]
-        require File.join(plugin_dir, plugin_name)
+      Pathname.glob(@plugins_dir.to_s + "/*") do |plugin_dir|
+        plugin_name = plugin_dir.to_s.match(/.*\/(.*)$/)[1]
+        require plugin_dir.join plugin_name
       end
 
       # Add all <plugins_root>/<plugin>/content directories to FileLookup.roots
-      Dir[ENV['PLUGINS_DIR'] + "/*/content"].each do |plugin_content_dir|
-        FileLookup.roots << plugin_content_dir if File.directory?(plugin_content_dir)
+      Pathname.glob(@plugins_dir.to_s + "/*/content") do |plugin_content_dir|
+        FileLookup.roots << plugin_content_dir.to_s if plugin_content_dir.directory?
       end
     end
 
