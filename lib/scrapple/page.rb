@@ -109,7 +109,7 @@ module Scrapple
 
       call_hooks(:after_initialize)
     end
-    
+
 
     # Fetch content body and settings from this and its surrounding files.
     # @return [Page] self, for chainability

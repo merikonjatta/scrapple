@@ -32,4 +32,5 @@
             %a(href="/auth/login") Log in
       .footer
         %pre=html_escape(env.pretty_inspect)
-        Powered by Scrapple
+        %p Powered by Scrapple
+        %p Rendered with #{env['scrapple.handler']}

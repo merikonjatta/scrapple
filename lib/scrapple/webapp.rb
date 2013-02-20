@@ -58,8 +58,9 @@ module Scrapple
       # Set rack env so that other middleware plugins can access them
       env['scrapple.page'] = page
       env['scrapple.params'] = params
+      env['scrapple.handler'] = handler = choose_handler_for(page)
 
-      return choose_handler_for(page).call(env)
+      return handler.call(env)
     end
 
 
