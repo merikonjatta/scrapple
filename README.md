@@ -14,6 +14,7 @@ Try it out
 
 * Clone the repo
 * `$ bundle install`
+* `$ touch data/config.yml`
 * `$ bundle exec rackup`
 * Go to http://localhost:9292/ to see the site running with sample content
 
