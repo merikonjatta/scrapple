@@ -3,6 +3,8 @@ require 'auth/auth'
 module Scrapple::Plugins::Auth
   module Twitter
     def self.setup
+      return if Scrapple.settings["twitter"].nil?
+
       # TODO how to catch 401 Unauthorized (from /auth/twitter) if key and secret are invalid
       @consumer_key    = Scrapple.settings["twitter"]["consumer_key"]
       @consumer_secret = Scrapple.settings["twitter"]["consumer_secret"]

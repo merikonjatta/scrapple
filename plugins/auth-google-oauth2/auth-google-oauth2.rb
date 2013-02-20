@@ -3,6 +3,8 @@ require 'auth/auth'
 module Scrapple::Plugins::Auth
   module GoogleOauth2
     def self.setup
+      return if Scrapple.settings["google_oauth2"].nil?
+
       # TODO how to catch 401 Unauthorized (from /auth/twitter) if key and secret are invalid
       @client_id    = Scrapple.settings["google_oauth2"]["client_id"]
       @client_secret = Scrapple.settings["google_oauth2"]["client_secret"]
