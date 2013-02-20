@@ -2,35 +2,40 @@
 module Scrapple::Plugins
 
   # Mixin modules that handle macro expansions
-  module ExpandMacros
+  class MacroExpander
 
-    # Expand all allowed macros in a body string.
-    # @params [locals] Local variables to set in the evaluation scope
-    # @return [Page]   self, for chainability
-    def expand_macros(locals = {})
-      return if self['macros'] == false
-      return if self['macros'] =~ /^(false|no|none)$/i
+    def initialize(text, allowed = nil)
+      @text = text
+      @allowed = allowed
 
-      self.content.gsub!(/(.?)\[\[(.*?)\]\]/) do
+      @allowed = @allowed.split(',').map(&:strip) if @allowed.is_a? String
+    end
+
+    def expand(scope = nil, locals = {})
+      return if @allowed == false
+      return if @allowed =~ /^(false|no|none)$/i
+
+      scope ||= text
+      scope = bind_to_scope(scope, locals)
+
+      @text.gsub(/(.?)\[\[(.*?)\]\]/) do
         begin
           if $1 == "\\"
             "[[#{$2}]]"
-          elsif ! macro_allowed?($2)
+          elsif ! allowed?($2)
             $1 + "[[#{$2}]]"
           else
-            $1 + get_scope_obj(locals).instance_eval(Helpers.unescape_html($2)).to_s
+            $1 + scope.instance_eval(Helpers.unescape_html($2)).to_s
           end
         rescue Exception => e
           sorry_couldnt_expand_macro($2, e)
         end
       end
-
-      self
     end
 
 
-    def get_scope_obj(locals)
-      obj = self.dup
+    def bind_to_scope(scope, locals)
+      obj = scope.dup
       locals.each do |key, value|
         obj.define_singleton_method(key) { value }
         obj.singleton_class.send(:private, key)
@@ -42,11 +47,11 @@ module Scrapple::Plugins
     # Check if this macro is allowed in the page.
     # @param code [String]  The macro code
     # @return [Bool]
-    def macro_allowed?(code)
-      case self['macros']
-      when String
+    def allowed?(code)
+      case @allowed
+      when Array
         macro_name = code.match(/^[^\s({]+/)[0]
-        self['macros'].split(',').map(&:strip).include?(macro_name)
+        @allowed.include?(macro_name)
       else
         true
       end
@@ -57,10 +62,6 @@ module Scrapple::Plugins
     def sorry_couldnt_expand_macro(code, e)
       str = "Sorry, couldn't expand macro [[#{Helpers.unescape_html(code)}]]:\n"
       str << "#{e.class.name}: #{e.message}\n at #{e.backtrace[1]})"
-      if self['debug_macros']
-        str << "\nBacktrace: \n"
-        str << e.backtrace.join("\n")
-      end
       "<pre>" + Rack::Utils.escape_html(str) + "</pre>"
     end
 
@@ -88,7 +89,6 @@ module Scrapple::Plugins
     end
   end
 
-  Scrapple::Page.send(:include, ExpandMacros)
   Scrapple::Page.send(:include, DefaultMacros)
 
 end
