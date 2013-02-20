@@ -17,7 +17,7 @@ module Scrapple::Plugins
 
         # TODO there's no possibility whatsoever that engine may be nil at this time? Really?
 
-        body = engine.new { page.tap{ |o| o.expand_macros}.content }.render(page)
+        body = engine.new { page.expand_macros(:env => env).content }.render(page, :env => env)
         headers = {'Content-Type' => content_type_for(page.type) }
 
         return [200, headers, [body]]

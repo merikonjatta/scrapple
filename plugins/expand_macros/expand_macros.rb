@@ -5,8 +5,9 @@ module Scrapple::Plugins
   module ExpandMacros
 
     # Expand all allowed macros in a body string.
-    # @return [Page] self, for chainability
-    def expand_macros
+    # @params [locals] Local variables to set in the evaluation scope
+    # @return [Page]   self, for chainability
+    def expand_macros(locals = {})
       return if self['macros'] == false
       return if self['macros'] =~ /^(false|no|none)$/i
 
@@ -17,7 +18,7 @@ module Scrapple::Plugins
           elsif ! macro_allowed?($2)
             $1 + "[[#{$2}]]"
           else
-            $1 + instance_eval(Helpers.unescape_html($2)).to_s
+            $1 + get_scope_obj(locals).instance_eval(Helpers.unescape_html($2)).to_s
           end
         rescue Exception => e
           sorry_couldnt_expand_macro($2, e)
@@ -25,6 +26,16 @@ module Scrapple::Plugins
       end
 
       self
+    end
+
+
+    def get_scope_obj(locals)
+      obj = self.dup
+      locals.each do |key, value|
+        obj.define_singleton_method(key) { value }
+        obj.singleton_class.send(:private, key)
+      end
+      obj
     end
 
 

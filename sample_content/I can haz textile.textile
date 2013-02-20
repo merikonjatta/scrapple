@@ -1,0 +1,7 @@
+h1. I can haz textile?
+
+Textile takes plain text with *simple* markup and produces __valid__ XHTML.
+
+[[index :of => ".."]]
+
+[[env]]

@@ -1,5 +1,17 @@
 module Scrapple::Plugins
   module HandlerMarkdown
+
+    DEFAULT_MARKDOWN_OPTIONS = {
+      :no_intra_emphasis => true,
+      :fenced_code_blocks => true,
+      :autolink => true
+    }
+
+    DEFAULT_HTML_OPTIONS = {
+      :hard_wrap => true
+    }
+
+
     class << self
 
       def confidence(page)
@@ -10,38 +22,28 @@ module Scrapple::Plugins
         end
       end
 
-      def priority
-        1000
-      end
 
       def call(env)
         page = env['scrapple.page']
 
-        options = {
-          :no_intra_emphasis => true,
-          :fenced_code_blocks => true,
-          :autolink => true
-        }
-
-        renderer_options = {
-          :hard_wrap => true
-        }
+        md_options = DEFAULT_MARKDOWN_OPTIONS.dup
+        html_options = DEFAULT_HTML_OPTIONS.dup
 
         if page['markdown'].is_a? Hash
-          options_from_page = page['markdown'].inject({}) do |result, (key, value)|
+          page['markdown'].each do |key, value|
             case key
             when /hard_?wrap/i
-              renderer_options[:hard_wrap] = value
+              html_options[:hard_wrap] = value
             else
-              options[key.to_sym] = value
+              md_options[key.to_sym] = value
             end
           end
         end
 
-        renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(renderer_options), options)
-        body = renderer.render(page.expand_macros.content)
-        headers = {"Content-Type" => "text/html"}
+        carpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(html_options), md_options)
 
+        body = carpet.render(page.expand_macros(:env => env).content)
+        headers = {"Content-Type" => "text/html"}
         return [200, headers, [body]]
       end
 
