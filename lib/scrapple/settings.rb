@@ -15,7 +15,7 @@ module Scrapple
       def resolve_key_alias(allass)
         @key_aliases[allass] || allass
       end
-      
+
       def directive_regexp; /^(.*?):(.*)$/; end
     end
 
