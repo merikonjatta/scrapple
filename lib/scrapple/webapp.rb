@@ -22,11 +22,8 @@ module Scrapple
       # while this class definition is taking place. Making this an explicit call
       # makes things easier.
       def setup
-        # The first _settings.txt found is read for webapp config
-        setng = Settings.new.parse(FileLookup.find("_settings"), :dont_stop => true)[1]
-
         # Relative URL root needs preceding slash, but no trailing slash
-        relroot = setng["relative_url_root"] || "/"
+        relroot = Scrapple.settings["relative_url_root"] || "/"
         set :relative_url_root, relroot.sub(/^[^\/]/, '/\0').sub(/\/$/, '')
       end
     end
@@ -70,7 +67,6 @@ module Scrapple
     # @param page [Page]
     # @return [Module]
     def choose_handler_for(page)
-
       specified = self.class.handlers[params['handler'] || page['handler']]
       return specified unless specified.nil?
 

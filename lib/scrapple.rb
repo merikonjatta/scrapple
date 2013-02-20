@@ -36,10 +36,14 @@ module Scrapple
       FileLookup.roots << @content_dir
 
       # Load global settings
+      # TODO settings file? config file? WTF? KISS
       @settings = Settings.new
-      @settings.parse_and_merge(FileLookup.find("_settings"), :root => @content_dir)
-      # TODO cope with config.yml not being there. Run some friendly install flow in that case
-      @settings.parse_and_merge(@data_dir.join("config.yml"))
+      if settings_file = FileLookup.find_in_root("_settings", @content_dir)
+        @settings.parse_and_merge(settings_file)
+      end
+      if File.exist?(config_file = @data_dir.join("config.yml"))
+        @settings.parse_and_merge(config_file)
+      end
 
       # Build basic middleware stack
       @middleware_stack = Scrapple::MiddlewareStack.new
