@@ -1,5 +1,5 @@
 require 'data_mapper'
-DataMapper.setup(:default, "sqlite:///#{Scrapple.data_dir}/auth.db")
+DataMapper.setup(:default, "yaml:///#{Scrapple.data_dir}/auth.yaml")
 
 require 'auth/models/user'
 require 'auth/models/identity'

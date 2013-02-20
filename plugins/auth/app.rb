@@ -31,11 +31,6 @@ module Scrapple::Plugins::Auth
 			redirect to '/auth/profile'
 		end
 
-    # Centralized Login page with links to all /auth/:strategy URLs
-    get '/auth/login' do
-      haml :login
-    end
-
 		# Log out
 		get '/auth/logout' do
 			env['rack.session']['user_id'] = nil
@@ -46,7 +41,7 @@ module Scrapple::Plugins::Auth
 		# Where new users fill in their profiles, or otherwise choose to merge with another identity
 		get '/auth/profile' do
 			redirect to "/auth/login" if env['scrapple.user'].nil?
-			haml :profile
+      pass
 		end
 
 		# Updating profile info
@@ -60,11 +55,6 @@ module Scrapple::Plugins::Auth
 				haml :profile
 			end
 		end
-
-    # Centralized failure page
-    get '/auth/failure' do
-      haml :failure
-    end
 
     # Helper for defining routes that match any of get, post, put, and delete
     def self.match(pattern, &block)
