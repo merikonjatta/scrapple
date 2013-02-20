@@ -49,6 +49,13 @@ Try it out
 * Runs on Ruby 1.9.2 (Other implementations might work, but MRI 1.8 can't take it)
 * No database needed (entirely file-based)
 
+### How to hack scrapple
+
+* Run `$ bundle exec shotgun` or `$ bundle exec rerun --background rackup`
+  instead of just rackup, so that your code will reload on change
+* Run `$ yard` to see core API docs (at `doc/index.html`)
+* Look at the code in `plugins/` to see how to implement them
+* Hack away
 
 Alternatives
 ------------
