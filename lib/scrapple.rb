@@ -24,8 +24,6 @@ module Scrapple
 
     # Require necessary libs and add file lookup paths.
     def setup
-      @root = Pathname.new(File.expand_path("../../", __FILE__))
-
       setup_dirs
       load_lib
 
@@ -49,16 +47,12 @@ module Scrapple
       # Let Webapp do its stuff
       Scrapple::Webapp.setup
 
-      # Define some directive aliases up front
-      Scrapple::Settings.alias_key("as",   "handler")
-      Scrapple::Settings.alias_key("with", "handler")
-      Scrapple::Settings.alias_key("in",   "handler")
-
       load_plugins
     end
 
 
     def setup_dirs
+      @root = Pathname.new(File.expand_path("../../", __FILE__))
       # TODO make these configurable
       @data_dir    = @root.join("data")
       @tmp_dir     = @root.join("data/tmp")
@@ -80,16 +74,20 @@ module Scrapple
       unless @tmp_dir.exist?
         FileUtils.mkdir_p @tmp_dir, :mode => 0755
       end
+
+      unless @plugins_dir.exist?
+        abort "Plugins dir #{@plugins_dir.to_s} doesn't exist. A typo, maybe?"
+      end
+
+      unless @content_dir.exist?
+        abort "Content dir #{@content_dir.to_s} doesn't exist. A typo, maybe?"
+      end
     end
+
 
     def load_lib
       %W(
-        file_lookup
-        settings
-        hookable
-        page
-        webapp
-        middleware_stack
+        file_lookup  settings  hookable page webapp  middleware_stack
       ).each { |lib| require @root.join("lib/scrapple/#{lib}") }
     end
 

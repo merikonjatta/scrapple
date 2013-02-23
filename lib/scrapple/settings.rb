@@ -5,19 +5,7 @@ module Scrapple
   # Hash-like data store for {Page}s that is also responsible for parsing directives.
   class Settings
 
-    @key_aliases = {}
-
-    class << self
-      def alias_key(allass, to)
-        @key_aliases[allass] = to
-      end
-
-      def resolve_key_alias(allass)
-        @key_aliases[allass] || allass
-      end
-
-      def directive_regexp; /^(.*?):(.*)$/; end
-    end
+    R_DIRECTIVE = /^(.*?):(.*)$/
 
     # Get a new instance specifying a starting hash of settings.
     # @param hash [Hash, Settings]
@@ -101,7 +89,7 @@ module Scrapple
           break if yaml.length > 0 && !options[:dont_stop]
         end
 
-        unless line =~ self.class.directive_regexp
+        unless line =~ R_DIRECTIVE
           if yaml.length == 0 && !options[:dont_stop]
             body << line
             break
@@ -118,11 +106,8 @@ module Scrapple
 
       # Directives are not hash? Something must be wrong.
       # Let's just say the line wasn't yaml at all
-      unless directives.is_a? Hash
-        directives = {}
-        io.rewind
-        body = io.read
-      end
+      raise ArgumentError unless directives.is_a? Hash
+      directives = normalize(directives)
 
       io.close rescue NoMethodError
       return [body, directives]
@@ -141,7 +126,6 @@ module Scrapple
 
       hash.each do |key, value|
         key = key.strip.downcase
-        key = resolve_key_alias(key)
         value = value.strip if value.is_a? String
         result[key] = value
       end
