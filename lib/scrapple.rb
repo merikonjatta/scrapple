@@ -1,6 +1,7 @@
 require 'bundler'
 Bundler.require(:default, :development)
 require 'pathname'
+require 'fileutils'
 require 'syck'
 require 'yaml'
 require 'active_support/core_ext'
@@ -25,14 +26,9 @@ module Scrapple
     def setup
       @root = Pathname.new(File.expand_path("../../", __FILE__))
 
+      setup_dirs
       load_lib
 
-      # TODO make these configurable
-      # TODO make sure tmp and data are writeable
-      @data_dir    = @root.join("data")
-      @tmp_dir     = @root.join("tmp")
-      @plugins_dir = @root.join("plugins")
-      @content_dir ||= @root.join("sample_content")
       FileLookup.roots << @content_dir
 
       # Load global settings
@@ -61,6 +57,30 @@ module Scrapple
       load_plugins
     end
 
+
+    def setup_dirs
+      # TODO make these configurable
+      @data_dir    = @root.join("data")
+      @tmp_dir     = @root.join("data/tmp")
+      @plugins_dir = @root.join("plugins")
+      @content_dir ||= @root.join("sample_content")
+
+      unless @data_dir.exist?
+        begin
+          FileUtils.mkdir_p @data_dir, :mode => 0755
+        rescue
+          abort "Couldn't create data dir #{@data_dir.to_s}. Please create it or specify a different location."
+        end
+      end
+
+      unless @data_dir.writable?
+        abort "Data dir #{@data_dir.to_s} is not writable by #{`whoami`.strip}."
+      end
+
+      unless @tmp_dir.exist?
+        FileUtils.mkdir_p @tmp_dir, :mode => 0755
+      end
+    end
 
     def load_lib
       %W(
