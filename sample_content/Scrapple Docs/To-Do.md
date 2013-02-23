@@ -1,13 +1,12 @@
 Scrapple To-Do
 ==============
 
-* Remove settings parsing section from webapp.rb
 * Support slim
 * Support layout for non-page requests
 * Edit new files
 * Image uploads
 * 日本語ファイル名が化けたり化けなかったりする
-* Make sure \[[ ... ]] macro syntax doesn't conflict with templating languages
+* Make sure \\[[ ... ]] macro syntax doesn't conflict with templating languages
 * self['key'] is kinda dull
 * Validate presence of content_dir (and plugin-dir?)
 * ymlでいいやん（Part 2)
