@@ -21,7 +21,8 @@
                 %a(href="#{page.path}/in/editor") Edit
               %li
                 %a(href="#{page.path}/as/code") Code
-          = yield
+          %div
+            = yield
         .col.subcol
           = page.index(:trailing_slash => false)
         .col.subcol
