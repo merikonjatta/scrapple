@@ -1,13 +1,4 @@
-#relative_url_root: /subdir
 site_name: Scrapple Sample Content
-
-macro_debug: on
-
-readable: public
-writable:
-  - marco
-  - kitar
-  - ryan
 
 markdown:
   hard_wrap: false

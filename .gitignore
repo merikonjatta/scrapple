@@ -6,4 +6,5 @@
 doc
 data
 tmp
+config.yml
 sample_content/_secret.txt

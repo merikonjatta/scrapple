@@ -16,16 +16,6 @@ module Scrapple
         raise ArgumentError "Please specify a name for this handler." if properties[:name].blank?
         @handlers[properties[:name]] = mod
       end
-
-      # Not putting this stuff in a configure block because FileLookup.roots must
-      # be configured first. The configure block is simply executed immediately
-      # while this class definition is taking place. Making this an explicit call
-      # makes things easier.
-      def setup
-        # Relative URL root needs preceding slash, but no trailing slash
-        relroot = Scrapple.settings["relative_url_root"] || "/"
-        set :relative_url_root, relroot.sub(/^[^\/]/, '/\0').sub(/\/$/, '')
-      end
     end
 
 

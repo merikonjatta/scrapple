@@ -24,63 +24,55 @@ module Scrapple
 
     # Require necessary libs and add file lookup paths.
     def setup
+      @root = Pathname.new(File.expand_path("../../", __FILE__))
+
+      load_settings
       setup_dirs
       load_lib
 
       FileLookup.roots << @content_dir
 
-      # Load global settings
-      # TODO settings file? config file? WTF? KISS
-      @settings = Settings.new
-      if settings_file = FileLookup.find_in_root("_settings", @content_dir)
-        @settings.parse_and_merge(settings_file)
-      end
-      if File.exist?(config_file = @data_dir.join("config.yml"))
-        @settings.parse_and_merge(config_file)
-      end
-
-      # Build basic middleware stack
-      @middleware_stack = Scrapple::MiddlewareStack.new
-      @middleware_stack.append Rack::Session::Cookie, :key => "scrapple_session"
-      @middleware_stack.append Scrapple::Webapp
-
-      # Let Webapp do its stuff
-      Scrapple::Webapp.setup
-
+      build_middleware_stack
       load_plugins
     end
 
 
-    def setup_dirs
-      @root = Pathname.new(File.expand_path("../../", __FILE__))
-      # TODO make these configurable
-      @data_dir    = @root.join("data")
-      @tmp_dir     = @root.join("data/tmp")
-      @plugins_dir = @root.join("plugins")
-      @content_dir ||= @root.join("sample_content")
+    def load_settings
+      if File.exist?(config_file = @root.join("config.yml"))
+        @settings = Syck.load_file(config_file)
+      else
+        @settings = {}
+      end
+    end
 
-      unless @data_dir.exist?
-        begin
-          FileUtils.mkdir_p @data_dir, :mode => 0755
-        rescue
-          abort "Couldn't create data dir #{@data_dir.to_s}. Please create it or specify a different location."
+
+    def setup_dirs
+      {
+        "data_dir" => "data",
+        "tmp_dir" => "tmp",
+        "plugins_dir" => "plugins",
+        "content_dir" => "sample_content"
+      }.each do |name, default|
+        value = @settings.delete(name) || default
+        instance_variable_set("@#{name}", @root.join(value))
+      end
+
+      [@data_dir, @tmp_dir].each do |dir|
+        unless dir.directory?
+          begin FileUtils.mkdir_p dir, :mode => 0755
+          rescue
+            abort "Couldn't create #{dir.to_s}. Please create it or specify another location in config.yml"
+          end
+        end
+        unless dir.writable?
+          abort "Directory #{dir.to_s} is not writable by #{`whoami`.strip}."
         end
       end
 
-      unless @data_dir.writable?
-        abort "Data dir #{@data_dir.to_s} is not writable by #{`whoami`.strip}."
-      end
-
-      unless @tmp_dir.exist?
-        FileUtils.mkdir_p @tmp_dir, :mode => 0755
-      end
-
-      unless @plugins_dir.exist?
-        abort "Plugins dir #{@plugins_dir.to_s} doesn't exist. A typo, maybe?"
-      end
-
-      unless @content_dir.exist?
-        abort "Content dir #{@content_dir.to_s} doesn't exist. A typo, maybe?"
+      [@plugins_dir, @content_dir].each do |dir|
+        unless dir.directory?
+          abort "#{dir.to_s} doesn't exist. A typo, maybe?"
+        end
       end
     end
 
@@ -89,6 +81,14 @@ module Scrapple
       %W(
         file_lookup  settings  hookable page webapp  middleware_stack
       ).each { |lib| require @root.join("lib/scrapple/#{lib}") }
+    end
+
+
+
+    def build_middleware_stack
+      @middleware_stack = Scrapple::MiddlewareStack.new
+      @middleware_stack.append Rack::Session::Cookie, :key => "scrapple_session"
+      @middleware_stack.append Scrapple::Webapp
     end
 
 

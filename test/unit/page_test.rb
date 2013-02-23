@@ -11,7 +11,7 @@ describe Scrapple::Page do
     it "should return an instance for a relative path" do
       page = SUT.for "index.md"
       page.fullpath.must_equal @content_root+"/index.md"
-      page.path.must_equal "/index.md"
+      page.path.must_equal "index.md"
     end
 
     it "should return an instance for a relative directory" do
@@ -22,7 +22,7 @@ describe Scrapple::Page do
     it "should return an instance for an absolute path" do
       page = SUT.for @content_root+"/index.md"
       page.fullpath.must_equal @content_root+"/index.md"
-      page.path.must_equal "/index.md"
+      page.path.must_equal "index.md"
     end
 
     it "should return an instance for an absolute directory" do
