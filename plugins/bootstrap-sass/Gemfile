@@ -1,2 +1,2 @@
-gem 'bootstrap-sass'
 gem 'compass'
+gem 'bootstrap-sass'
