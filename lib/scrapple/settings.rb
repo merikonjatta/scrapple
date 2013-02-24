@@ -1,5 +1,5 @@
 require 'active_support/core_ext'
-require 'syck'
+require 'yaml'
 
 module Scrapple
   # Hash-like data store for {Page}s that is also responsible for parsing directives.
@@ -102,7 +102,7 @@ module Scrapple
       # The rest is body
       body << io.read
 
-      directives = Syck.load(yaml)
+      directives = YAML.load(yaml)
 
       # Directives are not hash? Something must be wrong.
       # Let's just say the line wasn't yaml at all

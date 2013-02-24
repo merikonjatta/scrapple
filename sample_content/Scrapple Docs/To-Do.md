@@ -1,7 +1,6 @@
 Scrapple To-Do
 ==============
 
-* Use psych
 * Settings.merge!
 * Mobile layout (or responsive)
 * Utilize Dir[] file globbing in FileLookup

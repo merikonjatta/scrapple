@@ -2,7 +2,6 @@ require 'bundler'
 Bundler.require(:default, :development)
 require 'pathname'
 require 'fileutils'
-require 'syck'
 require 'yaml'
 require 'active_support/core_ext'
 
@@ -52,7 +51,7 @@ module Scrapple
     def load_settings
       @settings = DEFAULT_SETTINGS
       if File.exist?(config_file = @root.join("config.yml"))
-        @settings.merge!(Syck.load_file(config_file)) rescue TypeError # FIXME
+        @settings.merge!(YAML.load_file(config_file)) rescue TypeError # FIXME
       end
     end
 
