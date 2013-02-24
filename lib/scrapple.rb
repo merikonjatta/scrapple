@@ -27,7 +27,7 @@ module Scrapple
     attr_reader :middleware_stack
 
     # Set up accessor methods for basic settings entries
-    %w(content_dir plugins_dir data_dir tmp_dir).each do |name|
+    %w(content_dir plugins_dir data_dir tmp_dir perdir_file).each do |name|
       define_method name do
         settings[name]
       end
@@ -42,7 +42,7 @@ module Scrapple
       setup_dirs
       load_lib
 
-      FileLookup.roots << @content_dir
+      FileLookup.roots << content_dir
 
       build_middleware_stack
       load_plugins
@@ -52,7 +52,7 @@ module Scrapple
     def load_settings
       @settings = DEFAULT_SETTINGS
       if File.exist?(config_file = @root.join("config.yml"))
-        @settings.merge!(Syck.load_file(config_file))
+        @settings.merge!(Syck.load_file(config_file)) rescue TypeError # FIXME
       end
     end
 
@@ -112,7 +112,7 @@ module Scrapple
       end
 
       # Add all <plugins_root>/<plugin>/content directories to FileLookup.roots
-      Pathname.glob(@plugins_dir.to_s + "/*/content") do |plugin_content_dir|
+      Pathname.glob(plugins_dir.to_s + "/*/content") do |plugin_content_dir|
         FileLookup.roots << plugin_content_dir.to_s if plugin_content_dir.directory?
       end
     end

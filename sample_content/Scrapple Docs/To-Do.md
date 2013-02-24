@@ -4,6 +4,7 @@ Scrapple To-Do
 * Use psych
 * Settings.merge!
 * Mobile layout (or responsive)
+* Utilize Dir[] file globbing in FileLookup
 * Make sure \\[[ ... ]] macro syntax doesn't conflict with templating languages
 * Expand macros before or after rendering template?
 * When and how is html escaped?

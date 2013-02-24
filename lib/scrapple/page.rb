@@ -8,14 +8,14 @@ module Scrapple
     include Hookable
 
     # Local settings for this page. Includes directives found in file,
-    # and directives found in _config.yml in parent directories.
+    # and directives found in perdir files in parent directories.
     # But can be used to store arbitrary data.
     # @return [Settings]
     attr_accessor :settings
 
-    # Set this to true to ignore _config.yml files surrounding this Page's file.
+    # Set this to true to ignore perdir files surrounding this Page's file.
     # @return [Bool]
-    attr_accessor :ignore_settings_files
+    attr_accessor :ignore_perdir_files
 
     # Relative path to this file (from {#root}). Includes preceding slash.
     # Looks like "/docs/[Fowler] Mocks aren't stubs.md"
@@ -56,16 +56,16 @@ module Scrapple
     # @option options [String] :root (nil)          Specify the absolute root path to look in, if known. 
     # @option options [Bool] :fetch (false)         Whether to do a fetch after initialize.
     #                                               Not fetching means no parsing for directives,
-    #                                               no looking for _config.yml, so leave it as false
+    #                                               no looking for perdir files, so leave it as false
     #                                               unless you need the contents.
-    # @option options [Bool] :ignore_settings_files (false) Whether to ignore surrounding _config.yml files
+    # @option options [Bool] :ignore_perdir_files   (false) Whether to ignore surrounding perdir files
     #
     # @return [Page, nil] A Page if file is found, nil if not
     def self.for(path, options = {})
       options = {
         :root => nil,
         :fetch => false,
-        :ignore_settings_files => false,
+        :ignore_perdir_files => false,
         :look_for_index => true
       }.merge(options)
 
@@ -79,7 +79,7 @@ module Scrapple
 
       instance = self.new do |page|
         page.fullpath    = fullpath
-        page.ignore_settings_files = options[:ignore_settings_files]
+        page.ignore_perdir_files = options[:ignore_perdir_files]
       end
 
       instance.fetch if options[:fetch]
@@ -114,8 +114,8 @@ module Scrapple
     # Fetch content body and settings from this and its surrounding files.
     # @return [Page] self, for chainability
     def fetch
-      unless @ignore_settings_files
-        files = FileLookup.find_all_ascending("_config.yml", fullpath)
+      unless @ignore_perdir_files
+        files = FileLookup.find_all_ascending(Scrapple.perdir_file, fullpath)
         files.reverse_each do |file|
           # TODO: Does this have to be parse and merge? A simple yaml load file would do
           @settings.parse_and_merge(file, :dont_stop => true)
@@ -154,14 +154,14 @@ module Scrapple
     # Get a list of child pages.
     # @param options [Hash]
     # @option options [Bool] :directories_first     (true) List directories first.
-    # @option options [Bool] :ignore_settings_files (true) Do not include _config.yml files
+    # @option options [Bool] :ignore_perdir_files   (true) Do not include perdir files
     # @option options [Array, String] :ignore       ([]) Fullpaths to exclude
     def children(options = {})
       return [] unless has_children?
 
       options = {
         :directories_first => true,
-        :ignore_settings_files => true,
+        :ignore_perdir_files => true,
         :ignore => []
       }.merge!(options)
 
@@ -173,8 +173,8 @@ module Scrapple
       pages = Dir[base + "/*"].reject { |entry|
         entry =~ /\/index\..+$/ ||
           options[:ignore].include?(entry) ||
-          options[:ignore_settings_files] && entry =~ /\/_config\.yml$/
-      }.map { |entry| Page.for(entry, :fetch => true, :ignore_settings_files => true) }.compact
+          options[:ignore_perdir_files] && entry =~ /\/#{Regexp.escape(Scrapple.perdir_file)}$/
+      }.map { |entry| Page.for(entry, :fetch => true, :ignore_perdir_files => true) }.compact
 
       if options[:directories_first]
         # Sort directories-first, then by name. (A Shwartzian transform)
