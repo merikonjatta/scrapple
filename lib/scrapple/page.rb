@@ -118,11 +118,11 @@ module Scrapple
         files = FileLookup.find_all_ascending(Scrapple.perdir_file, fullpath)
         files.reverse_each do |file|
           # TODO: Does this have to be parse and merge? A simple yaml load file would do
-          @settings.parse_and_merge(file, :dont_stop => true)
+          @settings.parse_and_merge!(file, :dont_stop => true)
         end
       end
 
-      @content = @settings.parse_and_merge(fullpath) unless type == "directory"
+      @content = @settings.parse_and_merge!(fullpath) unless type == "directory"
 
       return self
     end

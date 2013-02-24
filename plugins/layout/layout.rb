@@ -68,7 +68,7 @@ module Scrapple::Plugins
 
       # Copy settings from original to layout page, except for which layout to use
       page.settings.hash.delete("layout")
-      layout_page.settings.merge(page.settings)
+      layout_page.settings.merge!(page.settings)
 
       return layout_page
     end

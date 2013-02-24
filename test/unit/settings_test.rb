@@ -67,7 +67,7 @@ describe Scrapple::Settings do
   end
 
 
-  describe "#parse_and_merge" do
+  describe "#parse_and_merge!" do
     it "should parse, then merge into result hash" do
       initial = {"layout" => "voodoo", "foo" => "bar"}
       text = <<-EOT.unindent
@@ -76,7 +76,7 @@ describe Scrapple::Settings do
       EOT
 
       s = Scrapple::Settings.new(initial)
-      s.parse_and_merge(StringIO.new(text))
+      s.parse_and_merge!(StringIO.new(text))
 
       s.hash.must_equal( {"layout" => "voodoo", "foo" => "BAZ!", "hoge" => "piyo"} )
     end

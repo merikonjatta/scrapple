@@ -35,16 +35,16 @@ module Scrapple
     #                       as a filename. If you want to parse the string itself,
     #                       you need to create and pass a StringIO.
     # @param options [Hash] Options hash. See {#parse}.
-    def parse_and_merge(io, options = {})
+    def parse_and_merge!(io, options = {})
       (body, hash) = parse(io, options)
-      merge(hash)
+      merge!(hash)
       body
     end
 
 
     # Merge a parsed hash to the results hash.
     # @param hash [Hash, Settings]
-    def merge(hash)
+    def merge!(hash)
       hash = hash.hash if hash.is_a? Settings
       @hash.merge!(hash)
     end
