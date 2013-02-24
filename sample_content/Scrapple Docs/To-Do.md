@@ -1,15 +1,17 @@
 Scrapple To-Do
 ==============
 
-* Support slim
+* Use psych
+* Settings.merge!
+* Mobile layout (or responsive)
+* Make sure \\[[ ... ]] macro syntax doesn't conflict with templating languages
+* Expand macros before or after rendering template?
+* When and how is html escaped?
 * Support layout for non-page requests
 * Edit new files
 * Image uploads
 * 日本語ファイル名が化けたり化けなかったりする
-* Make sure \\[[ ... ]] macro syntax doesn't conflict with templating languages
 * self['key'] is kinda dull
-* Validate presence of content_dir (and plugin-dir?)
-* ymlでいいやん（Part 2)
 * Respond to write in json
 * Authorization
 * Think of a way to test plugins
@@ -17,7 +19,7 @@ Scrapple To-Do
 * Find pages across roots
 * Write sass cache to temp dir
 * Document
-    * How to write settings.txt
+    * How to write config.yml/_config.yml
     * Webapp config keys
     * Plugin authoring
     * Kinds (Handler, Macro, mixin module, Rack middleware, hook, content)
@@ -44,6 +46,7 @@ Scrapple To-Do
 
 ----
 
+* Plugin: slim
 * Plugin: impress.js
 * Plugin: rak search
 * Plugin: gist

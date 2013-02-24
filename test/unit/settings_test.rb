@@ -59,9 +59,9 @@ describe Scrapple::Settings do
 
 
     it "should open and read from file if given a string" do
-      assert File.exist?( @content_root+"/_settings.txt" )
+      assert File.exist?( @content_root+"/_config.yml" )
 
-      (body, hash) = Scrapple::Settings.new.parse(@content_root+"/_settings.txt")
+      (body, hash) = Scrapple::Settings.new.parse(@content_root+"/_config.yml")
       hash.must_equal( {"readable" => "public"} )
     end
   end

@@ -31,7 +31,7 @@ List of known macros
 Disabling macros
 ----------------
 
-You can limit what macros may be expanded.  In your `_settings.txt` file, put
+You can limit what macros may be expanded.  In your `_config.yml` file, put
 
     macros: index, breadcrumbs, disqus
 

@@ -8,12 +8,12 @@ module Scrapple
     include Hookable
 
     # Local settings for this page. Includes directives found in file,
-    # and directives found in _settings.txt in parent directories.
+    # and directives found in _config.yml in parent directories.
     # But can be used to store arbitrary data.
     # @return [Settings]
     attr_accessor :settings
 
-    # Set this to true to ignore _settings.txt files surrounding this Page's file.
+    # Set this to true to ignore _config.yml files surrounding this Page's file.
     # @return [Bool]
     attr_accessor :ignore_settings_files
 
@@ -56,9 +56,9 @@ module Scrapple
     # @option options [String] :root (nil)          Specify the absolute root path to look in, if known. 
     # @option options [Bool] :fetch (false)         Whether to do a fetch after initialize.
     #                                               Not fetching means no parsing for directives,
-    #                                               no looking for _settings.txt, so leave it as false
+    #                                               no looking for _config.yml, so leave it as false
     #                                               unless you need the contents.
-    # @option options [Bool] :ignore_settings_files (false) Whether to ignore surrounding _settings.txt files
+    # @option options [Bool] :ignore_settings_files (false) Whether to ignore surrounding _config.yml files
     #
     # @return [Page, nil] A Page if file is found, nil if not
     def self.for(path, options = {})
@@ -115,8 +115,9 @@ module Scrapple
     # @return [Page] self, for chainability
     def fetch
       unless @ignore_settings_files
-        files = FileLookup.find_all_ascending("_settings", fullpath)
+        files = FileLookup.find_all_ascending("_config.yml", fullpath)
         files.reverse_each do |file|
+          # TODO: Does this have to be parse and merge? A simple yaml load file would do
           @settings.parse_and_merge(file, :dont_stop => true)
         end
       end
@@ -153,7 +154,7 @@ module Scrapple
     # Get a list of child pages.
     # @param options [Hash]
     # @option options [Bool] :directories_first     (true) List directories first.
-    # @option options [Bool] :ignore_settings_files (true) Do not include _settings.txt files
+    # @option options [Bool] :ignore_settings_files (true) Do not include _config.yml files
     # @option options [Array, String] :ignore       ([]) Fullpaths to exclude
     def children(options = {})
       return [] unless has_children?
@@ -172,7 +173,7 @@ module Scrapple
       pages = Dir[base + "/*"].reject { |entry|
         entry =~ /\/index\..+$/ ||
           options[:ignore].include?(entry) ||
-          options[:ignore_settings_files] && entry =~ /\/_settings\..+$/
+          options[:ignore_settings_files] && entry =~ /\/_config\.yml$/
       }.map { |entry| Page.for(entry, :fetch => true, :ignore_settings_files => true) }.compact
 
       if options[:directories_first]

@@ -109,10 +109,10 @@ describe Scrapple::FileLookup do
   describe "find_first_ascending" do
 
     it "should find the file next to near" do
-      assert File.exist?(@content_root + "/john/private/_settings.txt")
+      assert File.exist?(@content_root + "/john/private/_config.yml")
 
-      found = Scrapple::FileLookup.find_first_ascending("_settings", @content_root + "/john/private/index.md")
-      found.must_equal @content_root + "/john/private/_settings.txt"
+      found = Scrapple::FileLookup.find_first_ascending("_config", @content_root + "/john/private/index.md")
+      found.must_equal @content_root + "/john/private/_config.yml"
     end
 
 
@@ -142,9 +142,9 @@ describe Scrapple::FileLookup do
     end
 
     it "should find all files in between" do
-      found = Scrapple::FileLookup.find_all_ascending("_settings", @content_root + "/john/private/index.md")
-      found.must_equal [@content_root + "/john/private/_settings.txt",
-                        @content_root + "/_settings.txt"]
+      found = Scrapple::FileLookup.find_all_ascending("_config", @content_root + "/john/private/index.md")
+      found.must_equal [@content_root + "/john/private/_config.yml",
+                        @content_root + "/_config.yml"]
     end
 
     describe "with bad args" do
