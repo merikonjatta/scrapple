@@ -1,2 +1,2 @@
 gem 'compass'
-gem 'bootstrap-sass'
+gem 'compass_twitter_bootstrap'

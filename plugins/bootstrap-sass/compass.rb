@@ -1,12 +1,12 @@
+# This is a sample compass.rb for theme plugins that want to use compass-bootstrap.
+
 # Require any additional compass plugins here.
-require 'bootstrap-sass'
+require 'compass_twitter_bootstrap'
 
 # Set this to the root of your project when deployed:
-http_path = "/"
-css_dir = "content/css"
-sass_dir = "scss"
-images_dir = "content/images"
-javascripts_dir = "content/js"
+http_path       = "/"
+sass_dir        = "scss"
+css_dir         = "content/css"
 
 # You can select your preferred output style here (can be overridden via the command line):
 # output_style = :expanded or :nested or :compact or :compressed
