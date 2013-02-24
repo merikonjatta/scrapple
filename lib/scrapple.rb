@@ -14,17 +14,29 @@ module Scrapple
 
   class << self
 
+    DEFAULT_SETTINGS = {
+      "perdir_file" => "_config.yml",
+      "content_dir" => "sample_content",
+      "plugins_dir" => "plugins",
+      "data_dir"    => "data",
+      "tmp_dir"     => "tmp",
+    }
+
     attr_reader :root
-    attr_reader :content_dir
-    attr_reader :plugins_dir
-    attr_reader :data_dir
-    attr_reader :tmp_dir
     attr_reader :settings
     attr_reader :middleware_stack
+
+    # Set up accessor methods for basic settings entries
+    %w(content_dir plugins_dir data_dir tmp_dir).each do |name|
+      define_method name do
+        settings[name]
+      end
+    end
 
     # Require necessary libs and add file lookup paths.
     def setup
       @root = Pathname.new(File.expand_path("../../", __FILE__))
+      Dir.chdir @root
 
       load_settings
       setup_dirs
@@ -38,26 +50,19 @@ module Scrapple
 
 
     def load_settings
+      @settings = DEFAULT_SETTINGS
       if File.exist?(config_file = @root.join("config.yml"))
-        @settings = Syck.load_file(config_file)
-      else
-        @settings = {}
+        @settings.merge!(Syck.load_file(config_file))
       end
     end
 
 
     def setup_dirs
-      {
-        "data_dir" => "data",
-        "tmp_dir" => "tmp",
-        "plugins_dir" => "plugins",
-        "content_dir" => "sample_content"
-      }.each do |name, default|
-        value = @settings.delete(name) || default
-        instance_variable_set("@#{name}", @root.join(value))
+      %w(data_dir tmp_dir plugins_dir content_dir).each do |name|
+        @settings[name] = Pathname.new(File.expand_path(@settings[name])).cleanpath
       end
 
-      [@data_dir, @tmp_dir].each do |dir|
+      [data_dir, tmp_dir].each do |dir|
         unless dir.directory?
           begin FileUtils.mkdir_p dir, :mode => 0755
           rescue
@@ -69,7 +74,7 @@ module Scrapple
         end
       end
 
-      [@plugins_dir, @content_dir].each do |dir|
+      [plugins_dir, content_dir].each do |dir|
         unless dir.directory?
           abort "#{dir.to_s} doesn't exist. A typo, maybe?"
         end
@@ -95,10 +100,10 @@ module Scrapple
     def load_plugins
       # Add plugins dir to load path so that plugins with dependencies can
       # require them early.
-      $: << @plugins_dir
+      $: << plugins_dir
 
       # Require all <plugins_root>/<plugin>/<plugin>.rb scripts in plugins dir
-      Pathname.glob(@plugins_dir.to_s + "/*") do |plugin_dir|
+      Pathname.glob(plugins_dir.to_s + "/*") do |plugin_dir|
         plugin_name = plugin_dir.to_s.match(/.*\/(.*)$/)[1]
         begin
           require plugin_dir.join(plugin_name)
