@@ -15,7 +15,7 @@ module Scrapple::Plugins
       # Only for text/html
       return response unless response[1]['Content-Type'] =~ %r{text/html}
 
-      body = response.last.to_enum.inject { |whole, part| whole + part }
+      body = response.last.to_enum.inject("") { |whole, part| whole + part }
 
       # Avoid wrapping if...
       return response if body.empty?
