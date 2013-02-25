@@ -1,8 +1,6 @@
 Scrapple To-Do
 ==============
 
-* Make sure \\[[ ... ]] macro syntax doesn't conflict with templating languages
-* Support layout for non-page requests
 * Edit new files
 * Image uploads
 * self['key'] is kinda dull
@@ -10,12 +8,12 @@ Scrapple To-Do
 * Authorization
 * Think of a way to test plugins
 * Some Rack::Tests
-* Find pages across roots
 * Write sass cache to temp dir
 * Editor should use a Page
 
 ----
 
+* Make sure \\[[ ... ]] macro syntax doesn't conflict with templating languages
 * 日本語ファイル名が化けたり化けなかったりする
 * When and how is html escaped?
 

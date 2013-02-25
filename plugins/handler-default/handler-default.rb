@@ -15,9 +15,10 @@ module Scrapple::Plugins
         page = env['scrapple.page']
         engine = Tilt[page.type]
 
-        # TODO there's no possibility whatsoever that engine may be nil at this time? Really?
-
-        content = Scrapple::Plugins::MacroExpander.new(page.content, page['macros']).expand(page, :env => env)
+        content = Scrapple::Plugins::MacroExpander.expand(page.content,
+                                                          :allowed => page['macros'],
+                                                          :scope => page,
+                                                          :locals => {:env => env})
         body = engine.new { content }.render(page, :env => env)
         headers = {'Content-Type' => content_type_for(page.type) }
 

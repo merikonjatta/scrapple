@@ -42,7 +42,10 @@ module Scrapple::Plugins
 
         carpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(html_options), md_options)
 
-        content = Scrapple::Plugins::MacroExpander.new(page.content, page['macros']).expand(page, :env => env)
+        content = Scrapple::Plugins::MacroExpander.expand(page.content,
+                                                          :allowed => page['macros'],
+                                                          :scope => page,
+                                                          :locals => {:env => env})
         body = carpet.render(content)
         headers = {"Content-Type" => "text/html"}
         return [200, headers, [body]]
