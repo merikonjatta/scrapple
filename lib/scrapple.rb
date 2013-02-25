@@ -7,8 +7,8 @@ require 'active_support/core_ext'
 
 
 module Scrapple
-  class HandlerNotFound < Exception; end
-  class FileNotFound < Exception; end
+  class HandlerNotFound < StandardError; end
+  class FileNotFound < StandardError; end
   module Plugins; end
 
   class << self
