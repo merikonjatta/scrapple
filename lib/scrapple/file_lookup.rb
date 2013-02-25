@@ -70,7 +70,7 @@ module Scrapple
           end
         end
 
-        return found
+        return found ? Pathname.new(found).cleanpath.to_s : found
       end
 
 

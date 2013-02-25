@@ -150,6 +150,20 @@ module Scrapple
       @settings[key] = value
     end
 
+    # Get the parent page.
+    # This means:
+    # For ordinary pages and directories, the containing directory or its index file.
+    # For indexfiles, the containing directory of the containing directory, or its index file.
+    # Returns nil if there is no appropriate parent.
+    # @param options [Hash] See {Page#for}
+    def parent(options = {})
+      fp = if self.indexfile?
+             File.join(self.fullpath, "../../")
+           else
+             File.join(self.fullpath, "../")
+           end
+      self.class.for(fp, options)
+    end
 
     # Get a list of child pages.
     # If self is a Directory, the list of pages in that directory.
