@@ -1,0 +1,51 @@
+:ruby
+  page = env['scrapple.page']
+  page['stylesheets'] ||= []
+  page['stylesheets'] << "/css/clean.css"
+  page['javascripts'] ||= []
+  page['javascripts'] << "/js/jquery.js"
+  page['javascripts'] << "/js/bootstrap.min.js"
+
+!!! 5
+
+%html
+  %head
+    %title #{page['title'].try(:+, " - ")} #{page['site_name']}
+    - page['stylesheets'].each do |css|
+      %link(rel="stylesheet" type="text/css" href="#{css}")
+    - page['javascripts'].each do |js|
+      %script(type="text/javascript" src="#{js}")
+
+  %body{:class => page['body_class']}
+    .belt
+      .container
+        .row
+          .span12
+            = page.breadcrumbs
+            - if page.type != "directory"
+              %ul.actions
+                %li
+                  %a(href="#{page.path}/in/editor") Edit
+                %li
+                  %a(href="#{page.path}/as/code") Code
+    .mainbulk
+      .container
+        .row
+          .span8
+            .content
+              = yield
+          .span4
+            .aside
+              = page.index(:trailing_slash => false)
+
+            .aside
+              - if env['scrapple.user']
+                Logged in as 
+                %a(href="/auth/profile") #{env['scrapple.user'].username}
+              - else
+                %a(href="/auth/login") Log in
+        .row
+          .span12
+            .footer
+              %p Powered by Scrapple
+              %p Rendered with #{env['scrapple.handler']}

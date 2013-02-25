@@ -1,0 +1,118 @@
+$gridColumnWidth: 80px;
+$gridGutterWidth: 0px;
+$gridColumnWidth1200: 100px;
+$gridGutterWidth1200: 0px;
+$gridColumnWidth768: 62px;
+$gridGutterWidth768: 0px;
+
+$blue:     #2F78CB;
+$blueDark: #206B88;
+$green:    #66BF40;
+$red:      #C63E2E;
+$yellow:   #CDD23D;
+$orange:   #BE6C3C;
+$pink:     #B653AB;
+$purple:   #934FB5;
+
+$nonParagSansFontFamily: "Avenir LT Std", "Myriad Pro", sans-serif;
+
+$baseFontFamily: $nonParagSansFontFamily;
+$baseFontSize: 15px;
+$baseLineHeight: 22.5px;
+$linkColor: $green;
+
+
+.border-box {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@import "compass_twitter_bootstrap";
+@import "compass_twitter_bootstrap_responsive";
+
+[class*="span"] {
+    //@extend .border-box;
+    @media ( min-width:1200px ){
+        margin-left: $gridGutterWidth1200;
+    }
+    @media ( max-width:1199px ){
+        margin-left: $gridGutterWidth;
+    }
+
+}
+
+body {
+    background: #e3e3e3 image-url("noisy-grid.png");
+}
+
+.belt {
+    padding: 0px; margin:0px;
+    background: #d7d7d7;
+    border-bottom: 1px solid #bababa;
+    @include clearfix;
+}
+
+.mainbulk {
+    border-top: 1px solid #ffffff;
+}
+.content {
+    margin-top: 20px; padding: 20px;
+    @include box-shadow(0px 1px 5px 0px rgba(0,0,0,0.2));
+    @include border-radius;
+    background: #f5f5f5;
+    text-rendering: optimizelegibility;
+}
+
+.aside {
+    margin-top: 20px; padding: 20px;
+    font-family: $nonParagSansFontFamily;
+}
+
+.footer {
+    margin-top: 30px;
+    color: $grayLight;
+    font-weight: 200;
+    font-size: $fontSizeSmall;
+}
+
+ul.breadcrumb, ul.actions {
+    margin:0px; padding:10px; @include inline-block();
+    background:transparent; list-style:none;
+    font-family: $nonParagSansFontFamily;
+    li {
+        margin:0px; padding:0px; @include inline-block;
+        margin-right:9px; list-style:none;
+        text-shadow: 0px 1px 0px #FFF; color: #909090;
+        line-height: 1.0;
+        a:link, a:visited { color: #808080; }
+        a:hover           { color: #606060; text-decoration: none; }
+    }
+    li:last-child { margin-right: 0px; }
+}
+
+ul.breadcrumb {
+}
+
+ul.actions {
+    padding-left:20px;
+}
+
+
+
+.content {
+    font-family: $sansFontFamily;
+    h1,h2,h3,h4,h5,h6 { font-family: $nonParagSansFontFamily; }
+}
+
+
+
+.aside {
+    margin-left: 10px;
+    background: rgba(255,255,255,0.4);
+    @include box-shadow(0px 1px 3px 0px rgba(0,0,0,0.14));
+
+    ul.index {
+        margin:0px; list-style:none;
+    }
+}
