@@ -8,7 +8,7 @@ module Scrapple::Plugins
       if page.nil?
         "Couldn't find #{other} to include"
       else
-        MacroExpander.new(page.content, page['macros']).expand(page)
+        MacroExpander.expand(page.content, :allowed => page['macros'], :scope => page)
       end
     end
 

@@ -133,7 +133,7 @@ module Scrapple
     # @raise [WriteRefused]  When the file is outside the first entry in {FileLookp.roots}
     def write(content)
       if self.root != FileLookup.roots.first
-        raise WriteRefused.new("Refusing to write #{fullpath} outside of #{FileLookup.roots.first}")
+        raise WriteRefused, "Refusing to write #{fullpath} outside of #{FileLookup.roots.first}"
       end
       File.open(fullpath, 'w') { |f| f.write(content) }
     end

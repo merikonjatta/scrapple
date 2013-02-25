@@ -8170,38 +8170,49 @@ ul.actions {
   font-size: 12px;
   line-height: 16px;
 }
-/* line 125, ../../scss/clean.scss */
+/* line 124, ../../scss/clean.scss */
+.content blockquote {
+  border-left: 5px solid #e0e0e0;
+}
+/* line 126, ../../scss/clean.scss */
+.content blockquote p {
+  font-size: 15px;
+  line-height: 22.5px;
+  color: #555555;
+  margin-bottom: 11.25px;
+}
+/* line 135, ../../scss/clean.scss */
 .content p:last-child, .content pre:last-child, .content blockquote:last-child, .content form:last-child, .content ul:last-child, .content ol:last-child, .content dl:last-child {
   margin-bottom: 0px;
 }
 
-/* line 130, ../../scss/clean.scss */
+/* line 140, ../../scss/clean.scss */
 .aside a:link, .aside a:visited {
   color: #66bf40;
 }
-/* line 131, ../../scss/clean.scss */
+/* line 141, ../../scss/clean.scss */
 .aside a:hover {
   color: #47862d;
 }
-/* line 133, ../../scss/clean.scss */
+/* line 143, ../../scss/clean.scss */
 .aside ul.index {
   margin: 0px;
   list-style: none;
 }
-/* line 138, ../../scss/clean.scss */
+/* line 148, ../../scss/clean.scss */
 .aside ul.index li.active a:link, .aside ul.index li.active a:visited, .aside ul.index li.active a:hover {
   color: #47862d;
   font-weight: bold;
 }
 
-/* line 149, ../../scss/clean.scss */
+/* line 159, ../../scss/clean.scss */
 textarea.editor {
   font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
   font-size: 12px;
   line-height: 16px;
 }
 
-/* line 162, ../../scss/clean.scss */
+/* line 172, ../../scss/clean.scss */
 body.full .sidebar, body.full .footer {
   display: none;
 }

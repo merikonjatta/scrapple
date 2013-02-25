@@ -121,6 +121,16 @@ ul.actions {
 
     pre, pre code { font-size: $fontSizePre; line-height: $lineHeightPre; }
 
+    blockquote {
+        border-left: 5px solid #e0e0e0;
+        p { 
+            font-size: $baseFontSize;
+            line-height: $baseLineHeight;
+            color: $gray;
+            margin-bottom: $baseLineHeight * 0.5;
+        }
+    }
+
     p,pre,blockquote,form,ul,ol,dl {
         &:last-child { margin-bottom: 0px; }
     }
