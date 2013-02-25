@@ -102,17 +102,14 @@ module Scrapple
       $: << plugins_dir
 
       # Require all <plugins_root>/<plugin>/<plugin>.rb scripts in plugins dir
-      Pathname.glob(plugins_dir.to_s + "/*") do |plugin_dir|
-        plugin_name = plugin_dir.to_s.match(/.*\/(.*)$/)[1]
+      Pathname.glob(plugins_dir.to_s + "/*").map { |dir|
+        [dir.to_s.match(/.*\/(.*)$/)[1], dir, dir.join("content")]
+      }.each do |name, dir, content_dir|
         begin
-          require plugin_dir.join(plugin_name)
+          require dir.join(name)
+          FileLookup.roots << content_dir if File.directory?(content_dir)
         rescue LoadError
         end
-      end
-
-      # Add all <plugins_root>/<plugin>/content directories to FileLookup.roots
-      Pathname.glob(plugins_dir.to_s + "/*/content") do |plugin_content_dir|
-        FileLookup.roots << plugin_content_dir.to_s if plugin_content_dir.directory?
       end
     end
 

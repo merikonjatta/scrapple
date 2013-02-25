@@ -1,8 +1,6 @@
 Scrapple To-Do
 ==============
 
-* Don't add plugin content dirs to search paths if initializeer load failed
-* Mobile layout (or responsive)
 * Utilize Dir[] file globbing in FileLookup
 * Make sure \\[[ ... ]] macro syntax doesn't conflict with templating languages
 * Expand macros before or after rendering template?
