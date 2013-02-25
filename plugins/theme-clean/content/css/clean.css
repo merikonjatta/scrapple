@@ -2407,7 +2407,7 @@ table th[class*="span"],
   *margin-right: .3em;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url('/content/img/glyphicons-halflings.png?1361761155');
+  background-image: url('/img/glyphicons-halflings.png?1361761155');
   background-position: 14px 14px;
   background-repeat: no-repeat;
   margin-top: 1px;
@@ -2428,7 +2428,7 @@ table th[class*="span"],
 .dropdown-menu > .active > a > [class*=" icon-"],
 .dropdown-submenu:hover > a > [class^="icon-"],
 .dropdown-submenu:hover > a > [class*=" icon-"] {
-  background-image: url('/content/img/glyphicons-halflings-white.png?1361761155');
+  background-image: url('/img/glyphicons-halflings-white.png?1361761155');
 }
 
 /* line 48, ../../../../../../../.rbenv/versions/1.9.2-p320/lib/ruby/gems/1.9.1/gems/compass_twitter_bootstrap-2.2.2.2/stylesheets/compass_twitter_bootstrap/_sprites.scss */
@@ -8042,7 +8042,7 @@ a.label:hover, a.badge:hover {
 
 /* line 48, ../../scss/clean.scss */
 body {
-  background: #e3e3e3 url('/content/img/noisy-grid.png?1361761155');
+  background: #e3e3e3 url('/img/noisy-grid.png?1361808318');
 }
 
 /* line 52, ../../scss/clean.scss */

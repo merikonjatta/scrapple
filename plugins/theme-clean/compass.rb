@@ -7,8 +7,9 @@ exec "compass watch -c compass.rb" if ($0 == __FILE__)
 require 'compass_twitter_bootstrap'
 
 # Set this to the root of your project when deployed:
-http_path       = "/"
-sass_dir        = "scss"
-css_dir         = "content/css"
-images_dir      = "content/img"
-javascripts_dir = "content/js"
+http_path        = "/"
+sass_dir         = "scss"
+css_dir          = "content/css"
+images_dir       = "content/img"
+http_images_path = "/img"
+javascripts_dir  = "content/js"

@@ -2,12 +2,9 @@ Scrapple To-Do
 ==============
 
 * Make sure \\[[ ... ]] macro syntax doesn't conflict with templating languages
-* Expand macros before or after rendering template?
-* When and how is html escaped?
 * Support layout for non-page requests
 * Edit new files
 * Image uploads
-* 日本語ファイル名が化けたり化けなかったりする
 * self['key'] is kinda dull
 * Respond to write in json
 * Authorization
@@ -16,6 +13,11 @@ Scrapple To-Do
 * Find pages across roots
 * Write sass cache to temp dir
 * Editor should use a Page
+
+----
+
+* 日本語ファイル名が化けたり化けなかったりする
+* When and how is html escaped?
 
 ----
 
@@ -31,6 +33,8 @@ Document
     * Gemfiles
     * Rack middleware stack
         * Use same sinatra version
+    * Implementing Handlers
+        * Macro support: should be expanded before template language processing
 
 ----
 
