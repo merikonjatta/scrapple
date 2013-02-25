@@ -2,7 +2,7 @@ module Scrapple::Plugins
   # Rack middleware that wraps the body in a layout.
   class Layout
 
-    DEFAULT_LAYOUT = "layouts/scrapple.haml"
+    DEFAULT_LAYOUT = "layouts/clean.haml"
 
     def initialize(app=nil)
       @app = app

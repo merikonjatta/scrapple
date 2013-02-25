@@ -1,5 +1,4 @@
 site_name: Scrapple Sample Content
-layout: layouts/clean
 
 markdown:
   hard_wrap: false

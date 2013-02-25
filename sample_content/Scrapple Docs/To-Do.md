@@ -18,17 +18,22 @@ Scrapple To-Do
 * Some Rack::Tests
 * Find pages across roots
 * Write sass cache to temp dir
-* Document
-    * How to write config.yml/_config.yml
-    * Webapp config keys
-    * Plugin authoring
-    * Kinds (Handler, Macro, mixin module, Rack middleware, hook, content)
-        * Namespacing
-        * Placement
-        * content dir
-        * Gemfiles
-        * Rack middleware stack
-            * Use same sinatra version
+* Editor should use a Page
+
+----
+
+Document
+
+* How to write config.yml/_config.yml
+* Webapp config keys
+* Plugin authoring
+* Kinds (Handler, Macro, mixin module, Rack middleware, hook, content)
+    * Namespacing
+    * Placement
+    * content dir
+    * Gemfiles
+    * Rack middleware stack
+        * Use same sinatra version
 
 ----
 
