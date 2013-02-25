@@ -1,7 +1,7 @@
 Scrapple To-Do
 ==============
 
-* Remove theme slab
+* /auth/hamlとかに行くとサイドバーにあれがでちゃう
 * Edit new files
 * Image uploads
 * Respond to write in json
@@ -31,7 +31,9 @@ Document
     * Basic architecture
         * Page attributes and settings: attributes are inherent
     * Macros
+        * expansion context
         * Are Page mixins
+        * Are responsible for doing their own html escapes
     * Handlers
         * Macro support: should be expanded before template language processing
         * Layout support

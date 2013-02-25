@@ -152,7 +152,10 @@ module Scrapple
 
 
     # Get a list of child pages.
+    # If self is a Directory, the list of pages in that directory.
+    # If self is a Page, the list of sibling pages.
     # @param options [Hash]
+    # @option options [Bool] :indexfiles_first      (true) List index.* files first.
     # @option options [Bool] :directories_first     (true) List directories first.
     # @option options [Bool] :ignore_perdir_files   (true) Do not include perdir files
     # @option options [Array, String] :ignore       ([]) Fullpaths to exclude
@@ -160,6 +163,7 @@ module Scrapple
       return [] unless has_children?
 
       options = {
+        :indexfiles_first => true,
         :directories_first => true,
         :ignore_perdir_files => true,
         :ignore => []
@@ -171,30 +175,31 @@ module Scrapple
       base = (type == "directory") ? fullpath : File.dirname(fullpath)
 
       pages = Dir[base + "/*"].reject { |entry|
-        entry =~ /\/index\..+$/ ||
-          options[:ignore].include?(entry) ||
-          options[:ignore_perdir_files] && entry =~ /\/#{Regexp.escape(Scrapple.perdir_file)}$/
+        options[:ignore].include?(entry) ||
+        options[:ignore_perdir_files] && entry =~ /\/#{Regexp.escape(Scrapple.perdir_file)}$/
       }.map { |entry| Page.for(entry, :fetch => true, :ignore_perdir_files => true) }.compact
 
-      if options[:directories_first]
-        # Sort directories-first, then by name. (A Shwartzian transform)
-        # Got idea from bit.ly/d4UaMM
-        sh = pages.map do |page|
-          sortkey = ""
-          sortkey << ((page.type == "directory" || page.indexfile?) ? "0/" : "1/")
-          sortkey << page.fullpath
-          [sortkey, page]
-        end
-        sh.sort{|a,b| a.first <=> b.first }.map { |schw| schw[1] }
-      else
-        pages.sort
+      # Sort indexfiles-first, directories-first, then by name. (A Shwartzian transform)
+      # Got idea from bit.ly/d4UaMM
+      sh = pages.map do |page|
+        sortkey = ""
+        sortkey << ((page.indexfile?) ? "0/" : "1/" ) if options[:indexfiles_first]
+        sortkey << ((page.type == "directory" || page.indexfile?) ? "0/" : "1/") if options[:directories_first]
+        sortkey << page.fullpath
+        [sortkey, page]
       end
+      sh.sort{|a,b| a.first <=> b.first }.map { |schw| schw[1] }
     end
 
     # True if this is a directory or an indexfile.
     # @return [Bool]
     def has_children?
       type == "directory" || indexfile?
+    end
+
+    # True if other has the same fullpath
+    def same?(other)
+      fullpath == other.fullpath
     end
 
   end
