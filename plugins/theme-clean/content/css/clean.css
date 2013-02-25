@@ -1,4 +1,4 @@
-/* line 25, ../../scss/clean.scss */
+/* line 28, ../../scss/clean.scss */
 .border-box {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -2407,7 +2407,7 @@ table th[class*="span"],
   *margin-right: .3em;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url('/img/glyphicons-halflings.png');
+  background-image: url('/content/img/glyphicons-halflings.png?1361761155');
   background-position: 14px 14px;
   background-repeat: no-repeat;
   margin-top: 1px;
@@ -2428,7 +2428,7 @@ table th[class*="span"],
 .dropdown-menu > .active > a > [class*=" icon-"],
 .dropdown-submenu:hover > a > [class^="icon-"],
 .dropdown-submenu:hover > a > [class*=" icon-"] {
-  background-image: url('/img/glyphicons-halflings-white.png');
+  background-image: url('/content/img/glyphicons-halflings-white.png?1361761155');
 }
 
 /* line 48, ../../../../../../../.rbenv/versions/1.9.2-p320/lib/ruby/gems/1.9.1/gems/compass_twitter_bootstrap-2.2.2.2/stylesheets/compass_twitter_bootstrap/_sprites.scss */
@@ -8028,39 +8028,40 @@ a.label:hover, a.badge:hover {
   }
 }
 @media (min-width: 1200px) {
-  /* line 34, ../../scss/clean.scss */
+  /* line 37, ../../scss/clean.scss */
   [class*="span"] {
     margin-left: 0px;
   }
 }
 @media (max-width: 1199px) {
-  /* line 34, ../../scss/clean.scss */
+  /* line 37, ../../scss/clean.scss */
   [class*="span"] {
     margin-left: 0px;
   }
 }
 
-/* line 45, ../../scss/clean.scss */
+/* line 48, ../../scss/clean.scss */
 body {
-  background: #e3e3e3 url('/img/noisy-grid.png');
+  background: #e3e3e3 url('/content/img/noisy-grid.png?1361761155');
 }
 
-/* line 49, ../../scss/clean.scss */
+/* line 52, ../../scss/clean.scss */
 .belt {
   padding: 0px;
   margin: 0px;
+  font-size: 14px;
   background: #d7d7d7;
   border-bottom: 1px solid #bababa;
   overflow: hidden;
   *zoom: 1;
 }
 
-/* line 56, ../../scss/clean.scss */
+/* line 60, ../../scss/clean.scss */
 .mainbulk {
   border-top: 1px solid white;
 }
 
-/* line 59, ../../scss/clean.scss */
+/* line 63, ../../scss/clean.scss */
 .content {
   margin-top: 20px;
   padding: 20px;
@@ -8076,14 +8077,14 @@ body {
   text-rendering: optimizelegibility;
 }
 
-/* line 67, ../../scss/clean.scss */
+/* line 71, ../../scss/clean.scss */
 .aside {
   margin-top: 20px;
   padding: 20px;
   font-family: "Avenir LT Std", "Myriad Pro", sans-serif;
 }
 
-/* line 72, ../../scss/clean.scss */
+/* line 76, ../../scss/clean.scss */
 .footer {
   margin-top: 30px;
   color: #999999;
@@ -8091,10 +8092,10 @@ body {
   font-size: 12.75px;
 }
 
-/* line 79, ../../scss/clean.scss */
+/* line 83, ../../scss/clean.scss */
 ul.breadcrumb, ul.actions {
   margin: 0px;
-  padding: 10px;
+  padding: 6px 0px;
   display: -moz-inline-stack;
   display: inline-block;
   vertical-align: middle;
@@ -8105,7 +8106,7 @@ ul.breadcrumb, ul.actions {
   list-style: none;
   font-family: "Avenir LT Std", "Myriad Pro", sans-serif;
 }
-/* line 83, ../../scss/clean.scss */
+/* line 87, ../../scss/clean.scss */
 ul.breadcrumb li, ul.actions li {
   margin: 0px;
   padding: 0px;
@@ -8121,35 +8122,44 @@ ul.breadcrumb li, ul.actions li {
   color: #909090;
   line-height: 1.0;
 }
-/* line 88, ../../scss/clean.scss */
+/* line 92, ../../scss/clean.scss */
 ul.breadcrumb li a:link, ul.breadcrumb li a:visited, ul.actions li a:link, ul.actions li a:visited {
   color: #808080;
 }
-/* line 89, ../../scss/clean.scss */
+/* line 93, ../../scss/clean.scss */
 ul.breadcrumb li a:hover, ul.actions li a:hover {
   color: #606060;
   text-decoration: none;
 }
-/* line 91, ../../scss/clean.scss */
+/* line 95, ../../scss/clean.scss */
 ul.breadcrumb li:last-child, ul.actions li:last-child {
   margin-right: 0px;
 }
 
-/* line 97, ../../scss/clean.scss */
+/* line 101, ../../scss/clean.scss */
 ul.actions {
   padding-left: 20px;
 }
 
-/* line 103, ../../scss/clean.scss */
+/* line 107, ../../scss/clean.scss */
 .content {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-/* line 105, ../../scss/clean.scss */
+/* line 109, ../../scss/clean.scss */
 .content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
   font-family: "Avenir LT Std", "Myriad Pro", sans-serif;
 }
+/* line 111, ../../scss/clean.scss */
+.content h1:first-child, .content h2:first-child, .content h3:first-child, .content h4:first-child, .content h5:first-child, .content h6:first-child {
+  margin-top: 0px;
+}
+/* line 114, ../../scss/clean.scss */
+.content hr {
+  border-top: 1px solid #cccccc;
+  border-bottom: 1px solid white;
+}
 
-/* line 110, ../../scss/clean.scss */
+/* line 119, ../../scss/clean.scss */
 .aside {
   margin-left: 10px;
   background: rgba(255, 255, 255, 0.4);
@@ -8157,7 +8167,7 @@ ul.actions {
   -moz-box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.14);
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.14);
 }
-/* line 115, ../../scss/clean.scss */
+/* line 124, ../../scss/clean.scss */
 .aside ul.index {
   margin: 0px;
   list-style: none;

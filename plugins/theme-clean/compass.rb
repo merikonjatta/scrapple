@@ -1,3 +1,6 @@
+#!/usr/bin/env ruby
+exec "compass watch -c compass.rb" if ($0 == __FILE__)
+
 # See http://compass-style.org/help/tutorials/configuration-reference/ for a
 # complete list of config options.
 

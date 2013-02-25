@@ -18,6 +18,9 @@ $nonParagSansFontFamily: "Avenir LT Std", "Myriad Pro", sans-serif;
 
 $baseFontFamily: $nonParagSansFontFamily;
 $baseFontSize: 15px;
+$fontSizeLarge: 19px;
+$fontSizeSmall: 13px;
+$fontSizeMini: 11px;
 $baseLineHeight: 22.5px;
 $linkColor: $green;
 
@@ -48,6 +51,7 @@ body {
 
 .belt {
     padding: 0px; margin:0px;
+    font-size: 14px;
     background: #d7d7d7;
     border-bottom: 1px solid #bababa;
     @include clearfix;
@@ -77,7 +81,7 @@ body {
 }
 
 ul.breadcrumb, ul.actions {
-    margin:0px; padding:10px; @include inline-block();
+    margin:0px; padding:6px 0px; @include inline-block();
     background:transparent; list-style:none;
     font-family: $nonParagSansFontFamily;
     li {
@@ -102,7 +106,12 @@ ul.actions {
 
 .content {
     font-family: $sansFontFamily;
-    h1,h2,h3,h4,h5,h6 { font-family: $nonParagSansFontFamily; }
+    h1,h2,h3,h4,h5,h6 {
+        font-family: $nonParagSansFontFamily;
+        &:first-child { margin-top: 0px; }
+    }
+
+    hr { border-top:1px solid #cccccc; border-bottom:1px solid #ffffff; }
 }
 
 
