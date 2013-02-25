@@ -13,20 +13,22 @@ module Scrapple::Plugins
         entries[page.fullpath] = page
       end
 
-      pages = entries.keys.uniq.map { |path| entries[path] }.reverse
+      pages = entries.keys.uniq.map { |path| entries[path] }.reverse.uniq
 
       str = "<ul class=\"breadcrumb\">\n"
-      pages.uniq[0...-1].each do |page|
-        str << "<li><a href=\""
+      pages.each do |page|
+        if page == pages.last
+          str << "<li class=\"active\"><a href=\""
+        else
+          str << "<li><a href=\""
+        end
         str << page.link
         str << "\">"
         str << page['title']
         str << "</a></li>\n"
-        str << "<li class=\"seperator\">&raquo;</li>\n"
+        str << "<li class=\"seperator\">&raquo;</li>\n" unless page == pages.last
       end
-      str << "<li class=\"active\">"
-      str << pages.last['title']
-      str << "</li>\n</ul>\n"
+      str << "</ul>"
 
       str
     end

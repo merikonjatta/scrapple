@@ -1,4 +1,3 @@
-// Variables {{{
 $gridColumnWidth       : 80px;
 $gridGutterWidth       : 0px;
 $gridColumnWidth1200   : 100px;
@@ -15,7 +14,7 @@ $orange                : #BE6C3C;
 $pink                  : #B653AB;
 $purple                : #934FB5;
 
-$linkColor             : $green;
+$linkColor             : $blue;
 
 $nonParagSansFontFamily: "Avenir LT Std", "Myriad Pro", sans-serif;
 $baseFontFamily        : $nonParagSansFontFamily;
@@ -28,7 +27,6 @@ $fontSizePre           : 12px;
 
 $baseLineHeight        : 22.5px;
 $lineHeightPre         : 16px;
-// }}}
 
 // Bootstrap & monkey patching {{{
 @import "compass_twitter_bootstrap";
@@ -129,8 +127,16 @@ ul.actions {
 }
 
 .aside {
+    a:link, a:visited { color: $green; }
+    a:hover           { color: darken($green, 15%); }
+
     ul.index {
         margin:0px; list-style:none;
+        li {
+        }
+        li.active {
+            a:link, a:visited, a:hover { color: darken($green, 15%); font-weight:bold; }
+        }
     }
 }
 
