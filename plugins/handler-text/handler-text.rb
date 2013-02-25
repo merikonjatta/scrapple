@@ -1,7 +1,6 @@
 module Scrapple::Plugins
   module HandlerText
     class << self
-      # List taken mostly from Ack
       def confidence(page)
         if %w(txt text).include?(page.type)
           1000
@@ -13,12 +12,19 @@ module Scrapple::Plugins
 
       def call(env)
         page = env['scrapple.page']
-        page['macros'] = false
-        page['file_content'] = Rack::Utils.escape_html(File.read(page.fullpath))
 
-        body = Rack::Utils.escape_html(File.read(page.fullpath)).gsub(/\r?\n/, '<br />')
+        body = format(File.read(page.fullpath))
+        body = Scrapple::Plugins::Layout.wrap(body, env)
 
         [200, {"Content-Type" => "text/html"}, [body]]
+      end
+
+
+      def format(text)
+        t = text.dup
+        t = Rack::Utils.escape_html(t)
+        t.gsub!(/\r\n?/, "\n")
+        t.gsub!(/\n/, "<br />")
       end
     end
   end

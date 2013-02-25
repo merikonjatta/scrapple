@@ -24,15 +24,25 @@ Document
 * How to write config.yml/_config.yml
 * Webapp config keys
 * Plugin authoring
-* Kinds (Handler, Macro, mixin module, Rack middleware, hook, content)
+    * Basic architecture
+        * Page attributes and settings: attributes are inherent
+    * Macros
+        * Are Page mixins
+    * Handlers
+        * Macro support: should be expanded before template language processing
+        * Layout support
+    * Rack Middleware
+    * Auth
+    * Hooks
+    * Content
+    * Themes
+    * Mixin Modules
     * Namespacing
     * Placement
-    * content dir
+    * Content dir
     * Gemfiles
-    * Rack middleware stack
-        * Use same sinatra version
-    * Implementing Handlers
-        * Macro support: should be expanded before template language processing
+* Rack middleware stack
+    * Use same sinatra version
 
 ----
 

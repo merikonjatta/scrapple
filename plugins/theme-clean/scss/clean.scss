@@ -1,41 +1,37 @@
-$gridColumnWidth: 80px;
-$gridGutterWidth: 0px;
-$gridColumnWidth1200: 100px;
-$gridGutterWidth1200: 0px;
-$gridColumnWidth768: 62px;
-$gridGutterWidth768: 0px;
+$gridColumnWidth       : 80px;
+$gridGutterWidth       : 0px;
+$gridColumnWidth1200   : 100px;
+$gridGutterWidth1200   : 0px;
+$gridColumnWidth768    : 62px;
+$gridGutterWidth768    : 0px;
 
-$blue:     #2F78CB;
-$blueDark: #206B88;
-$green:    #66BF40;
-$red:      #C63E2E;
-$yellow:   #CDD23D;
-$orange:   #BE6C3C;
-$pink:     #B653AB;
-$purple:   #934FB5;
+$blue                  : #2F78CB;
+$blueDark              : #206B88;
+$green                 : #66BF40;
+$red                   : #C63E2E;
+$yellow                : #CDD23D;
+$orange                : #BE6C3C;
+$pink                  : #B653AB;
+$purple                : #934FB5;
+
+$linkColor             : $green;
 
 $nonParagSansFontFamily: "Avenir LT Std", "Myriad Pro", sans-serif;
+$baseFontFamily        : $nonParagSansFontFamily;
+$baseFontSize          : 15px;
 
-$baseFontFamily: $nonParagSansFontFamily;
-$baseFontSize: 15px;
-$fontSizeLarge: 19px;
-$fontSizeSmall: 13px;
-$fontSizeMini: 11px;
-$baseLineHeight: 22.5px;
-$linkColor: $green;
+$fontSizeLarge         : 19px;
+$fontSizeSmall         : 13px;
+$fontSizeMini          : 11px;
+$fontSizePre           : 12px;
 
-
-.border-box {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
+$baseLineHeight        : 22.5px;
+$lineHeightPre         : 16px;
 
 @import "compass_twitter_bootstrap";
 @import "compass_twitter_bootstrap_responsive";
 
 [class*="span"] {
-    //@extend .border-box;
     @media ( min-width:1200px ){
         margin-left: $gridGutterWidth1200;
     }
@@ -60,12 +56,17 @@ body {
 .mainbulk {
     border-top: 1px solid #ffffff;
 }
+
+
+//--------------------------------------------------------
+
 .content {
     margin-top: 20px; padding: 20px;
     @include box-shadow(0px 1px 5px 0px rgba(0,0,0,0.2));
     @include border-radius;
     background: #f5f5f5;
     text-rendering: optimizelegibility;
+    text-align: justify;
 }
 
 .aside {
@@ -112,6 +113,8 @@ ul.actions {
     }
 
     hr { border-top:1px solid #cccccc; border-bottom:1px solid #ffffff; }
+
+    pre, pre code { font-size: $fontSizePre; line-height: $lineHeightPre; }
 }
 
 

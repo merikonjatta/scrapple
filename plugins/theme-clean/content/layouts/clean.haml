@@ -36,7 +36,7 @@
               = yield
           .span4
             .aside
-              = page.index(:trailing_slash => false)
+              = page.index(:of => "..", :trailing_slash => false)
 
             .aside
               - if env['scrapple.user']

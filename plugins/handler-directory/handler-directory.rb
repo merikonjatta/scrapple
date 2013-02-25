@@ -16,6 +16,8 @@ module Scrapple::Plugins
         body = "<h1>" + (page['title'] || File.basename(page.fullpath)) + "</h1>\n"
         body << page.index(:depth => depth)
 
+        body = Scrapple::Plugins::Layout.wrap(body, env)
+
         [200, {"Content-Type" => "text/html"}, [body]]
       end
 

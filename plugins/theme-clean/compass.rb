@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
-exec "compass watch -c compass.rb" if ($0 == __FILE__)
+if ($0 == __FILE__)
+  require 'shellwords'
+  exec "cd #{File.dirname(__FILE__).shellescape} && compass watch -c compass.rb"
+end
 
 # See http://compass-style.org/help/tutorials/configuration-reference/ for a
 # complete list of config options.

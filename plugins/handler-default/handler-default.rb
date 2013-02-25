@@ -19,10 +19,11 @@ module Scrapple::Plugins
                                                           :allowed => page['macros'],
                                                           :scope => page,
                                                           :locals => {:env => env})
-        body = engine.new { content }.render(page, :env => env)
-        headers = {'Content-Type' => content_type_for(page.type) }
+        content = engine.new { content }.render(page, :env => env)
+        content = Scrapple::Plugins::Layout.wrap(content, env)
 
-        return [200, headers, [body]]
+        headers = {'Content-Type' => content_type_for(page.type) }
+        return [200, headers, [content]]
       end
 
 
