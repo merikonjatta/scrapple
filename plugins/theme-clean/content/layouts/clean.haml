@@ -1,10 +1,14 @@
 :ruby
   page = env['scrapple.page']
+
   page['stylesheets'] ||= []
   page['stylesheets'] << "/css/clean.css"
+  page['stylesheets'].uniq!
+
   page['javascripts'] ||= []
   page['javascripts'] << "/js/jquery.js"
   page['javascripts'] << "/js/bootstrap.min.js"
+  page['javascripts'].uniq!
 
 !!! 5
 
@@ -31,19 +35,21 @@
     .mainbulk
       .container
         .row
-          .span8
-            .content
-              = yield
-          .span4
-            .aside
-              = page.index(:of => "..", :trailing_slash => false)
+          .main
+            .span8
+              .content
+                = yield
+          .sidebar
+            .span4
+              .aside
+                = page.index(:of => "..", :trailing_slash => false)
 
-            .aside
-              - if env['scrapple.user']
-                Logged in as 
-                %a(href="/auth/profile") #{env['scrapple.user'].username}
-              - else
-                %a(href="/auth/login") Log in
+              .aside
+                - if env['scrapple.user']
+                  Logged in as 
+                  %a(href="/auth/profile") #{env['scrapple.user'].username}
+                - else
+                  %a(href="/auth/login") Log in
         .row
           .span12
             .footer

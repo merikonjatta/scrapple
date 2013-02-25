@@ -1,16 +1,4 @@
-!!! 5
-
-%html
-  %head
-    %title Editing #{path}
-    %link( rel="stylesheet" type="text/css" href="/css/scrapple.css" )
-    %link( rel="stylesheet" type="text/css" href="/css/editor.css" )
-    %script( type="text/javascript" src="/js/jquery.js" )
-    %script( type="text/javascript" src="/js/editor.js" )
-  %body( class="editor" )
-    .container
-      .maincol
-        %form(action="/" method="post")
-          %input(type="hidden" name="fullpath" value="#{self.fullpath}")
-          %textarea#content(name="content")= self['editing_content']
-          %input(type="submit" value="Save" class="button")
+%form(action="/" method="post")
+  %input(type="hidden" name="fullpath" value="#{self.fullpath}")
+  %textarea.editor#content(name="content")= self['editing_content']
+  %input(type="submit" value="Save" class="btn")

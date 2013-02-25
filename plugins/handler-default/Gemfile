@@ -1,5 +1,16 @@
 gem 'tilt'
-gem 'redcarpet'
-gem 'haml'
+
 gem 'rdoc'
+gem 'redcarpet'
 gem 'RedCloth'
+gem 'asciidoctor'
+gem 'creole'
+gem 'wikicloth'
+
+gem 'erubis'
+gem 'haml'
+gem 'slim'
+gem 'liquid'
+gem 'radius'
+
+gem 'builder'

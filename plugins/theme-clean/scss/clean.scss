@@ -1,3 +1,4 @@
+// Variables {{{
 $gridColumnWidth       : 80px;
 $gridGutterWidth       : 0px;
 $gridColumnWidth1200   : 100px;
@@ -27,7 +28,9 @@ $fontSizePre           : 12px;
 
 $baseLineHeight        : 22.5px;
 $lineHeightPre         : 16px;
+// }}}
 
+// Bootstrap & monkey patching {{{
 @import "compass_twitter_bootstrap";
 @import "compass_twitter_bootstrap_responsive";
 
@@ -38,8 +41,12 @@ $lineHeightPre         : 16px;
     @media ( max-width:1199px ){
         margin-left: $gridGutterWidth;
     }
-
 }
+// }}}
+
+//--------------------------------------------------------------------------------
+
+// Layout elements {{{
 
 body {
     background: #e3e3e3 image-url("noisy-grid.png");
@@ -57,20 +64,20 @@ body {
     border-top: 1px solid #ffffff;
 }
 
-
-//--------------------------------------------------------
-
 .content {
-    margin-top: 20px; padding: 20px;
+    margin-top: 10px; margin-bottom:10px; padding: 20px;
     @include box-shadow(0px 1px 5px 0px rgba(0,0,0,0.2));
     @include border-radius;
     background: #f5f5f5;
     text-rendering: optimizelegibility;
     text-align: justify;
+    font-family: $sansFontFamily;
 }
 
 .aside {
-    margin-top: 20px; padding: 20px;
+    margin-top: 10px; margin-left: 10px; padding: 20px;
+    @include box-shadow(0px 1px 3px 0px rgba(0,0,0,0.14));
+    background: rgba(255,255,255,0.4);
     font-family: $nonParagSansFontFamily;
 }
 
@@ -80,6 +87,12 @@ body {
     font-weight: 200;
     font-size: $fontSizeSmall;
 }
+
+// }}}
+
+//--------------------------------------------------------
+
+// Components {{{
 
 ul.breadcrumb, ul.actions {
     margin:0px; padding:6px 0px; @include inline-block();
@@ -96,17 +109,11 @@ ul.breadcrumb, ul.actions {
     li:last-child { margin-right: 0px; }
 }
 
-ul.breadcrumb {
-}
-
 ul.actions {
     padding-left:20px;
 }
 
-
-
 .content {
-    font-family: $sansFontFamily;
     h1,h2,h3,h4,h5,h6 {
         font-family: $nonParagSansFontFamily;
         &:first-child { margin-top: 0px; }
@@ -115,16 +122,42 @@ ul.actions {
     hr { border-top:1px solid #cccccc; border-bottom:1px solid #ffffff; }
 
     pre, pre code { font-size: $fontSizePre; line-height: $lineHeightPre; }
+
+    p,pre,blockquote,form,ul,ol,dl {
+        &:last-child { margin-bottom: 0px; }
+    }
 }
 
-
-
 .aside {
-    margin-left: 10px;
-    background: rgba(255,255,255,0.4);
-    @include box-shadow(0px 1px 3px 0px rgba(0,0,0,0.14));
-
     ul.index {
         margin:0px; list-style:none;
     }
 }
+
+// }}}
+
+//--------------------------------------------------------
+
+// Editor support {{{
+
+textarea.editor { 
+    font-family: $monoFontFamily; 
+    font-size: $fontSizePre;
+    line-height: $lineHeightPre;
+}
+
+// }}}
+
+//--------------------------------------------------------
+
+// Alternative layouts {{{
+
+body.full {
+    .sidebar, .footer { display: none; }
+    .main .span8 { @extend .span12; }
+}
+
+// }}}
+
+
+// vim: foldmethod=marker

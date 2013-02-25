@@ -21,8 +21,16 @@ module Scrapple::Plugins
         page = env['scrapple.page']
         page['macros'] = false
         page['editing_content'] = File.read(page.fullpath)
+        page['stylesheets'] ||= []
+        page['stylesheets'] << "/css/editor.css"
+        page['javascripts'] ||= []
+        page['javascripts'] << "/js/jquery.js"
+        page['javascripts'] << "/js/jquery.vimarea.js"
+        page['javascripts'] << "/js/editor.js"
+        page['body_class']  = "full"
 
         body = Tilt['haml'].new(File.expand_path("../content/__editor.haml", __FILE__)).render(page)
+        body = Scrapple::Plugins::Layout.wrap(body, env)
 
         [200, {"Content-Type" => "text/html"}, [body]]
       end

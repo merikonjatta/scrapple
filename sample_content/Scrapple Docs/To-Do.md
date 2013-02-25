@@ -1,6 +1,7 @@
 Scrapple To-Do
 ==============
 
+* Remove theme slab
 * Edit new files
 * Image uploads
 * Respond to write in json
@@ -39,6 +40,9 @@ Document
     * Hooks
     * Content
     * Themes
+        * Page settings conventions
+            * javascripts, stylesheets
+            * body_class default, full
     * Mixin Modules
     * Namespacing
     * Placement
@@ -48,6 +52,8 @@ Document
     * Use same sinatra version
 
 ----
+
+Authentication
 
 * Return to previous location (/auth/twitter?origin=http://...)
 * For setups that don't want open registrations, the admin must first
@@ -63,7 +69,6 @@ Document
 
 ----
 
-* Plugin: slim
 * Plugin: impress.js
 * Plugin: rak search
 * Plugin: gist
