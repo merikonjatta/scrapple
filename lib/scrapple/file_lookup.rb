@@ -20,8 +20,7 @@ module Scrapple
       def find(file)
         found = nil
 
-        if absolute?(file)
-          rewt = parent_root(file)
+        if rewt = parent_root(file)
           file = relative_path(file, rewt)
           rewts = [rewt]
         else
@@ -86,8 +85,7 @@ module Scrapple
       # @raise  [ArgumentError]           When near is not a descendant of any of the {.roots}
       # @raise  [ArgumentError]           When near doesn't exist
       def find_first_ascending(file, near)
-        found = find_all_ascending(file, near)
-        return found.first
+        find_all_ascending(file, near).first
       end
 
 
@@ -133,9 +131,9 @@ module Scrapple
 
 
       # Check if a path is an absolute path.
-      # Returns true if the path starts with one of the {.roots}.
+      # Same as {parent_root}, except this one returns a Bool.
       # So if given something like "/etc/init.d" and /etc nor /etc/init.d is in the {.roots},
-      # then that's a relative path (returns false).
+      # then that's a relative path AFAIC (returns false).
       # @param path [String]
       # @return [Bool]
       def absolute?(path)
@@ -143,9 +141,9 @@ module Scrapple
       end
 
 
-      # Check if an absolute path is a descendant any of the {.roots}.
-      # If it is, returns that base path.
-      # If not, returns nil.
+      # Check if an absolute path is a descendant any of the {.roots}.  In
+      # other words, if the path starts with one of the {.roots}.  If it is,
+      # returns that base path.  If not, returns nil.
       # @param path [String]
       # @return [String]
       def parent_root(fullpath)
@@ -161,7 +159,7 @@ module Scrapple
       def descendant?(path, root)
         relative = relative_path(path, root)
         return false if relative.nil?
-        return relative !~ /\.\./
+        relative !~ /\.\./
       end
 
     end
