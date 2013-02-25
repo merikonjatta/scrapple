@@ -3,7 +3,6 @@ Scrapple To-Do
 
 * Edit new files
 * Image uploads
-* self['key'] is kinda dull
 * Respond to write in json
 * Authorization
 * Think of a way to test plugins
@@ -16,6 +15,10 @@ Scrapple To-Do
 * Make sure \\[[ ... ]] macro syntax doesn't conflict with templating languages
 * 日本語ファイル名が化けたり化けなかったりする
 * When and how is html escaped?
+
+----
+
+* self['key'] is kinda dull
 
 ----
 
