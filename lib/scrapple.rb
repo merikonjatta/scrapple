@@ -24,6 +24,7 @@ module Scrapple
     attr_reader :root
     attr_reader :settings
     attr_reader :middleware_stack
+    attr_reader :plugins
 
     # Set up accessor methods for basic settings entries
     %w(content_dir plugins_dir data_dir tmp_dir perdir_file).each do |name|
@@ -31,6 +32,7 @@ module Scrapple
         settings[name]
       end
     end
+
 
     # Require necessary libs and add file lookup paths.
     def setup
@@ -102,12 +104,14 @@ module Scrapple
       $: << plugins_dir
 
       # Require all <plugins_root>/<plugin>/<plugin>.rb scripts in plugins dir
+      @plugins = []
       Pathname.glob(plugins_dir.to_s + "/*").map { |dir|
         [dir.to_s.match(/.*\/(.*)$/)[1], dir, dir.join("content")]
       }.each do |name, dir, content_dir|
         begin
           require dir.join(name)
           FileLookup.roots << content_dir if File.directory?(content_dir)
+          @plugins << dir
         rescue LoadError
         end
       end
