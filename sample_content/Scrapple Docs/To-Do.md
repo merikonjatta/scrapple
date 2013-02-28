@@ -9,7 +9,7 @@ Scrapple To-Do
 * Think of a way to test plugins
 * Some Rack::Tests
 * Write sass cache to temp dir
-* Editor should use a Page
+* Rack::CodeHighlighter
 
 ----
 
@@ -74,6 +74,7 @@ Authentication
 * Plugin: impress.js
 * Plugin: rak search
 * Plugin: gist
+* Plugin: tex
 
 ----
 
