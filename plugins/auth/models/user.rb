@@ -1,9 +1,10 @@
 class User
   include DataMapper::Resource
 
-  property :id,         Serial
-  property :username,   String, :length => 100
-  property :expires_at, Time
+  property :id,              Serial
+  property :username,        String, :length => 100
+  property :password_digest, String, :length => 255
+  attr_accessor :password_confirmation
 
   has n, :identities
 
@@ -12,7 +13,6 @@ class User
   def self.for_identity(provider, uid)
     u = User.first_or_new(:identities => [:provider => provider, :uid => uid])
     unless u.saved?
-      u.expires_at = Time.now + 1.day
       u.username = "Temporary Account"
     end
     u
