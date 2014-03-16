@@ -50,10 +50,13 @@ module Scrapple
 
     # Returns a full application with all apps in the stack.
     def to_app
-      Rack::Builder.new {
-        Scrapple.middleware_stack.middleware.each { |ware| use ware[0], *ware[1], &ware[2] }
+      Rack::Builder.new do
+        Scrapple.middleware_stack.middleware.each do |ware|
+          use ware[0], *ware[1], &ware[2]
+        end
+
         run Scrapple.middleware_stack.endpoint
-      }
+      end 
     end
 
   end

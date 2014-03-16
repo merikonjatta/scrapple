@@ -1,9 +1,19 @@
 require 'bundler'
 Bundler.require(:default, :development)
+
 require 'pathname'
 require 'fileutils'
 require 'yaml'
 require 'active_support/core_ext'
+
+%w{
+  scrapple/file_lookup
+  scrapple/settings
+  scrapple/hookable
+  scrapple/page
+  scrapple/webapp
+  scrapple/middleware_stack
+}.each { |lib| require File.expand_path("../", __FILE__) + "/#{lib}" }
 
 
 module Scrapple
@@ -13,90 +23,74 @@ module Scrapple
 
   class << self
 
-    DEFAULT_SETTINGS = {
+    ROOT = Pathname.new(File.expand_path("../../", __FILE__)).cleanpath
+
+    DEFAULTS = {
+      "content_dir" => ROOT + "sample_content",
+      "plugins_dir" => ROOT + "plugins",
+      "data_dir"    => ROOT + "data",
       "perdir_file" => "_config.yml",
-      "content_dir" => "sample_content",
-      "plugins_dir" => "plugins",
-      "data_dir"    => "data",
-      "tmp_dir"     => "tmp",
     }
 
     attr_reader :root
-    attr_reader :settings
+    attr_reader :config
     attr_reader :middleware_stack
     attr_reader :plugins
 
-    # Set up accessor methods for basic settings entries
-    %w(content_dir plugins_dir data_dir tmp_dir perdir_file).each do |name|
-      define_method name do
-        settings[name]
-      end
+    def root
+      ROOT
+    end
+
+    def content_dir
+      config["content_dir"]
+    end
+
+    def plugins_dir
+      config["plugins_dir"]
+    end
+
+    def data_dir
+      config["data_dir"]
+    end
+
+    def perdir_file
+      config["perdir_file"]
     end
 
 
-    # Require necessary libs and add file lookup paths.
-    def setup
-      @root = Pathname.new(File.expand_path("../../", __FILE__))
-      Dir.chdir @root
-
-      load_settings
-      setup_dirs
-      load_lib
-
-      FileLookup.roots << content_dir
-
-      build_middleware_stack
-      load_plugins
+    def load_config
+      @config = DEFAULTS.merge!(YAML.load_file(ROOT.join("config.yml")))
     end
 
-
-    def load_settings
-      @settings = DEFAULT_SETTINGS
-      if File.exist?(config_file = @root.join("config.yml"))
-        @settings.merge!(YAML.load_file(config_file)) rescue TypeError # FIXME
+    def clean_pathnames
+      ["content_dir", "plugins_dir", "data_dir"].each do |key|
+        config[key] = Pathname.new(config[key]).cleanpath
       end
     end
 
-
-    def setup_dirs
-      %w(data_dir tmp_dir plugins_dir content_dir).each do |name|
-        @settings[name] = Pathname.new(File.expand_path(@settings[name])).cleanpath
-      end
-
-      [data_dir, tmp_dir].each do |dir|
+    def check_dirs
+      [data_dir, content_dir, plugins_dir].each do |dir|
         unless dir.directory?
-          begin FileUtils.mkdir_p dir, :mode => 0755
+          begin
+            FileUtils.mkdir_p dir, :mode => 0755
           rescue
             abort "Couldn't create #{dir.to_s}. Please create it or specify another location in config.yml"
           end
         end
+      end
+
+      [data_dir, content_dir].each do |dir|
         unless dir.writable?
           abort "Directory #{dir.to_s} is not writable by #{`whoami`.strip}."
         end
       end
-
-      [plugins_dir, content_dir].each do |dir|
-        unless dir.directory?
-          abort "#{dir.to_s} doesn't exist. A typo, maybe?"
-        end
-      end
     end
-
-
-    def load_lib
-      %W(
-        file_lookup  settings  hookable page webapp  middleware_stack
-      ).each { |lib| require @root.join("lib/scrapple/#{lib}") }
-    end
-
-
 
     def build_middleware_stack
       @middleware_stack = Scrapple::MiddlewareStack.new
       @middleware_stack.append Rack::Session::Cookie, :key => "scrapple_session"
       @middleware_stack.append Scrapple::Webapp
     end
-
 
     def load_plugins
       # Add plugins dir to load path so that plugins with dependencies can
@@ -105,12 +99,10 @@ module Scrapple
 
       # Require all <plugins_root>/<plugin>/<plugin>.rb scripts in plugins dir
       @plugins = []
-      Pathname.glob(plugins_dir.to_s + "/*").map { |dir|
-        [dir.to_s.match(/.*\/(.*)$/)[1], dir, dir.join("content")]
-      }.each do |name, dir, content_dir|
+      Pathname.glob(plugins_dir + "/*").each do |dir|
         begin
-          require dir.join(name)
-          FileLookup.roots << content_dir if File.directory?(content_dir)
+          require dir + dir.to_s.match(/.*\/(.*)$/)[1]
+          FileLookup.roots << (dir + "content") if (dir + "content").directory?
           @plugins << dir
         rescue LoadError
         end
@@ -121,4 +113,12 @@ module Scrapple
 
 end
 
-Scrapple.setup
+
+Scrapple.load_config
+Scrapple.clean_pathnames
+Scrapple.check_dirs
+
+Scrapple::FileLookup.roots << Scrapple.content_dir
+
+Scrapple.build_middleware_stack
+Scrapple.load_plugins
