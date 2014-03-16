@@ -29,7 +29,7 @@ module Scrapple
       "content_dir" => ROOT + "sample_content",
       "plugins_dir" => ROOT + "plugins",
       "data_dir"    => ROOT + "data",
-      "perdir_file" => "_config.yml",
+      "rc_file"     => "_config.yml",
     }
 
     attr_reader :root
@@ -53,8 +53,8 @@ module Scrapple
       config["data_dir"]
     end
 
-    def perdir_file
-      config["perdir_file"]
+    def rc_file
+      config["rc_file"]
     end
 
 
