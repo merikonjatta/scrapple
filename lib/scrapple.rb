@@ -23,12 +23,7 @@ module Scrapple
 
   class << self
 
-    ROOT = Pathname.new(File.expand_path("../../", __FILE__)).cleanpath
-
     DEFAULTS = {
-      "content_dir" => ROOT + "sample_content",
-      "plugins_dir" => ROOT + "plugins",
-      "data_dir"    => ROOT + "data",
       "rc_file"     => "_config.yml",
     }
 
@@ -36,14 +31,8 @@ module Scrapple
     attr_reader :config
     attr_reader :middleware_stack
     attr_reader :plugins
-
-    def root
-      ROOT
-    end
-
-    def content_dir
-      config["content_dir"]
-    end
+    attr_reader :content
+    attr_reader :renderers
 
     def plugins_dir
       config["plugins_dir"]
@@ -57,9 +46,42 @@ module Scrapple
       config["rc_file"]
     end
 
+    def init
+      @root = Pathname.new(File.expand_path("../../", __FILE__)).cleanpath
+      @renderers = {}
+      load_config
+      validate_config
+      clean_pathnames
+      check_dirs
+      init_content
+      build_middleware_stack
+      load_plugins
+    end
+
 
     def load_config
       @config = DEFAULTS.merge!(YAML.load_file(ROOT.join("config.yml")))
+    end
+
+
+    def validate_config
+      @config['data_dir'] ||= @root + "data"
+      @config['plugins_dir'] ||= @root + "plugins"
+
+      @config['fallback_renderer'] ||= 'webpage'
+      @config['default_renderers'] ||= {
+        'md'       => 'webpage',
+        'markdown' => 'webpage',
+        'textile'  => 'webpage',
+        'rdoc'     => 'webpage',
+        'html'     => 'raw',
+        'js'       => 'raw',
+        'css'      => 'raw',
+      }
+     
+      unless @config['content_dir']
+        abort "Please specify content_dir in your config.yml"
+      end
     end
 
     def clean_pathnames
@@ -86,6 +108,11 @@ module Scrapple
       end
     end
 
+    def init_content
+      @content = Scrapple::Content.new
+      @content << config["content_dir"]
+    end
+
     def build_middleware_stack
       @middleware_stack = Scrapple::MiddlewareStack.new
       @middleware_stack.append Rack::Session::Cookie, :key => "scrapple_session"
@@ -101,12 +128,39 @@ module Scrapple
       @plugins = []
       Pathname.glob(plugins_dir + "/*").each do |dir|
         begin
-          require dir + dir.to_s.match(/.*\/(.*)$/)[1]
-          FileLookup.roots << (dir + "content") if (dir + "content").directory?
+          require dir + dir.basename
+          @content << (dir + "content")
           @plugins << dir
         rescue LoadError
         end
       end
+    end
+
+
+    # Register a renderer.
+    # @param [Module] mod                Renderer module.
+    # @param [Hash] properties           Properties of the renderer.
+    # @option properties [String] :name  The name of this module.
+    def register_renderer(mod, properties)
+      raise ArgumentError "Please specify a name for this renderer." if properties[:name].blank?
+      @renderer[properties[:name]] = mod
+    end
+
+    # Choose a suitable renderer for this page and request.
+    # @param page [Page]
+    # @return [Module]
+    def renderer_for(page)
+      (
+        renderer(params['renderer']) ||
+        renderer(page['renderer']) ||
+        renderer(config["default_renderers"][page.type]) ||
+        renderer(config["fallback_renderer"])
+      )
+    end
+
+    # Get a renderer module by name.
+    def renderer(name)
+      renderers[name]
     end
 
   end
@@ -114,11 +168,3 @@ module Scrapple
 end
 
 
-Scrapple.load_config
-Scrapple.clean_pathnames
-Scrapple.check_dirs
-
-Scrapple::FileLookup.roots << Scrapple.content_dir
-
-Scrapple.build_middleware_stack
-Scrapple.load_plugins
