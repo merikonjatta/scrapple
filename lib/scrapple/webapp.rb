@@ -1,6 +1,6 @@
 require 'sinatra/base'
 
-module Scrapple
+class Scrapple
 
   class Webapp < Sinatra::Base
 
@@ -17,17 +17,30 @@ module Scrapple
 
 
     def for_path(path = '')
-      page = Scrapple::Content.get(path)
+      page = Scrapple.content.get(path)
       raise Sinatra::NotFound if page.nil?
 
-      renderer = Scrapple.renderer_for(page)
+      renderer = renderer_for(page)
 
       # Set rack env so that other middleware plugins can access them
       env['scrapple.page'] = page
       env['scrapple.params'] = params
       env['scrapple.renderer'] = renderer
 
-      return renderer.call(env)
+      return renderer.render(page, params)
+    end
+
+
+    # Choose a suitable renderer for this page and request.
+    # @param page [Page]
+    # @return [Module]
+    def renderer_for(page)
+      (
+        Scrapple.renderer(params['renderer']) ||
+        Scrapple.renderer(page['renderer']) ||
+        Scrapple.renderer(Scrapple.config["default_renderers"][page.type]) ||
+        Scrapple.renderer(Scrapple.config["fallback_renderer"])
+      )
     end
 
   end

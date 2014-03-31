@@ -1,4 +1,4 @@
-module Scrapple
+class Scrapple
   class MiddlewareStack
 
     def initialize

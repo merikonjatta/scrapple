@@ -1,18 +1,8 @@
 module Scrapple::Plugins
-  module HandlerDefault
+  module HandlerPage
     class << self
 
-      def confidence(page)
-        if (Tilt.mappings.keys - %w(markdown md mkd)).include?(page.type)
-          1000
-        else
-          0
-        end
-      end
-
-
       def call(env)
-        page = env['scrapple.page']
         engine = Tilt[page.type]
 
         content = Scrapple::Plugins::MacroExpander.expand(page.content,

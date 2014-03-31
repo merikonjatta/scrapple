@@ -7,16 +7,16 @@ require 'yaml'
 require 'active_support/core_ext'
 
 %w{
-  scrapple/file_lookup
-  scrapple/settings
-  scrapple/hookable
+  scrapple/content
+  scrapple/file_system_bag
   scrapple/page
+  scrapple/parser
   scrapple/webapp
   scrapple/middleware_stack
 }.each { |lib| require File.expand_path("../", __FILE__) + "/#{lib}" }
 
 
-module Scrapple
+class Scrapple
   class HandlerNotFound < StandardError; end
   class FileNotFound < StandardError; end
   module Plugins; end
@@ -60,24 +60,46 @@ module Scrapple
 
 
     def load_config
-      @config = DEFAULTS.merge!(YAML.load_file(ROOT.join("config.yml")))
+      @config = DEFAULTS.merge!(YAML.load_file(@root.join("config.yml")))
+    rescue
+      @config = {}
     end
 
 
     def validate_config
       @config['data_dir'] ||= @root + "data"
       @config['plugins_dir'] ||= @root + "plugins"
+      @config['content_dir'] ||= @root + "sample_content"
+      @config['fallback_renderer'] ||= 'page'
 
-      @config['fallback_renderer'] ||= 'webpage'
-      @config['default_renderers'] ||= {
-        'md'       => 'webpage',
-        'markdown' => 'webpage',
-        'textile'  => 'webpage',
-        'rdoc'     => 'webpage',
-        'html'     => 'raw',
-        'js'       => 'raw',
-        'css'      => 'raw',
-      }
+      @config['default_renderers'] ||= {}
+      @config['default_renderers'].merge!({
+        'directory' => 'directory',
+
+        'md'        => 'page',
+        'mdown'     => 'page',
+        'markdown'  => 'page',
+        'textile'   => 'page',
+        'rdoc'      => 'page',
+        'haml'      => 'page',
+        'erb'       => 'page',
+
+        'txt'       => 'raw',
+        'rb'        => 'raw',
+        'pl'        => 'raw',
+        'php'       => 'raw',
+        'c'         => 'raw',
+
+        'jpg'       => 'raw',
+        'jpeg'      => 'raw',
+        'png'       => 'raw',
+        'gif'       => 'raw',
+        'svg'       => 'raw',
+        'pdf'       => 'raw',
+        'html'      => 'raw',
+        'js'        => 'raw',
+        'css'       => 'raw',
+      })
      
       unless @config['content_dir']
         abort "Please specify content_dir in your config.yml"
@@ -91,20 +113,18 @@ module Scrapple
     end
 
     def check_dirs
-      [data_dir, content_dir, plugins_dir].each do |dir|
-        unless dir.directory?
+      ["content_dir", "plugins_dir", "data_dir"].each do |dir|
+        unless config[dir].directory?
           begin
-            FileUtils.mkdir_p dir, :mode => 0755
+            FileUtils.mkdir_p config[dir], :mode => 0755
           rescue
-            abort "Couldn't create #{dir.to_s}. Please create it or specify another location in config.yml"
+            abort "Couldn't create #{config[dir].to_s}. Please create it or specify another location in config.yml"
           end
         end
       end
 
-      [data_dir, content_dir].each do |dir|
-        unless dir.writable?
-          abort "Directory #{dir.to_s} is not writable by #{`whoami`.strip}."
-        end
+      unless data_dir.writable?
+        abort "Directory #{data_dir.to_s} is not writable by #{`whoami`.strip}."
       end
     end
 
@@ -126,7 +146,7 @@ module Scrapple
 
       # Require all <plugins_root>/<plugin>/<plugin>.rb scripts in plugins dir
       @plugins = []
-      Pathname.glob(plugins_dir + "/*").each do |dir|
+      Pathname.glob(plugins_dir + "*").each do |dir|
         begin
           require dir + dir.basename
           @content << (dir + "content")
@@ -143,24 +163,14 @@ module Scrapple
     # @option properties [String] :name  The name of this module.
     def register_renderer(mod, properties)
       raise ArgumentError "Please specify a name for this renderer." if properties[:name].blank?
-      @renderer[properties[:name]] = mod
-    end
-
-    # Choose a suitable renderer for this page and request.
-    # @param page [Page]
-    # @return [Module]
-    def renderer_for(page)
-      (
-        renderer(params['renderer']) ||
-        renderer(page['renderer']) ||
-        renderer(config["default_renderers"][page.type]) ||
-        renderer(config["fallback_renderer"])
-      )
+      @renderers[properties[:name]] = mod
     end
 
     # Get a renderer module by name.
+    # @param name [String]
+    # @return [Module]
     def renderer(name)
-      renderers[name]
+      @renderers[name]
     end
 
   end

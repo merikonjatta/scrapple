@@ -1,23 +1,16 @@
 require 'pathname'
+require 'cgi'
 
-module Scrapple
+class Scrapple
   # Represents a single page (or file) in the filesystem.
   class Page
-    class WriteRefused < StandardError; end
+    class WriteFailed < StandardError; end
 
-    include Hookable
+    # The content bag where this page is from.
+    # @return [Object]
+    attr_accessor :bag
 
-    # Local settings for this page. Includes directives found in file,
-    # and directives found in perdir files in parent directories.
-    # But can be used to store arbitrary data.
-    # @return [Settings]
-    attr_accessor :settings
-
-    # Set this to true to ignore perdir files surrounding this Page's file.
-    # @return [Bool]
-    attr_accessor :ignore_perdir_files
-
-    # Relative path to this file (from {#root}). Includes preceding slash.
+    # Relative path to this file (from the source root). Includes preceding slash.
     # Looks like "/docs/[Fowler] Mocks aren't stubs.md"
     # @return [String]
     attr_accessor :path
@@ -27,16 +20,6 @@ module Scrapple
     # @return [String]
     attr_accessor :link
 
-    # Base of the relative {#path}.
-    # Looks like "/home/marco/scrapple-site"
-    # @return [String]
-    attr_accessor :root
-
-    # Full filesystem path of this Page.
-    # Looks like "/home/marco/scrapple-site/docs/[Fowler] Mocks aren't stubs.md"
-    # @return [String]
-    attr_accessor :fullpath
-
     # Type of this Page. Looks like "md" "textile" "css", or "directory" if it's a directory.
     # @return [String]
     attr_accessor :type
@@ -45,44 +28,18 @@ module Scrapple
     attr_accessor :isindexfile
     alias_method :indexfile?, :isindexfile
 
-    # The content body of the file this page represents.
-    # Does not include the directives section.
-    # @return [String]
-    attr_accessor :content
+    REGEX_INDEXFILE = %r{(^|/)index\..+$}
+
 
     # Pass the request filename to get a new Page instance.
-    # @param [String] path   Absolute or relative path to the page file or directory.
-    # @param [Hash] options  Options for the instance.
-    # @option options [String] :root (nil)          Specify the absolute root path to look in, if known. 
-    # @option options [Bool] :fetch (false)         Whether to do a fetch after initialize.
-    #                                               Not fetching means no parsing for directives,
-    #                                               no looking for perdir files, so leave it as false
-    #                                               unless you need the contents.
-    # @option options [Bool] :ignore_perdir_files   (false) Whether to ignore surrounding perdir files
-    #
-    # @return [Page, nil] A Page if file is found, nil if not
-    def self.for(path, options = {})
-      options = {
-        :root => nil,
-        :fetch => false,
-        :ignore_perdir_files => false,
-        :look_for_index => true
-      }.merge(options)
-
-      if options[:root] && FileLookup.roots.include?(options[:root])
-        fullpath = FileLookup.find_in_root(path, options[:root])
-      else
-        fullpath = FileLookup.find(path)
-      end
-
-      return nil if fullpath.nil?
-
+    # @param [String] path   Path to the page file or directory.
+    # @param [Object] bag    Content bag where this page is supposed to be from.
+    # @return [Page, nil] A Page
+    def self.for(path, bag)
       instance = self.new do |page|
-        page.fullpath    = fullpath
-        page.ignore_perdir_files = options[:ignore_perdir_files]
+        page.path = path
+        page.bag = bag
       end
-
-      instance.fetch if options[:fetch]
 
       return instance
     end
@@ -91,63 +48,54 @@ module Scrapple
     # Manually create an instance. Note that {Page.for} is the recommended
     # way of getting new instances.
     def initialize
-      @settings = Settings.new
+      @body        = ""
+      @rc          = {}
       yield(self) if block_given?
-
-      if fullpath
-        @root        = FileLookup.parent_root(fullpath)
-        @path        = "/" + FileLookup.relative_path(fullpath, @root)
-        @link        = "/" + @path.split("/")[1..-1].map{ |part| CGI.escape(part) }.join("/")
-        @isindexfile = !!(fullpath =~ /(^|\/)index\..+$/)
-        @type        = if File.directory?(fullpath)
-                         "directory"
-                       else
-                         File.extname(fullpath)[1..-1] || File.basename(fullpath)
-                       end
-        self['title'] ||= File.basename(fullpath)
-      end
-
-      call_hooks(:after_initialize)
+      @fetched     = false
+      @path        = Pathname.new("/" + @path.to_s).cleanpath
+      @link        = @path.to_s.split("/")[1..-1].map{ |part| CGI.escape(part) }.join("/")
+      @isindexfile = !!(@path.to_s =~ REGEX_INDEXFILE)
+      @type        = @bag.directory?(@path) ? "directory" : @path.extname[1..-1]
+      self['title'] ||= File.basename(@path)
     end
 
-
-    # Fetch content body and settings from this and its surrounding files.
-    # @return [Page] self, for chainability
+    # Fetch the content body and rc directives.
     def fetch
-      unless @ignore_perdir_files
-        files = FileLookup.find_all_ascending(Scrapple.perdir_file, fullpath)
-        files.reverse_each do |file|
-          # TODO: Does this have to be parse and merge? A simple yaml load file would do
-          @settings.parse_and_merge!(file, :dont_stop => true)
-        end
+      unless @fetched
+        parser = Parser.new(bag.content(path))
+        @body = parser.body
+        @rc = @rc.merge(parser.rc)
+        @fetched = true
       end
-
-      @content = @settings.parse_and_merge!(fullpath) unless type == "directory"
-
-      return self
     end
 
-    # Write given contents to file. Raises a WriteRefused if the file is
-    # not under the first entry in {FileLookp.roots}.
-    # @param content [String] The stuff to write.
-    # @raise [WriteRefused]  When the file is outside the first entry in {FileLookp.roots}
-    def write(content)
-      if self.root != FileLookup.roots.first
-        raise WriteRefused, "Refusing to write #{fullpath} outside of #{FileLookup.roots.first}"
-      end
-      File.open(fullpath, 'w') { |f| f.write(content) }
+    # The content body of the file this page represents.
+    # Does not include the directives section.
+    # @return [String]
+    def body
+      fetch
+      @body
+    end
+
+    # Local settings for this page. Includes directives found in file,
+    # and directives found in rc files in parent directories.
+    # Can be used to store arbitrary data about this page.
+    # @return [Hash]
+    def rc
+      fetch
+      @rc
     end
 
 
-    # Get variables from settings
+    # Get variables from rc
     def [](key)
-      @settings[key]
+      rc[key]
     end
 
 
-    # Set settings value
+    # Set rc value
     def []=(key, value)
-      @settings[key] = value
+      rc[key] = value
     end
 
     # Get the parent page.
@@ -157,12 +105,11 @@ module Scrapple
     # Returns nil if there is no appropriate parent.
     # @param options [Hash] See {Page#for}
     def parent(options = {})
-      fp = if self.indexfile?
-             File.join(self.fullpath, "../../")
-           else
-             File.join(self.fullpath, "../")
-           end
-      self.class.for(fp, options)
+      if indexfile?
+        @bag.get(@path.dirname.dirname)
+      else
+        @bag.get(@path.dirname)
+      end
     end
 
     # Get a list of child pages.
@@ -171,49 +118,20 @@ module Scrapple
     # @param options [Hash]
     # @option options [Bool] :indexfiles_first      (true) List index.* files first.
     # @option options [Bool] :directories_first     (true) List directories first.
-    # @option options [Bool] :ignore_perdir_files   (true) Do not include perdir files
     # @option options [Array, String] :ignore       ([]) Fullpaths to exclude
     def children(options = {})
-      return [] unless has_children?
-
-      options = {
-        :indexfiles_first => true,
-        :directories_first => true,
-        :ignore_perdir_files => true,
-        :ignore => []
-      }.merge!(options)
-
-      options[:ignore] = [options[:ignore]] unless options[:ignore].is_a? Array
-      options[:ignore].map! { |ig| ig.is_a?(Page) ? ig : Page.for(ig) }
-
-      base = (type == "directory") ? fullpath : File.dirname(fullpath)
-
-      pages = Dir[base + "/*"].reject { |entry|
-        options[:ignore].include?(entry) ||
-        options[:ignore_perdir_files] && entry =~ /\/#{Regexp.escape(Scrapple.perdir_file)}$/
-      }.map { |entry| Page.for(entry, :fetch => true, :ignore_perdir_files => true) }.compact
-
-      # Sort indexfiles-first, directories-first, then by name. (A Shwartzian transform)
-      # Got idea from bit.ly/d4UaMM
-      sh = pages.map do |page|
-        sortkey = ""
-        sortkey << ((page.indexfile?) ? "0/" : "1/" ) if options[:indexfiles_first]
-        sortkey << ((page.type == "directory" || page.indexfile?) ? "0/" : "1/") if options[:directories_first]
-        sortkey << page.fullpath
-        [sortkey, page]
-      end
-      sh.sort{|a,b| a.first <=> b.first }.map { |schw| schw[1] }
+      has_children? ? @bag.ls(@path) : []
     end
 
     # True if this is a directory or an indexfile.
     # @return [Bool]
     def has_children?
-      type == "directory" || indexfile?
+      @bag.has_children?(path)
     end
 
-    # True if other has the same fullpath
+    # True if other has the same bag and path
     def same?(other)
-      fullpath == other.fullpath
+      bag == other.bag && path == other.path
     end
 
   end
