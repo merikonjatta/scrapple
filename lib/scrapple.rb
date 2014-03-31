@@ -8,6 +8,7 @@ require 'active_support/core_ext'
 
 %w{
   scrapple/content
+  scrapple/bag
   scrapple/file_system_bag
   scrapple/page
   scrapple/parser
