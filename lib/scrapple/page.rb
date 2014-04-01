@@ -24,12 +24,6 @@ class Scrapple
     # @return [String]
     attr_accessor :type
 
-    # True if this is an directory index file.
-    attr_accessor :isindexfile
-    alias_method :indexfile?, :isindexfile
-
-    REGEX_INDEXFILE = %r{(^|/)index\..+$}
-
 
     # Pass the request filename to get a new Page instance.
     # @param [String] path   Path to the page file or directory.
@@ -55,13 +49,12 @@ class Scrapple
       yield(self) if block_given?
 
       @path        = Pathname.new("/" + @path.to_s).cleanpath
-      binding.pry
       @link        = @path.to_s.split("/").map{ |part| CGI.escape(part) }.join("/")
-      @isindexfile = @bag.indexfile?(@path)
       @type        = @bag.type(@path)
 
       self['title'] ||= @path.basename
     end
+
 
     # Fetch the content body and rc directives.
     def fetch
@@ -73,6 +66,7 @@ class Scrapple
       end
     end
 
+
     # The content body of the file this page represents.
     # Does not include the directives section.
     # @return [String]
@@ -80,6 +74,7 @@ class Scrapple
       fetch
       @body
     end
+
 
     # Local settings for this page. Includes directives found in file,
     # and directives found in rc files in parent directories.
@@ -102,29 +97,24 @@ class Scrapple
       rc[key] = value
     end
 
+
     # Get the parent page.
-    # This means:
-    # For ordinary pages and directories, the containing directory or its index file.
-    # For indexfiles, the containing directory of the containing directory, or its index file.
-    # Returns nil if there is no appropriate parent.
-    # @param options [Hash] See {Page#for}
-    def parent(options = {})
+    def parent()
       bag.get(bag.parent(path))
     end
 
+
     # Get a list of child pages.
-    # If self is a Directory, the list of pages in that directory.
-    # If self is a Page, the list of sibling pages.
-    # @param options [Hash]
-    def children(options = {})
+    def children()
       bag.ls(path).map { |pat| bag.get(pat) }.compact
     end
 
+
     # True if this is a directory or an indexfile.
-    # @return [Bool]
     def has_children?
       bag.has_children?(path)
     end
+
 
     # True if other has the same bag and path
     def same?(other)

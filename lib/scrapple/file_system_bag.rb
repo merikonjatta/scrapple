@@ -108,6 +108,7 @@ class Scrapple
     end
 
 
+    private
     # Rewrite the path to find a matching file.
     # /dir => /dir/index.*
     # /file => /file.*
