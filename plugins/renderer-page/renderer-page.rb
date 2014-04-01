@@ -4,10 +4,11 @@ module Scrapple::Plugins
 
       def render(page, options = {})
         engine = Tilt[page.type]
+        raise "Tilt can't handle this type: #{page.type}"
 
         body = engine.new { page.body }.render(page)
-
         headers = {'Content-Type' => content_type_for(page.type) }
+
         return [200, headers, [body]]
       end
 
