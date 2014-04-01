@@ -4,7 +4,7 @@ module Scrapple::Plugins
 
       def render(page, options = {})
         engine = Tilt[page.type]
-        raise "Tilt can't handle this type: #{page.type}"
+        raise "Tilt can't handle this type: #{page.type}" if engine.nil?
 
         body = engine.new { page.body }.render(page)
         headers = {'Content-Type' => content_type_for(page.type) }
@@ -22,7 +22,7 @@ module Scrapple::Plugins
         when "builder"
           "text/xml"
         else
-          Scrapple::Webapp.mime_type(ext) || "text/html"
+          Sinatra::Base.mime_type(ext) || "text/html"
         end
       end
 
