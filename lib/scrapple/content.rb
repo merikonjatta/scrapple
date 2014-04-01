@@ -29,6 +29,7 @@ class Scrapple
     # @param path [String, Pathname] Relative path (or pseudo-full path) of what you want.
     # @return [Page]
     def get(path)
+      path = Pathname.new(path)
       @bags.lazy.map { |bag| bag.get(path, do_raise: false) }.find { |page| page }
     end
 
@@ -37,6 +38,7 @@ class Scrapple
     # @param path [String, Pathname] Relative path (or pseudo-full path) of what you want.
     # @return [Array<Page>]
     def get_all(path)
+      path = Pathname.new(path)
       @bags.map { |bag| bag.get(path, do_raise: false) }.compact
     end
   end
