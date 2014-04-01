@@ -108,6 +108,15 @@ class Scrapple
     end
 
 
+    # The list of rc files for a page
+    def rc_files(path)
+      path = rewrite(path)
+      rcs = []
+      Pathname.new("/"+path.to_s).ascend { |pa| rcs << (pa + Scrapple.config['rc_file']) }
+      rcs.map { |rc| relative(rc) }.select { |rc| exist?(rc) }
+    end
+
+
     private
     # Rewrite the path to find a matching file.
     # /dir => /dir/index.*

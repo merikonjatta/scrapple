@@ -6,6 +6,8 @@ class Scrapple
   #   * rc
   class Content
 
+    attr_reader :bags
+
     def initialize
       @bags = []
     end

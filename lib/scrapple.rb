@@ -24,10 +24,6 @@ class Scrapple
 
   class << self
 
-    DEFAULTS = {
-      "rc_file"     => "_config.yml",
-    }
-
     attr_reader :root
     attr_reader :config
     attr_reader :middleware_stack
@@ -61,13 +57,14 @@ class Scrapple
 
 
     def load_config
-      @config = DEFAULTS.merge!(YAML.load_file(@root.join("config.yml")))
+      @config = YAML.load_file(@root.join("config.yml"))
     rescue
       @config = {}
     end
 
 
     def validate_config
+      @config['rc_file'] ||= "_config.yml"
       @config['data_dir'] ||= @root + "data"
       @config['plugins_dir'] ||= @root + "plugins"
       @config['content_dir'] ||= @root + "sample_content"

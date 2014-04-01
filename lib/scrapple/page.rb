@@ -52,16 +52,19 @@ class Scrapple
       @link        = @path.to_s.split("/").map{ |part| CGI.escape(part) }.join("/")
       @type        = @bag.type(@path)
 
-      self['title'] ||= @path.basename
+      self['title'] ||= @path.basename.to_s
     end
 
 
     # Fetch the content body and rc directives.
     def fetch
       unless @fetched
-        parser = Parser.new(bag.content(path))
+        parser = Parser.new(bag.content(path)).parse
         @body = parser.body
-        @rc = @rc.merge(parser.rc)
+        bag.rc_files(path).each do |rc_file|
+          @rc.merge!(YAML.load(bag.content(rc_file)))
+        end
+        @rc.merge!(parser.rc)
         @fetched = true
       end
     end
