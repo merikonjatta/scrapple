@@ -12,12 +12,13 @@ class Scrapple
 
     # A get route with no handler specified
     get '/*' do |path|
+      pass if path =~ %r{^__sinatra__}
       for_path(CGI.unescape(path))
     end
 
 
     def for_path(path = '')
-      page = Scrapple.content.get(path)
+      page = Scrapple.content.get(Pathname.new(path))
       raise Sinatra::NotFound if page.nil?
 
       renderer = renderer_for(page)

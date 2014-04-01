@@ -50,13 +50,17 @@ class Scrapple
     def initialize
       @body        = ""
       @rc          = {}
-      yield(self) if block_given?
       @fetched     = false
+
+      yield(self) if block_given?
+
       @path        = Pathname.new("/" + @path.to_s).cleanpath
-      @link        = @path.to_s.split("/")[1..-1].map{ |part| CGI.escape(part) }.join("/")
-      @isindexfile = !!(@path.to_s =~ REGEX_INDEXFILE)
-      @type        = @bag.directory?(@path) ? "directory" : @path.extname[1..-1]
-      self['title'] ||= File.basename(@path)
+      binding.pry
+      @link        = @path.to_s.split("/").map{ |part| CGI.escape(part) }.join("/")
+      @isindexfile = @bag.indexfile?(@path)
+      @type        = @bag.type(@path)
+
+      self['title'] ||= @path.basename
     end
 
     # Fetch the content body and rc directives.
@@ -105,28 +109,21 @@ class Scrapple
     # Returns nil if there is no appropriate parent.
     # @param options [Hash] See {Page#for}
     def parent(options = {})
-      if indexfile?
-        @bag.get(@path.dirname.dirname)
-      else
-        @bag.get(@path.dirname)
-      end
+      bag.get(bag.parent(path))
     end
 
     # Get a list of child pages.
     # If self is a Directory, the list of pages in that directory.
     # If self is a Page, the list of sibling pages.
     # @param options [Hash]
-    # @option options [Bool] :indexfiles_first      (true) List index.* files first.
-    # @option options [Bool] :directories_first     (true) List directories first.
-    # @option options [Array, String] :ignore       ([]) Fullpaths to exclude
     def children(options = {})
-      has_children? ? @bag.ls(@path) : []
+      bag.ls(path).map { |pat| bag.get(pat) }.compact
     end
 
     # True if this is a directory or an indexfile.
     # @return [Bool]
     def has_children?
-      @bag.has_children?(path)
+      bag.has_children?(path)
     end
 
     # True if other has the same bag and path

@@ -15,8 +15,10 @@ class Scrapple
     # 
     # @param source [String, Pathname, FileSystemSource, Object]
     def <<(bag)
-      bag = FileSystemBag.new(bag) if (bag.is_a?(String)|| bag.is_a?(Pathname))
+      bag = FileSystemBag.instance(bag) if (bag.is_a?(String)|| bag.is_a?(Pathname))
       @bags << bag
+    rescue Bag::PathNotFound
+      @bags
     end
 
     # Get a file within the bags.
@@ -25,7 +27,7 @@ class Scrapple
     # @param path [String, Pathname] Relative path (or pseudo-full path) of what you want.
     # @return [Page]
     def get(path)
-      @bags.lazy.map { |so| so.get(path) }.find { |pa| pa }
+      @bags.lazy.map { |bag| bag.get(path, do_raise: false) }.find { |page| page }
     end
 
     # Get all matching files within the bags.
@@ -33,7 +35,7 @@ class Scrapple
     # @param path [String, Pathname] Relative path (or pseudo-full path) of what you want.
     # @return [Array<Page>]
     def get_all(path)
-      @bags.map { |so| so.get(path) }.compact
+      @bags.map { |bag| bag.get(path, do_raise: false) }.compact
     end
   end
 end

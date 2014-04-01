@@ -3,84 +3,136 @@ class Scrapple
     
     attr_reader :root
 
+    REGEX_INDEXFILE = %r{(^|/)index\..+$}
+
     def self.instance(root_path)
-      raise Bag::NotFound.new unless Pathname.new(root_path).cleanpath.directory?
+      raise Bag::PathNotFound.new unless Pathname.new(root_path).cleanpath.directory?
       self.new(root_path)
     end
+
 
     def initialize(root_path)
       @root = Pathname.new(root_path).cleanpath
     end
 
+
     # Does that path exist?
     def exist?(path)
+      path = rewrite(path)
       (@root + path).exist?
     end
     
-    # Get a file.
-    def get(path)
+
+    # Get a file as a Page.
+    def get(path, do_raise: true)
+      path = rewrite(path)
       if exist?(path)
-        Page.for(@root + path, self)
+        Page.for(path, self)
+      elsif do_raise
+        raise Bag::PathNotFound.new
       else
         nil
       end
     end
 
+
     # Get the text content of a file as string.
     def content(path)
-      raise Bag::NotFound.new unless exist?(path)
+      path = rewrite(path)
+      raise Bag::PathNotFound.new unless exist?(path)
       if directory?(path)
-        # TODO: get index file
-        "index"
+        ""
       else
-        File.read(root + path)
+        File.read(@root + path)
       end
     end
+
 
     # Get the type of a file.
     def type(path)
-      raise Bag::NotFound.new unless exist?(path)
-      get(path).type
+      path = rewrite(path)
+      directory?(path) ? "directory" : path.extname[1..-1]
     end
 
-    # Get the config hash for a path.
-    def rc(path)
-      raise Bag::NotFound.new unless exist?(path)
-      get(path).rc
+
+    # Whether a path is an indexfile
+    def indexfile?(path)
+      path = rewrite(path)
+      path.to_s =~ REGEX_INDEXFILE
     end
+
 
     # Whether a path is a directory
     def directory?(path)
-      raise Bag::NotFound.new unless exist?(path)
-      (root + path).directory?
+      path = rewrite(path)
+      (@root + path).directory?
     end
+
 
     # Whether a path has children or not.
     def has_children?(path)
-      raise Bag::NotFound.new unless exist?(path)
-      type(path) == "directory" || get(path).indexfile?
+      path = rewrite(path)
+      directory?(path) || indexfile?(path)
     end
 
-    # Get the children of a file.
-    def ls(path)
-      raise Bag::NotFound.new unless exist?(path)
 
+    # Get the paths of the children of a path
+    def ls(path)
+      path = rewrite(path)
       return [] unless has_children?(path)
 
-      base = (type(path) == "directory") ? path : path.dirname
-
-      pages = Dir[base + "/*"].map { |entry| Page.for(entry, self) }.compact
+      base = directory?(path) ? path : path.dirname
+      paths = Pathname.glob((@root + base) + "/*")
 
       # Sort indexfiles-first, directories-first, then by name. (A Shwartzian transform)
       # Got idea from http://bit.ly/d4UaMM
-      sh = pages.map do |page|
+      sh = paths.map do |pa|
         sortkey = ""
-        sortkey << ((page.indexfile?) ? "1/" : "2/" )
-        sortkey << ((page.type == "directory") ? "1/" : "2/")
-        sortkey << page.path
-        [sortkey, page]
+        sortkey << indexfile?(pa) ? "1/" : "2/"
+        sortkey << directory?(pa) ? "1/" : "2/"
+        sortkey << pa
+        [sortkey, pa]
       end
-      sh.sort{|a,b| a.first <=> b.first }.map { |a| a.last }
+      sh.sort{|a,b| a.first <=> b.first }.map { |a| a.last.relative_path_from(@root) }
+    end
+
+    
+    # Get the parent path
+    def parent(path)
+      path = rewrite(path)
+      if indexfile?(path)
+        path.dirname.dirname
+      else
+        path.dirname
+      end
+    end
+
+
+    # Rewrite the path to find a matching file.
+    # /dir => /dir/index.*
+    # /file => /file.*
+    def rewrite(path)
+      rel = relative(path)
+
+      if (@root + rel).directory?
+        indexfile = Pathname.glob(@root + (rel.to_s + "/index.*")).first
+        return indexfile.relative_path_from(@root) if indexfile
+      end
+
+      ext_appended = Pathname.glob(@root + (rel.to_s + ".*")).first
+      return ext_appended.relative_path_from(@root) if ext_appended
+
+      return rel
+    end
+
+
+    # Remove preceding slash if exsists.
+    def relative(path)
+      if path.relative?
+        path
+      else
+        path.relative_path_from(Pathname.new("/"))
+      end
     end
 
   end
