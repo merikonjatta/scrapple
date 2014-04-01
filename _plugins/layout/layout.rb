@@ -3,8 +3,6 @@ require 'tilt'
 module Scrapple::Plugins
   class Layout
 
-    DEFAULT_LAYOUT = "layouts/clean.haml"
-
     class << self
       def wrap(body, env)
         page = env['scrapple.page']

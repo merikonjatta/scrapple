@@ -1,15 +1,21 @@
+require 'layout/layout'
+
 module Scrapple::Plugins
   module RendererPage
     class << self
 
-      def render(page, options = {})
+      def render(page, params, env)
         engine = Tilt[page.type]
         raise "Tilt can't handle this type: #{page.type}" if engine.nil?
 
-        body = engine.new { page.body }.render(page)
-        headers = {'Content-Type' => content_type_for(page.type) }
+        page.body = engine.new { page.body }.render(page, page: page, env: env)
 
-        return [200, headers, [body]]
+        if page['layout']
+          page = Scrapple::Plugins::Layout.wrap(page, env)
+        end
+
+        headers = {'Content-Type' => content_type_for(page.type) }
+        return [200, headers, [page.body]]
       end
 
 

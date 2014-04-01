@@ -4,15 +4,11 @@ class Scrapple
 
   class Webapp < Sinatra::Base
 
-    # A get route with handler specified
-    get %r{(.*)/(as|with|in)/(.+)} do |path, dummy, renderer_name|
-      params['handler_name'] = renderer_name
-      for_path(CGI.unescape(path))
-    end
-
-    # A get route with no handler specified
+    # A get route
     get '/*' do |path|
       pass if path =~ %r{^__sinatra__}
+      params['renderer'] ||= params['as']
+      params['renderer'] ||= params['in']
       for_path(CGI.unescape(path))
     end
 
@@ -28,7 +24,7 @@ class Scrapple
       env['scrapple.params'] = params
       env['scrapple.renderer'] = renderer
 
-      return renderer.render(page, params)
+      return renderer.render(page, params, env)
     end
 
 

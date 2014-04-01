@@ -1,5 +1,5 @@
 site_name: Scrapple Sample Content
-hoge: boobs
+layout: layouts/clean.haml
 
 markdown:
   hard_wrap: false

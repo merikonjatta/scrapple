@@ -78,6 +78,10 @@ class Scrapple
       @body
     end
 
+    def body=(val)
+      @body = val
+    end
+
 
     # Local settings for this page. Includes directives found in file,
     # and directives found in rc files in parent directories.
@@ -86,6 +90,10 @@ class Scrapple
     def rc
       fetch
       @rc
+    end
+
+    def rc=(val)
+      @rc = val
     end
 
 

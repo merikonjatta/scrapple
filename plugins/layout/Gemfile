@@ -1,0 +1,5 @@
+gem 'tilt'
+gem 'haml'
+gem 'redcarpet'
+gem 'rdoc'
+gem 'RedCloth'
