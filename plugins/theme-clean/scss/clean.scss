@@ -16,7 +16,7 @@ $purple                : #934FB5;
 
 $linkColor             : $blue;
 
-$nonParagSansFontFamily: "Avenir LT Std", "Myriad Pro", sans-serif;
+$nonParagSansFontFamily: "Helvetica", "Arial", sans-serif;
 $baseFontFamily        : $nonParagSansFontFamily;
 $baseFontSize          : 15px;
 
@@ -47,14 +47,14 @@ $lineHeightPre         : 16px;
 // Layout elements {{{
 
 body {
-    background: #e3e3e3 image-url("noisy-grid.png");
+    background: #f0f0f0;// image-url("noisy-grid.png");
 }
 
 .belt {
     padding: 0px; margin:0px;
     font-size: 14px;
-    background: #d7d7d7;
-    border-bottom: 1px solid #bababa;
+    background: #e9e9e9;
+    border-bottom: 1px solid #dddddd;
     @include clearfix;
 }
 
@@ -64,8 +64,7 @@ body {
 
 .content {
     margin-top: 10px; margin-bottom:10px; padding: 20px;
-    @include box-shadow(0px 1px 5px 0px rgba(0,0,0,0.2));
-    @include border-radius;
+    @include box-shadow(0px 1px 3px 0px rgba(0,0,0,0.14));
     background: #f5f5f5;
     text-rendering: optimizelegibility;
     text-align: justify;
